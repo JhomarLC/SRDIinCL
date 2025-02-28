@@ -18,7 +18,10 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
+            'first_name' => fake()->firstName(),
+            'middle_name' => $this->faker->boolean(70) ? fake()->lastName() . '.' : null, // 70% chance to have an initial, 30% to be null
+            'last_name' => fake()->lastName(),
+            'suffix' => $this->faker->randomElement(['Jr.', 'Sr.', 'III', null]), // Random suffix or null
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password

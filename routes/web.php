@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\AEWSController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -15,8 +17,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
-});
+    return view('auth.login');
+})->middleware('guest');
 
 // Route::get('/dashboard', function () {
 //     return view('dashboard');
@@ -28,14 +30,24 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::middleware('auth', 'role:admin')->group(function (){
-    Route::get('/admin/dashboard', function () {
-        return view('admin.dashboard');
+// ADMIN
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
+    Route::get('/dashboard', function () {
+        return view('admin.index');
     })->name('admin.dashboard');
+
+    // ADMIN MANAGEMENT
+    require __DIR__.'/admin/admin-management.php';
+    // AEWS MANAGEMENT
+    require __DIR__.'/admin/aews-management.php';
+
 });
+
+// AEWS
 Route::middleware('auth', 'role:aews')->group(function (){
     Route::get('/dashboard', function () {
-        return view('dashboard');
+        return view('aews.index');
     })->name('dashboard');
 });
+
 require __DIR__.'/auth.php';
