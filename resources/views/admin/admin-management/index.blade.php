@@ -21,10 +21,10 @@
         Admin Account Management
     @endslot
 @endcomponent
-@component('components.alert')
-@endcomponent
-@component('admin.admin-management.components.modal-create')
-@endcomponent
+@include('components.alert')
+@include('admin.admin-management.components.modal-create')
+@include('admin.admin-management.components.modal-update')
+@include('admin.admin-management.components.status-update')
 
 <div class="row">
     <div class="col-lg-12">
@@ -42,8 +42,11 @@
                 <table id="admins" class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">
                     <thead>
                         <tr>
+                            <th data-ordering="false">Full Name</th>
+                            <!--
                             <th data-ordering="false">First Name</th>
                             <th data-ordering="false">Last Name</th>
+                            -->
                             <th data-ordering="false">Suffix</th>
                             <th data-ordering="false">Email</th>
                             <th data-ordering="false">Status</th>
@@ -65,7 +68,6 @@
 <!--end row-->
 
 
-
 @endsection
 @section('script')
 
@@ -85,80 +87,6 @@
 <script src="{{ URL::asset('build/js/pages/datatables.init.js') }}"></script>
 
 <script src="{{ URL::asset('admin-js/admin.js') }}"></script>
-
-<script>
-    $(document).ready(function () {
-        $("#admins").DataTable({
-            processing: true,
-            serverSide: true,
-            responsive: true,
-            ajax: "{{ route('admin-management.get-index') }}",
-            columns: [
-                { data: 'first_name', name: 'first_name' },
-                { data: 'last_name', name: 'last_name' },
-                { data: 'suffix', name: 'suffix',  orderable: false, searchable: false },
-                { data: 'email', name: 'email' },
-                { data: 'status', name: 'status', orderable: false, searchable: false },
-                // { data: 'updated_at', name: 'updated_at' },
-                // { data: 'created_at', name: 'created_at' },
-                { data: 'actions', name: 'actions', orderable: false, searchable: false }
-            ]
-        });
-    });
-
-    $(document).ready(function () {
-        $('#createAdminForm').submit(function (e) {
-            e.preventDefault();
-
-            // Clear previous errors
-            $('.form-control').removeClass('is-invalid'); // Remove red borders
-            $('.invalid-feedback').text(''); // Clear error messages
-
-            let formData = {
-                first_name: $('#first_name').val(),
-                middle_name: $('#middle_name').val(),
-                last_name: $('#last_name').val(),
-                suffix: $('#suffix').val(),
-                email: $('#email').val(),
-                password: $('#password').val(),
-                password_confirmation: $('#password_confirmation').val(),
-                _token: $('meta[name="csrf-token"]').attr('content')
-            };
-
-            $.ajax({
-                url: "{{ route('admin-management.store') }}", // Laravel route for storing admin
-                type: "POST",
-                data: formData,
-                dataType: "json",
-                success: function (response) {
-                    if (response.status === "success") {
-                        $('#addnewadminmodal').modal('hide'); // Hide modal
-                        $('#createAdminForm')[0].reset(); // Reset form
-                        $('#admins').DataTable().ajax.reload(); // Reload DataTable
-                        // alert("Admin added successfully!"); // Show success message
-                    }
-                },
-                error: function (xhr) {
-                    let errors = xhr.responseJSON.errors;
-                    console.log(errors);
-                    if (errors) {
-                        $.each(errors, function (key, value) {
-                            $('#' + key).addClass('is-invalid'); // Add red border
-                            $('#' + key + '_error').text(value); // Display error message
-                        });
-                    }
-                }
-            });
-        });
-
-        // Remove error message on input
-        $('.form-control').on('input', function () {
-            $(this).removeClass('is-invalid'); // Remove red border
-            $('#' + $(this).attr('id') + '_error').text(''); // Clear error message
-        });
-    });
-
-</script>
-
+@include('admin.admin-management._includes.script')
 <script src="{{ URL::asset('build/js/app.js') }}"></script>
 @endsection

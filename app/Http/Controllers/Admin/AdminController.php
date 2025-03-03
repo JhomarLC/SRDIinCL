@@ -23,25 +23,45 @@ class AdminController extends Controller
 
     public function getIndex()
     {
+        $currentUser = auth()->user();
         $users = User::all()->where('role', 'admin');
 
         return DataTables::of($users)
-            ->addColumn('actions', function ($user) {
-                $editButton = '<a href="' . route('admin-management.edit', $user->id) . '" class="btn btn-sm btn-success">
-                                <i class="ri-edit-fill"></i> Update
-                            </a>';
+            ->editColumn('full_name', function ($user) {
+                $middleName = $user->middle_name ? ' ' . $user->middle_name : ''; // Add middle name if available
+                return "{$user->first_name} {$middleName} {$user->last_name}";
+            })
+            ->addColumn('actions', function ($user) use ($currentUser) {
+
+                if ($currentUser->id === $user->id) {
+                    return '<span class="text-muted">You</span>';
+                }
+
+                $editButton = '<button class="btn btn-sm btn-success editAdmin"
+                                    data-id="' . $user->id . '"
+                                    data-first_name="' . $user->first_name . '"
+                                    data-middle_name="' . $user->middle_name . '"
+                                    data-last_name="' . $user->last_name . '"
+                                    data-suffix="' . $user->suffix . '"
+                                    data-email="' . $user->email . '"
+                                    <i class="ri-edit-line"></i> Update
+                                </button>';
 
                 $activateButton = ($user->status === 'disabled')
-                    ? '<button class="btn btn-sm btn-secondary activateUser" data-bs-toggle="modal" data-id="' . $user->id . '" href="#activeAccount' . $user->id . '">
-                            <i class="ri-service-fill"></i> Activate
-                    </button>'
+                    ? '<button class="btn btn-sm btn-secondary status-activate"
+                            data-id="' . $user->id . '"
+                            <i class="ri-service-fill"></i>
+                            Activate
+                        </button>'
                     : '';
 
                 $deactivateButton = ($user->status === 'active')
-                    ? '<button class="btn btn-sm btn-danger deactivateUser" data-bs-toggle="modal" data-id="' . $user->id . '" href="#deactivateAccount' . $user->id . '">
-                            <i class="ri-archive-fill"></i> Disable
+                ? '<button class="btn btn-sm btn-danger status-deactivate"
+                        data-id="' . $user->id . '"
+                        <i class="ri-archive-fill"></i>
+                        Deactivate
                     </button>'
-                    : '';
+                : '';
 
                 return $editButton . ' ' . $activateButton . ' ' . $deactivateButton;
             })
@@ -121,26 +141,39 @@ class AdminController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $admin_management)
     {
-        $request->validate([
-            'admin_password' => ['required', 'string'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        // Validate request
+        $validatedData = $request->validate([
+            'first_name' => 'required|string|max:255',
+            'middle_name' => 'nullable|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'suffix' => 'nullable|string|max:10',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $admin_management,
+            'password' => 'nullable|string|min:8|confirmed', // Password can be empty
         ]);
 
-        $authenticatedAdmin = Auth::user();
+        // Find the admin by ID
+        $admin = User::findOrFail($admin_management);
 
-        if (!Hash::check($request->admin_password, $authenticatedAdmin->password)) {
-            return redirect()->back()->with('error', 'Your password is incorrect.');
+        // Update only provided fields
+        $admin->update([
+            'first_name' => $validatedData['first_name'],
+            'middle_name' => $validatedData['middle_name'],
+            'last_name' => $validatedData['last_name'],
+            'suffix' => $validatedData['suffix'],
+            'email' => $validatedData['email'], // Required, so no need for ??
+        ]);
+
+        // Only update password if a new one is provided
+        if ($request->filled('password')) {
+            $admin->update([
+                'password' => Hash::make($validatedData['password']),
+            ]);
         }
-
-        $targetAdmin = User::findOrFail($id);
-
-        $targetAdmin->password = Hash::make($request->password);
-        $targetAdmin->save();
-
-        return redirect()->route('admin-management.index')->with('success', 'Admin password updated successfully.');
+        return response()->json(['status' => 'success', 'message' => 'Admin updated successfully!', 'admin' => $admin]);
     }
+
 
     /**
      * Remove the specified resource from storage.
@@ -158,17 +191,26 @@ class AdminController extends Controller
     {
         $user = User::findOrFail($id);
 
-        if (Auth::user()->id == $user->id) {
-            return redirect()->back()->with('error', 'You cannot deactivate your own account.');
+        if (Auth::user()->id == $id) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You cannot deactivate your own account.'
+            ]);
         }
 
         if ($user->status === 'disabled') {
-            return redirect()->back()->with('error', 'This admin account is already disabled.');
+            return response()->json([
+                'status' => 'error',
+                'message' => 'This admin account is already disabled.'
+            ]);
         }
 
         $user->update(['status' => 'disabled']);
 
-        return redirect()->route('admin-management.index')->with('success', 'Admin account deactivated successfully.');
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Admin account deactivated successfully!'
+        ]);
     }
 
     /**
@@ -179,12 +221,17 @@ class AdminController extends Controller
         $user = User::findOrFail($id);
 
         if ($user->status === 'active') {
-            return redirect()->back()->with('error', 'This admin account is already active.');
+            return response()->json([
+                'status' => 'error',
+                'message' => 'This admin account is already active.'
+            ]);
         }
-
         $user->update(['status' => 'active']);
 
-        return redirect()->route('admin-management.index')->with('success', 'Admin account activated successfully.');
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Admin account activated successfully!'
+        ]);
     }
 
     /**
