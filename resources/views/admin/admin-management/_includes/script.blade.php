@@ -128,6 +128,7 @@
                         $('#updateAdminForm')[0].reset(); // Reset form
                         $("#admins").DataTable().ajax.reload(); // Reload DataTable
                     }
+                    showAlertModal(response.status, response.message);
                 },
                 error: function (xhr) {
                     let errors = xhr.responseJSON.errors;
