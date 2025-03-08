@@ -29,16 +29,6 @@ class User extends Authenticatable
         'status'
     ];
 
-    public function getCreatedAtFormattedAttribute()
-    {
-        return Carbon::parse($this->created_at)->format('M d, Y | h:i A');
-    }
-
-    public function getUpdatedAtFormattedAttribute()
-    {
-        return Carbon::parse($this->updated_at)->format('M d, Y | h:i A');
-    }
-
     /**
      * The attributes that should be hidden for serialization.
      *

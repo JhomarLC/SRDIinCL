@@ -5,7 +5,6 @@ use App\Http\Controllers\Admin\AEWSController;
 use Illuminate\Support\Facades\Route;
 
 
-
 Route::get('/admin-management/get-index', [AdminController::class, 'getIndex'])
         ->name('admin-management.get-index');
 

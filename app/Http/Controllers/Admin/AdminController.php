@@ -63,12 +63,12 @@ class AdminController extends Controller
                     </button>'
                 : '';
 
-                return $editButton . ' ' . $activateButton . ' ' . $deactivateButton;
+                return ($user->status === 'active' && $editButton ? $editButton : "") . ' ' . $activateButton . ' ' . $deactivateButton;
             })
             ->editColumn('status', function ($user) {
                 return $user->status === 'active'
                     ? '<span class="badge bg-success">Active</span>'
-                    : '<span class="badge bg-danger">Disabled</span>';
+                    : '<span class="badge bg-danger">Deactivated</span>';
             })
             ->editColumn('suffix', function ($user) {
                 return $user->suffix ? $user->suffix : 'N/A';
@@ -112,7 +112,7 @@ class AdminController extends Controller
             'last_name' => $validatedData['last_name'],
             'suffix' => $validatedData['suffix'],
             'email' => $validatedData['email'],
-            'password' => bcrypt($validatedData['password']),
+            'password' => Hash::make($validatedData['password']),
             'role' => 'admin',
             'status' => 'active', // Default status
         ]);
