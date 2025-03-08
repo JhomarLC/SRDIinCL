@@ -43,13 +43,13 @@ class AdminController extends Controller
                                     data-middle_name="' . $user->middle_name . '"
                                     data-last_name="' . $user->last_name . '"
                                     data-suffix="' . $user->suffix . '"
-                                    data-email="' . $user->email . '"
-                                    <i class="ri-edit-line"></i> Update
+                                    data-email="' . $user->email . '">
+                                    <i class="ri-edit-fill"></i> Update
                                 </button>';
 
                 $activateButton = ($user->status === 'disabled')
                     ? '<button class="btn btn-sm btn-secondary status-activate"
-                            data-id="' . $user->id . '"
+                            data-id="' . $user->id . '">
                             <i class="ri-service-fill"></i>
                             Activate
                         </button>'
@@ -57,7 +57,7 @@ class AdminController extends Controller
 
                 $deactivateButton = ($user->status === 'active')
                 ? '<button class="btn btn-sm btn-danger status-deactivate"
-                        data-id="' . $user->id . '"
+                        data-id="' . $user->id . '">
                         <i class="ri-archive-fill"></i>
                         Deactivate
                     </button>'

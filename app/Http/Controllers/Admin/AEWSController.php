@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\EmploymentType;
+use App\Models\Position;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,19 +18,33 @@ class AEWSController extends Controller
      */
     public function index()
     {
-        return view('admin.aews-management.index');
+        $positions = Position::all();
+        $employment_types = EmploymentType::all();
+
+        return view('admin.aews-management.index', compact('positions', 'employment_types'));
     }
 
     public function getIndex()
     {
         $currentUser = auth()->user();
-        $users = User::where('role', 'aews')->latest()->get();
+        $users = User::where('role', 'aews')->with(['profile' => function ($query) {
+            $query->with('position', 'employment_type');
+        }])->latest()->get();
 
         return DataTables::of($users)
             ->editColumn('full_name', function ($user) {
                 $middleName = $user->middle_name ? ' ' . $user->middle_name : ''; // Add middle name if available
                 $extName = $user->suffix ? ' ' . $user->suffix : ''; // Add middle name if available
                 return "{$user->first_name} {$middleName} {$user->last_name} {$extName}";
+            })
+            ->addColumn('contact_number', function ($user) {
+                return optional($user->profile)->contact_number ?? 'N/A'; // Safely access profile attribute
+            })
+            ->addColumn('position', function ($user) {
+                return optional(optional($user->profile)->position)->position_name ?? 'N/A';
+            })
+            ->addColumn('employment_type', function ($user) {
+                return optional(optional($user->profile)->employment_type)->employment_name ?? 'N/A';
             })
             ->addColumn('actions', function ($user) use ($currentUser) {
 
@@ -43,12 +59,17 @@ class AEWSController extends Controller
                                     data-last_name="' . $user->last_name . '"
                                     data-suffix="' . $user->suffix . '"
                                     data-email="' . $user->email . '"
-                                    <i class="ri-edit-line"></i> Update
+                                    data-contact_number="' . optional($user->profile)->contact_number . '"
+                                    data-start_date="' . optional($user->profile)->start_date . '"
+                                    data-position="' . optional(optional($user->profile)->position)->id . '"
+                                    data-employment_type="' . optional(optional($user->profile)->employment_type)->id . '">
+                                    <i class="ri-edit-fill"></i>
+                                    Update
                                 </button>';
 
                 $activateButton = ($user->status === 'disabled')
                     ? '<button class="btn btn-sm btn-secondary status-activate"
-                            data-id="' . $user->id . '"
+                            data-id="' . $user->id . '">
                             <i class="ri-service-fill"></i>
                             Activate
                         </button>'
@@ -56,7 +77,7 @@ class AEWSController extends Controller
 
                 $deactivateButton = ($user->status === 'active')
                 ? '<button class="btn btn-sm btn-danger status-deactivate"
-                        data-id="' . $user->id . '"
+                        data-id="' . $user->id . '">
                         <i class="ri-archive-fill"></i>
                         Deactivate
                     </button>'
@@ -69,7 +90,25 @@ class AEWSController extends Controller
                     ? '<span class="badge bg-success">Active</span>'
                     : '<span class="badge bg-danger">Deactivated</span>';
             })
-            ->rawColumns(['status', 'actions'])
+            ->editColumn('job_status', function ($user) {
+                $status = optional($user->profile)->job_status; // Safely access job_status
+                switch ($status) {
+                    case 'new':
+                        return '<span class="badge bg-success">New</span>';
+                    case 'old':
+                        return '<span class="badge bg-warning">Old</span>';
+                    case 'resigned':
+                        return '<span class="badge bg-secondary">Resigned</span>';
+                    case 'retired':
+                        return '<span class="badge bg-primary">Retired</span>';
+                    case 'transferred':
+                        return '<span class="badge bg-info">Transferred</span>';
+                    default:
+                        return '<span class="badge bg-danger">Unknown</span>'; // Fallback for unexpected values
+                }
+            })
+
+            ->rawColumns(['job_status', 'status', 'actions'])
             ->make(true);
     }
     /**
@@ -92,6 +131,11 @@ class AEWSController extends Controller
             'suffix' => 'nullable|string|max:10',
             'email' => 'required|string|email|max:255|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
+            'position_id' => 'required|exists:positions,id',
+            'employment_type_id' => 'required|exists:employment_types,id',
+            'contact_number' => 'required|string|max:20',
+            'start_date' => 'required|date',
+            // 'end_date' => 'nullable|date',
         ]);
 
         $aews = User::create([
@@ -103,6 +147,16 @@ class AEWSController extends Controller
             'password' => Hash::make($validatedData['password']),
             'role' => 'aews',
         ]);
+
+        $aews->profile()->create([
+            'position_id' => $validatedData['position_id'],
+            'employment_type_id' => $validatedData['employment_type_id'],
+            'contact_number' => $validatedData['contact_number'],
+            'start_date' => $validatedData['start_date'],
+            // 'end_date' => $validatedData['end_date'],
+        ]);
+
+        $aews->profile->updateStatus();
 
         return response()->json(['status' => 'success', 'message' => 'AEW created successfully!', 'aews' => $aews]);
     }
@@ -136,13 +190,17 @@ class AEWSController extends Controller
             'suffix' => 'nullable|string|max:10',
             'email' => 'required|string|email|max:255|unique:users,email,' . $aews_management,
             'password' => 'nullable|string|min:8|confirmed', // Password can be empty
+            'position_id' => 'required|exists:positions,id',
+            'employment_type_id' => 'required|exists:employment_types,id',
+            'contact_number' => 'required|string|max:20',
+            'start_date' => 'required|date',
         ]);
 
         // Find the admin by ID
-        $admin = User::findOrFail($aews_management);
+        $aews = User::findOrFail($aews_management);
 
         // Update only provided fields
-        $admin->update([
+        $aews->update([
             'first_name' => $validatedData['first_name'],
             'middle_name' => $validatedData['middle_name'],
             'last_name' => $validatedData['last_name'],
@@ -150,13 +208,23 @@ class AEWSController extends Controller
             'email' => $validatedData['email'], // Required, so no need for ??
         ]);
 
+        $aews->profile()->update([
+            'position_id' => $validatedData['position_id'],
+            'employment_type_id' => $validatedData['employment_type_id'],
+            'contact_number' => $validatedData['contact_number'],
+            'start_date' => $validatedData['start_date'],
+            // 'end_date' => $validatedData['end_date'],
+        ]);
+
+        $aews->profile->updateStatus();
+
         // Only update password if a new one is provided
         if ($request->filled('password')) {
-            $admin->update([
+            $aews->update([
                 'password' => Hash::make($validatedData['password']),
             ]);
         }
-        return response()->json(['status' => 'success', 'message' => 'Admin updated successfully!', 'admin' => $admin]);
+        return response()->json(['status' => 'success', 'message' => 'AEW updated successfully!', 'aews' => $aews]);
     }
 
     /**

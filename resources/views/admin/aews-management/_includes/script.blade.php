@@ -9,9 +9,24 @@
             columns: [
                 { data: 'full_name', name: 'full_name' },
                 { data: 'email', name: 'email' },
+                { data: 'position', name: 'position' },
+                { data: 'employment_type', name: 'employment_type' },
+                { data: 'contact_number', name: 'contact_number' },
+                { data: 'job_status', name: 'job_status' },
                 { data: 'status', name: 'status', orderable: false, searchable: false },
                 { data: 'actions', name: 'actions', orderable: false, searchable: false }
             ]
+        });
+        $('.select2').select2({
+            dropdownParent: $('#addnewaewmodal') // Ensures Select2 dropdown stays inside the modal
+        });
+        $('.select2').select2({
+            dropdownParent: $('#editAEWModal') // Ensures Select2 dropdown stays inside the modal
+        });
+        flatpickr("#start_date", {
+            altInput: true,
+            altFormat: "F j, Y",
+            dateFormat: "Y-m-d",
         });
     });
 
@@ -19,6 +34,7 @@
     $(document).ready(function () {
         $('#createAEWForm').submit(function (e) {
             e.preventDefault();
+            // Store Flatpickr instances for Edit Modal
 
             // Clear previous errors
             $('.form-control').removeClass('is-invalid'); // Remove red borders
@@ -32,6 +48,11 @@
                 email: $('#email').val(),
                 password: $('#password').val(),
                 password_confirmation: $('#password_confirmation').val(),
+                position_id: $('#position_id').val(),
+                employment_type_id: $('#employment_type_id').val(),
+                contact_number: $('#contact_number').val(),
+                start_date: $('#start_date').val(),
+                end_date: $('#end_date').val(),
                 _token: $('meta[name="csrf-token"]').attr('content')
             };
 
@@ -44,6 +65,11 @@
                     if (response.status === "success") {
                         $('#addnewaewmodal').modal('hide'); // Hide modal
                         $('#createAEWForm')[0].reset(); // Reset form
+                        // Reset Select2 to the first option
+                        $('#position_id, #employment_type_id').each(function () {
+                            $(this).val($(this).find('option:first').val()).trigger('change');
+                        });
+                        // $('#createAEWForm .select2').val(null).trigger('change'); // Reset all Select2
                         $('#aews').DataTable().ajax.reload(); // Reload DataTable
                     }
                     showAlertModal(response.status, response.message);
@@ -71,8 +97,14 @@
 
     // UPDATE
     $(document).ready(function () {
+        let flatpickrStart = flatpickr("#update_start_date", {
+            altInput: true,
+            altFormat: "F j, Y",
+            dateFormat: "Y-m-d",
+        });
         // Handle the Edit button click
         $(document).on("click", ".editAEW", function () {
+
             // Remove error messages on input change
             $(".form-control").removeClass("is-invalid"); // Remove all error borders
             $(".error-message").text(""); // Clear all error messages
@@ -84,6 +116,12 @@
             let lastName = $(this).data("last_name");
             let suffix = $(this).data("suffix");
             let email = $(this).data("email");
+            let contact_number = $(this).data("contact_number");
+            let start_date = $(this).data('start_date');
+            let positionId = $(this).data('position');
+            let employment_typeId = $(this).data('employment_type');
+
+            console.log(start_date);
 
             // Populate the modal fields
             $("#edit_id").val(userId);
@@ -92,10 +130,21 @@
             $("#update_last_name").val(lastName);
             $("#update_suffix").val(suffix);
             $("#update_email").val(email);
+            $("#update_contact_number").val(contact_number);
+            // Set values for Flatpickr
+            if (start_date) {
+                flatpickrStart.setDate(start_date, true);
+            } else {
+                flatpickrStart.clear(); // Clear if no date
+            }
+
+            $("#update_position_id").val(positionId).trigger('change');
+            $("#update_employment_type_id").val(employment_typeId).trigger('change');
 
             // Show the modal
             $("#editAEWModal").modal("show");
         });
+
 
         $("#updateAEWForm").submit(function (e) {
             e.preventDefault(); // Prevent default form submission
@@ -110,8 +159,15 @@
                 email: $("#update_email").val(),
                 password: $('#update_password').val(),
                 password_confirmation: $('#update_password_confirmation').val(),
+                position_id: $('#update_position_id').val(),
+                employment_type_id: $('#update_employment_type_id').val(),
+                contact_number: $('#update_contact_number').val(),
+                start_date: $('#update_start_date').val(),
+                end_date: $('#update_end_date').val(),
                 _token: $('meta[name="csrf-token"]').attr("content") // CSRF Token
             };
+
+            console.log(formData);
 
             $.ajax({
                 url: "/admin/aews-management/" + userId, // Laravel route for updating aew

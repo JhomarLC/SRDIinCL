@@ -8,6 +8,12 @@
 <!--datatable responsive css-->
 <link href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap.min.css" rel="stylesheet" type="text/css" />
 <link href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css" rel="stylesheet" type="text/css" />
+<!-- select2  -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="{{ URL::asset('build/libs/@simonwep/pickr/themes/classic.min.css') }}" /> <!-- 'classic' theme -->
+<link rel="stylesheet" href="{{ URL::asset('build/libs/@simonwep/pickr/themes/monolith.min.css') }}" /> <!-- 'monolith' theme -->
+<link rel="stylesheet" href="{{ URL::asset('build/libs/@simonwep/pickr/themes/nano.min.css') }}" /> <!-- 'nano' theme -->
+
 <meta name="csrf-token" content="{{ csrf_token() }}">
 @endsection
 @section('content')
@@ -43,6 +49,10 @@
                         <tr>
                             <th data-ordering="false">Full Name</th>
                             <th data-ordering="false">Email</th>
+                            <th data-ordering="false">Position</th>
+                            <th data-ordering="false">Employment Type</th>
+                            <th data-ordering="false">Contact Number</th>
+                            <th data-ordering="false">Job Status</th>
                             <th data-ordering="false">Status</th>
                             <!--
                             <th data-ordering="false">Updated</th>
@@ -81,6 +91,15 @@
 <script src="{{ URL::asset('build/js/pages/datatables.init.js') }}"></script>
 
 <script src="{{ URL::asset('aews-js/admin.js') }}"></script>
+
 @include('admin.aews-management._includes.script')
+
+
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="{{ URL::asset('build/js/pages/select2.init.js') }}"></script>
+
+<script  src='{{ URL::asset('build/libs/choices.js/public/assets/scripts/choices.min.js') }}'></script>
+<script  src='{{ URL::asset('build/libs/flatpickr/flatpickr.min.js') }}'></script>
+
 <script src="{{ URL::asset('build/js/app.js') }}"></script>
 @endsection

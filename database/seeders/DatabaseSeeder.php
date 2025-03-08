@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
+use App\Models\EmploymentType;
+use App\Models\Position;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -14,7 +16,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory(20)->create();
+        // User::factory(10000)->create();
 
         User::factory()->create([
             'first_name' => 'Jhomar',
@@ -25,14 +27,10 @@ class DatabaseSeeder extends Seeder
             'role' => 'admin'
         ]);
 
-        User::factory()->create([
-            'first_name' => 'Jamaica',
-            'middle_name' => 'Cawayan',
-            'last_name' => 'Sambrano',
-            'suffix' => '',
-            'email' => 'aews@gmail.com',
-            'role' => 'aews'
+        $this->call([
+            PositionSeeder::class, // Register the custom seeder
+            EmploymentTypeSeeder::class, // Register the custom seeder
+            TrainingsSeeder::class, // Register the custom seeder
         ]);
-
     }
 }
