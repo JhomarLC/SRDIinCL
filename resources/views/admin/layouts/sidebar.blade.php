@@ -34,7 +34,6 @@
             </div>
             <ul class="navbar-nav" id="navbar-nav">
                 <li class="menu-title"><span>Analytics</span></li>
-
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="dashboard">
                         <i class="ri-dashboard-2-line"></i> <span>Dashboard</span>
@@ -66,7 +65,6 @@
                         <span>Baseline Monitoring</span>
                     </a>
                 </li>
-
                 <li class="menu-title"><span>Account Management</span></li>
                 <li class="nav-item">
                     <a class="nav-link menu-link {{ request()->is('admin/admin-management*') ? 'active' : '' }}"
@@ -80,12 +78,11 @@
                         <span>AEWs Management</span>
                     </a>
                 </li>
-
                 <li class="menu-title"><span>Settings</span></li>
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="aews-management">
+                    <a class="nav-link menu-link {{ request()->is('admin/activity-logs*') ? 'active' : '' }}" href="{{ route('activity-logs.index') }}">
                         <i class="ri-list-settings-line"></i>
-                        <span>Activity Log</span>
+                        <span>Activity Logs</span>
                     </a>
                 </li>
             </ul>

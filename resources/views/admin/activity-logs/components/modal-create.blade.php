@@ -47,43 +47,7 @@
                             <span class="invalid-feedback" id="confirm_password_error" role="alert"></span>
                         </div>
                         <hr>
-                        <div class="col-xxl-6">
-                            <label for="region" class="form-label">Region <span class="text-danger">*</span></label>
-                            <select class="form-control select2" id="region" name="region">
-                                <option selected disabled hidden>-- SELECT REGION --</option>
-                            </select>
-                            <span class="invalid-feedback" id="region_error" role="alert"></span>
-                        </div>
 
-                        <div class="col-xxl-6">
-                            <label for="province" class="form-label">Province <span class="text-danger">*</span></label>
-                            <select class="form-control select2" id="province" name="province" disabled>
-                                <option selected disabled hidden>-- SELECT PROVINCE --</option>
-                            </select>
-                            <span class="invalid-feedback" id="province_error" role="alert"></span>
-                        </div>
-
-                        <div class="col-xxl-6">
-                            <label for="municipality" class="form-label">Municipality <span class="text-danger">*</span></label>
-                            <select class="form-control select2" id="municipality" name="municipality" disabled>
-                                <option selected disabled hidden>-- SELECT MUNICIPALITY --</option>
-                            </select>
-                            <span class="invalid-feedback" id="municipality_error" role="alert"></span>
-                        </div>
-
-                        <div class="col-xxl-6">
-                            <label for="barangay" class="form-label">Barangay <span class="text-danger">*</span></label>
-                            <select class="form-control select2" id="barangay" name="barangay" disabled>
-                                <option selected disabled hidden>-- SELECT BARANGAY --</option>
-                            </select>
-                            <span class="invalid-feedback" id="barangay_error" role="alert"></span>
-                        </div>
-                        <!-- <div class="col-xxl-6">
-                            <label for="barangay" class="form-label">Barangay</label>
-                            <input type="text" class="form-control" name="barangay" id="barangay" placeholder="Enter barangay">
-                            <span class="invalid-feedback" id="barangay_error" role="alert"></span>
-                        </div> -->
-                        <hr>
                         <div class="col-xxl-6">
                             <label for="contact_number" class="form-label">Contact Number <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" name="contact_number" id="contact_number" placeholder="Contact Number">

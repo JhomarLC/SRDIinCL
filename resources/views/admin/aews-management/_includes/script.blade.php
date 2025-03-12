@@ -17,17 +17,235 @@
                 { data: 'actions', name: 'actions', orderable: false, searchable: false }
             ]
         });
-        $('.select2').select2({
-            dropdownParent: $('#addnewaewmodal') // Ensures Select2 dropdown stays inside the modal
+        $('#addnewaewmodal').on('shown.bs.modal', function () {
+            $(this).find('.select2').select2({
+                dropdownParent: $(this)
+            });
         });
-        $('.select2').select2({
-            dropdownParent: $('#editAEWModal') // Ensures Select2 dropdown stays inside the modal
+
+        $('#editAEWModal').on('shown.bs.modal', function () {
+            $(this).find('.select2').select2({
+                dropdownParent: $(this)
+            });
         });
+        // $('.select2').select2({
+        //     dropdownParent: $('#editAEWModal') // Ensures Select2 dropdown stays inside the modal
+        // });
         flatpickr("#start_date", {
+            maxDate: "today",
             altInput: true,
             altFormat: "F j, Y",
             dateFormat: "Y-m-d",
         });
+    });
+
+
+    // Address
+    $(document).ready(function () {
+        // Load regions on page load
+        $.ajax({
+            url: "https://psgc.gitlab.io/api/regions/",
+            method: "GET",
+            dataType: "json",
+            success: function (data) {
+                console.log(data); // Debugging: Check the structure of the response
+                let regionDropdown = $("#region");
+
+                // Convert the object values into an array
+                let regionsArray = Object.values(data);
+
+                regionsArray.forEach(region => {
+                    regionDropdown.append(
+                        `<option value="${region.code}">${region.name}</option>`
+                    );
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error("Failed to load regions:", error);
+            }
+        });
+
+        // Load provinces based on selected region
+        $("#region").change(function () {
+            let regionCode = $(this).val();
+            $("#province").prop("disabled", false).html('<option selected disabled hidden>-- SELECT PROVINCE --</option>');
+            $("#municipality").prop("disabled", true).html('<option selected disabled hidden>-- SELECT MUNICIPALITY --</option>');
+            $("#barangay").prop("disabled", true).html('<option selected disabled hidden>-- SELECT BARANGAY --</option>');
+
+            $.ajax({
+                url: `https://psgc.gitlab.io/api/regions/${regionCode}/provinces/`,
+                method: "GET",
+                dataType: "json",
+                success: function (data) {
+                    let provinceDropdown = $("#province");
+                    let provincesArray = Object.values(data);
+
+                    provincesArray.forEach(province => {
+                        provinceDropdown.append(
+                            `<option value="${province.code}">${province.name}</option>`
+                        );
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error("Failed to load provinces:", error);
+                }
+            });
+        });
+
+        // Load municipalities based on selected province
+        $("#province").change(function () {
+            let provinceCode = $(this).val();
+            $("#municipality").prop("disabled", false).html('<option selected disabled hidden>-- SELECT MUNICIPALITY --</option>');
+            $("#barangay").prop("disabled", true).html('<option selected disabled hidden>-- SELECT BARANGAY --</option>');
+
+            $.ajax({
+                url: `https://psgc.gitlab.io/api/provinces/${provinceCode}/cities-municipalities/`,
+                method: "GET",
+                dataType: "json",
+                success: function (data) {
+                    let municipalityDropdown = $("#municipality");
+                    let municipalitiesArray = Object.values(data);
+
+                    municipalitiesArray.forEach(municipality => {
+                        municipalityDropdown.append(
+                            `<option value="${municipality.code}">${municipality.name}</option>`
+                        );
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error("Failed to load municipalities:", error);
+                }
+            });
+        });
+
+        $("#municipality").change(function () {
+            let municipalityCode = $(this).val();
+            $("#barangay").prop("disabled", false).html('<option selected disabled hidden>-- SELECT BARANGAY --</option>');
+
+            $.ajax({
+                url: `https://psgc.gitlab.io/api/cities-municipalities/${municipalityCode}/barangays/`, // FIXED URL
+                method: "GET",
+                dataType: "json",
+                success: function (data) {
+                    let barangayDropdown = $("#barangay");
+                    let barangaysArray = Object.values(data); // Convert object to array if needed
+
+                    barangaysArray.forEach(barangay => {
+                        barangayDropdown.append(
+                            `<option value="${barangay.code}">${barangay.name}</option>`
+                        );
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error("Failed to load barangays:", error);
+                }
+            });
+        });
+
+    });
+
+    // Address Update
+    $(document).ready(function () {
+        // Load regions on page load
+        $.ajax({
+            url: "https://psgc.gitlab.io/api/regions/",
+            method: "GET",
+            dataType: "json",
+            success: function (data) {
+                console.log(data); // Debugging: Check the structure of the response
+                let regionDropdown = $("#update_region");
+
+                // Convert the object values into an array
+                let regionsArray = Object.values(data);
+
+                regionsArray.forEach(region => {
+                    regionDropdown.append(
+                        `<option value="${region.code}">${region.name}</option>`
+                    );
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error("Failed to load regions:", error);
+            }
+        });
+
+        // Load provinces based on selected region
+        $("#update_region").change(function () {
+            let regionCode = $(this).val();
+            $("#update_province").prop("disabled", false).html('<option selected disabled hidden>-- SELECT PROVINCE --</option>');
+            $("#update_municipality").prop("disabled", true).html('<option selected disabled hidden>-- SELECT MUNICIPALITY --</option>');
+            $("#update_barangay").prop("disabled", true).html('<option selected disabled hidden>-- SELECT BARANGAY --</option>');
+
+            $.ajax({
+                url: `https://psgc.gitlab.io/api/regions/${regionCode}/provinces/`,
+                method: "GET",
+                dataType: "json",
+                success: function (data) {
+                    let provinceDropdown = $("#update_province");
+                    let provincesArray = Object.values(data);
+
+                    provincesArray.forEach(province => {
+                        provinceDropdown.append(
+                            `<option value="${province.code}">${province.name}</option>`
+                        );
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error("Failed to load provinces:", error);
+                }
+            });
+        });
+
+        // Load municipalities based on selected province
+        $("#update_province").change(function () {
+            let provinceCode = $(this).val();
+            $("#update_municipality").prop("disabled", false).html('<option selected disabled hidden>-- SELECT MUNICIPALITY --</option>');
+            $("#update_barangay").prop("disabled", true).html('<option selected disabled hidden>-- SELECT BARANGAY --</option>');
+
+            $.ajax({
+                url: `https://psgc.gitlab.io/api/provinces/${provinceCode}/cities-municipalities/`,
+                method: "GET",
+                dataType: "json",
+                success: function (data) {
+                    let municipalityDropdown = $("#update_municipality");
+                    let municipalitiesArray = Object.values(data);
+
+                    municipalitiesArray.forEach(municipality => {
+                        municipalityDropdown.append(
+                            `<option value="${municipality.code}">${municipality.name}</option>`
+                        );
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error("Failed to load municipalities:", error);
+                }
+            });
+        });
+
+        $("#update_municipality").change(function () {
+            let municipalityCode = $(this).val();
+            $("#update_barangay").prop("disabled", false).html('<option selected disabled hidden>-- SELECT BARANGAY --</option>');
+
+            $.ajax({
+                url: `https://psgc.gitlab.io/api/cities-municipalities/${municipalityCode}/barangays/`, // FIXED URL
+                method: "GET",
+                dataType: "json",
+                success: function (data) {
+                    let barangayDropdown = $("#update_barangay");
+                    let barangaysArray = Object.values(data); // Convert object to array if needed
+
+                    barangaysArray.forEach(barangay => {
+                        barangayDropdown.append(
+                            `<option value="${barangay.code}">${barangay.name}</option>`
+                        );
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error("Failed to load barangays:", error);
+                }
+            });
+        });
+
     });
 
     // CREATE
@@ -48,6 +266,12 @@
                 email: $('#email').val(),
                 password: $('#password').val(),
                 password_confirmation: $('#password_confirmation').val(),
+
+                region: $('#region').val(),
+                province: $('#province').val(),
+                municipality: $('#municipality').val(),
+                barangay: $('#barangay').val(),
+
                 position_id: $('#position_id').val(),
                 employment_type_id: $('#employment_type_id').val(),
                 contact_number: $('#contact_number').val(),
@@ -94,10 +318,10 @@
         });
     });
 
-
     // UPDATE
     $(document).ready(function () {
         let flatpickrStart = flatpickr("#update_start_date", {
+            maxDate: "today",
             altInput: true,
             altFormat: "F j, Y",
             dateFormat: "Y-m-d",
@@ -121,7 +345,10 @@
             let positionId = $(this).data('position');
             let employment_typeId = $(this).data('employment_type');
 
-            console.log(start_date);
+            let regionCode = $(this).data("region");
+            let provinceCode = $(this).data("province");
+            let municipalityCode = $(this).data("municipality");
+            let barangayCode = $(this).data("barangay");
 
             // Populate the modal fields
             $("#edit_id").val(userId);
@@ -131,16 +358,16 @@
             $("#update_suffix").val(suffix);
             $("#update_email").val(email);
             $("#update_contact_number").val(contact_number);
+
+            $("#update_position_id").val(positionId).trigger("change");
+            $("#update_employment_type_id").val(employment_typeId).trigger("change");
+
             // Set values for Flatpickr
             if (start_date) {
                 flatpickrStart.setDate(start_date, true);
             } else {
                 flatpickrStart.clear(); // Clear if no date
             }
-
-            $("#update_position_id").val(positionId).trigger('change');
-            $("#update_employment_type_id").val(employment_typeId).trigger('change');
-
             // Show the modal
             $("#editAEWModal").modal("show");
         });
@@ -166,8 +393,6 @@
                 end_date: $('#update_end_date').val(),
                 _token: $('meta[name="csrf-token"]').attr("content") // CSRF Token
             };
-
-            console.log(formData);
 
             $.ajax({
                 url: "/admin/aews-management/" + userId, // Laravel route for updating aew

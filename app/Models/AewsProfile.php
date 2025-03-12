@@ -5,14 +5,41 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class AewsProfile extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['position_id', 'employment_type_id', 'contact_number', 'start_date', 'end_date', 'job_status'];
+    protected $fillable = [
+        'region',
+        'province',
+        'municipality',
+        'barangay',
+        'position_id',
+        'employment_type_id',
+        'contact_number',
+        'start_date',
+        'end_date',
+        'job_status'
+    ];
 
     protected $appends = ['years_of_service'];
+
+    // public function getActivitylogOptions(): LogOptions
+    // {
+    //     return LogOptions::defaults()
+    //     ->logOnly([
+    //         'position_id',
+    //         'employment_type_id',
+    //         'contact_number',
+    //         'start_date',
+    //         'end_date',
+    //         // 'job_status'
+    //     ])
+    //     ->logOnlyDirty();
+    // }
 
     // Compute years of service dynamically
     public function getYearsOfServiceAttribute()
@@ -28,8 +55,13 @@ class AewsProfile extends Model
         if (in_array($this->job_status, ['resigned', 'retired', 'transferred'])) {
             return; // Don't update if already left
         }
+        // Temporarily disable logging
+        // static::disableLogging();
 
         $this->update(['job_status' => ($this->years_of_service < 1) ? 'new' : 'old']);
+
+        // Re-enable logging
+        // static::enableLogging();
     }
 
     public function employment_type()

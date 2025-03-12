@@ -23,43 +23,28 @@
         ['label' => 'Admin', 'route' => 'admin.dashboard'],
     ])
     @slot('title')
-        AEWs Account Management
+        Activity Logs
     @endslot
 @endcomponent
 @include('components.alert')
-@include('admin.aews-management.components.modal-create')
-@include('admin.aews-management.components.modal-update')
-@include('admin.aews-management.components.status-update')
 
 <div class="row">
     <div class="col-lg-12">
         <div class="card">
             <div class="card-header d-flex align-items-center">
-                <h5 class="card-title mb-0 flex-grow-1">Lists of AEWs</h5>
-                <a style="margin-right: 10px" href="{{ route('admin-management.export') }}">
-                    <button class="btn btn-success"><i class="ri-file-excel-2-fill"></i> Export</button>
-                </a>
-                <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#addnewaewmodal">
-                    <i class="ri-user-add-line"></i> New AEW
-                </button>
+                <h5 class="card-title mb-0 flex-grow-1">Activity Logs</h5>
             </div>
-
             <div class="card-body">
                 <table id="aews" class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">
                     <thead>
                         <tr>
-                            <th data-ordering="false">Full Name</th>
-                            <th data-ordering="false">Email</th>
-                            <th data-ordering="false">Position</th>
-                            <th data-ordering="false">Employment Type</th>
-                            <th data-ordering="false">Contact Number</th>
-                            <th data-ordering="false">Job Status</th>
-                            <th data-ordering="false">Status</th>
-                            <!--
-                            <th data-ordering="false">Updated</th>
-                            <th data-ordering="false">Created</th>
-                            -->
-                            <th>Action</th>
+                            <th>Timestamp</th>
+                            <th>Created At</th>
+                            <th>Event</th>
+                            <th>Causer</th>
+                            <th>Role</th>
+                            <th>Description</th>
+                            <th>Properties</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -94,7 +79,7 @@
 <script src="{{ URL::asset('build/js/pages/datatables.init.js') }}"></script>
 
 <script src="{{ URL::asset('aews-js/admin.js') }}"></script>
-@include('admin.aews-management._includes.script')
+@include('admin.activity-logs._includes.script')
 
 <script  src='{{ URL::asset('build/libs/choices.js/public/assets/scripts/choices.min.js') }}'></script>
 <script  src='{{ URL::asset('build/libs/flatpickr/flatpickr.min.js') }}'></script>/

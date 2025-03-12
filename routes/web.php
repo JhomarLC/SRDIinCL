@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\ActivityLogsController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AEWSController;
 use App\Http\Controllers\ProfileController;
@@ -40,7 +41,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     require __DIR__.'/admin/admin-management.php';
     // AEWS MANAGEMENT
     require __DIR__.'/admin/aews-management.php';
-
+    // ACTIVITY LOGS/
+    require __DIR__.'/admin/activity-logs.php';
 });
 
 // AEWS

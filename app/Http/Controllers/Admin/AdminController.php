@@ -47,7 +47,7 @@ class AdminController extends Controller
                                     <i class="ri-edit-fill"></i> Update
                                 </button>';
 
-                $activateButton = ($user->status === 'disabled')
+                $activateButton = ($user->status === 'deactivated')
                     ? '<button class="btn btn-sm btn-secondary status-activate"
                             data-id="' . $user->id . '">
                             <i class="ri-service-fill"></i>
@@ -117,6 +117,24 @@ class AdminController extends Controller
             'status' => 'active', // Default status
         ]);
 
+        // Log a single activity for admin
+        activity()
+            ->causedBy(auth()->user())
+            ->performedOn($admin)
+            ->event('account_created')
+            ->withProperties([
+                'admin' => $admin->only([
+                    'first_name',
+                    'middle_name',
+                    'last_name',
+                    'suffix',
+                    'email',
+                    'role',
+                    'status'
+                ]),
+            ])
+        ->log("New admin account created for {$admin->first_name} {$admin->last_name}");
+
         return response()->json(['status' => 'success', 'message' => 'Admin created successfully!', 'admin' => $admin]);
     }
 
@@ -156,6 +174,14 @@ class AdminController extends Controller
         // Find the admin by ID
         $admin = User::findOrFail($admin_management);
 
+        // Store original values before update
+        $originalUserData = $admin->only([
+            'first_name',
+            'middle_name',
+            'last_name',
+            'suffix',
+            'email',
+        ]);
         // Update only provided fields
         $admin->update([
             'first_name' => $validatedData['first_name'],
@@ -171,6 +197,33 @@ class AdminController extends Controller
                 'password' => Hash::make($validatedData['password']),
             ]);
         }
+
+        // Reload user data to get updated values
+        $admin->load('profile');
+
+        // Store only changed fields (old and new values)
+        $changes = [];
+
+        // Compare old and new user values
+        foreach ($originalUserData as $key => $value) {
+            if ($value !== $admin->$key) {
+                $changes['user'][$key] = [
+                    'old' => $value,
+                    'new' => $admin->$key
+                ];
+            }
+        }
+
+         // Log only if there are changes
+         if (!empty($changes)) {
+            activity()
+                ->causedBy(auth()->user())
+                ->performedOn($admin)
+                ->event('account_updated')
+                ->withProperties($changes)
+                ->log("Admin account for {$admin->first_name} {$admin->last_name} was updated.");
+        }
+
         return response()->json(['status' => 'success', 'message' => 'Admin updated successfully!', 'admin' => $admin]);
     }
 
@@ -198,14 +251,27 @@ class AdminController extends Controller
             ]);
         }
 
-        if ($user->status === 'disabled') {
+        if ($user->status === 'deactivated') {
             return response()->json([
                 'status' => 'error',
-                'message' => 'This admin account is already disabled.'
+                'message' => 'This admin account is already deactivated.'
             ]);
         }
 
-        $user->update(['status' => 'disabled']);
+        $user->update(['status' => 'deactivated']);
+
+          // Log the activity
+        activity()
+            ->causedBy(auth()->user())
+            ->performedOn(model: $user)
+            ->event('deactivated')
+            ->withProperties([
+                'status' => [
+                    'old' => 'active',
+                    'new' => 'deactivated'
+                ],
+        ])
+        ->log("{$user->first_name} {$user->last_name}'s account has been deactivated.");
 
         return response()->json([
             'status' => 'success',
@@ -227,6 +293,19 @@ class AdminController extends Controller
             ]);
         }
         $user->update(['status' => 'active']);
+
+        // Log the activity
+        activity()
+            ->causedBy(auth()->user())
+            ->performedOn($user)
+            ->event('activated')
+            ->withProperties([
+                'status' => [
+                    'old' => 'deactivated',
+                    'new' => 'active'
+                ],
+        ])
+        ->log("{$user->first_name} {$user->last_name}'s account has been activated.");
 
         return response()->json([
             'status' => 'success',
