@@ -29,7 +29,8 @@ class AdminController extends Controller
         return DataTables::of($users)
             ->editColumn('full_name', function ($user) {
                 $middleName = $user->middle_name ? ' ' . $user->middle_name : ''; // Add middle name if available
-                return "{$user->first_name} {$middleName} {$user->last_name}";
+                $suffix = $user->suffix ? $user->suffix : '';
+                return "{$user->first_name} {$middleName} {$user->last_name} {$suffix}";
             })
             ->addColumn('actions', function ($user) use ($currentUser) {
 
@@ -70,15 +71,6 @@ class AdminController extends Controller
                     ? '<span class="badge bg-success">Active</span>'
                     : '<span class="badge bg-danger">Deactivated</span>';
             })
-            ->editColumn('suffix', function ($user) {
-                return $user->suffix ? $user->suffix : 'N/A';
-            })
-            // ->editColumn('updated_at', function ($user) {
-            //     return $user->updated_at->format('h:i A | m/d/y');
-            // })
-            // ->editColumn('created_at', function ($user) {
-            //     return $user->created_at->format('h:i A | M d, Y');
-            // })
             ->rawColumns(['status', 'actions'])
             ->make(true);
     }
@@ -182,6 +174,7 @@ class AdminController extends Controller
             'suffix',
             'email',
         ]);
+
         // Update only provided fields
         $admin->update([
             'first_name' => $validatedData['first_name'],
@@ -190,13 +183,6 @@ class AdminController extends Controller
             'suffix' => $validatedData['suffix'],
             'email' => $validatedData['email'], // Required, so no need for ??
         ]);
-
-        // Only update password if a new one is provided
-        if ($request->filled('password')) {
-            $admin->update([
-                'password' => Hash::make($validatedData['password']),
-            ]);
-        }
 
         // Reload user data to get updated values
         $admin->load('profile');
@@ -212,6 +198,17 @@ class AdminController extends Controller
                     'new' => $admin->$key
                 ];
             }
+        }
+          // Only update password if a new one is provided
+        if ($request->filled('password')) {
+            $admin->update([
+                'password' => Hash::make($validatedData['password']),
+            ]);
+
+            $changes['user']['password'] = [
+                'old' => '********',
+                'new' => '********'
+            ];
         }
 
          // Log only if there are changes

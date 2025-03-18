@@ -29,6 +29,20 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        // Get the authenticated user
+        $user = Auth::user();
+        // Log the activity
+        activity()
+            ->causedBy($user)
+            ->performedOn($user)
+            ->event('logged_in') // Corrected event name
+            ->withProperties([
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->header('User-Agent'),
+                'status' => 'success', // Log successful login
+            ])
+            ->log("{$user->first_name} {$user->last_name} logged in successfully.");
+
         return redirect()->intended(RouteServiceProvider::redirectTo());
     }
 
@@ -37,6 +51,22 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        $user = Auth::user(); // Get the authenticated user before logging out
+
+        if ($user) {
+            // Log the logout activity
+            activity()
+                ->causedBy($user)
+                ->performedOn($user)
+                ->event('logged_out')
+                ->withProperties([
+                    'ip_address' => $request->ip(),
+                    'user_agent' => $request->header('User-Agent'),
+                    'status' => 'success',
+                ])
+                ->log("{$user->first_name} {$user->last_name} logged out.");
+        }
+
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();

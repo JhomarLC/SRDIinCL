@@ -36,32 +36,32 @@
                 <li class="menu-title"><span>Analytics</span></li>
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="dashboard">
-                        <i class="ri-dashboard-2-line"></i> <span>Dashboard</span>
+                        <i class="ri-dashboard-2-fill"></i> <span>Dashboard</span>
                     </a>
                 </li>
 
                 <li class="menu-title"><span>Forms</span></li>
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="dashboard">
-                        <i class="ri-group-line"></i>
+                        <i class="ri-group-fill"></i>
                         <span>Farmers Profile</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="dashboard">
-                        <i class="ri-user-voice-line"></i>
+                        <i class="ri-user-voice-fill"></i>
                         <span>Speaker Evaluation</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="dashboard">
-                        <i class="ri-booklet-line"></i>
+                        <i class="ri-booklet-fill"></i>
                         <span>Training Evaluation</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="dashboard">
-                        <i class="ri-bar-chart-grouped-line"></i>
+                        <i class="ri-bar-chart-grouped-fill"></i>
                         <span>Baseline Monitoring</span>
                     </a>
                 </li>
@@ -69,19 +69,19 @@
                 <li class="nav-item">
                     <a class="nav-link menu-link {{ request()->is('admin/admin-management*') ? 'active' : '' }}"
                         href="{{ route('admin-management.index') }}">
-                        <i class="ri-admin-line"></i> <span>Admin Management</span>
+                        <i class="ri-admin-fill"></i> <span>Admin Management</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="aews-management">
-                        <i class="ri-group-line"></i>
+                        <i class="ri-group-fill"></i>
                         <span>AEWs Management</span>
                     </a>
                 </li>
                 <li class="menu-title"><span>Settings</span></li>
                 <li class="nav-item">
                     <a class="nav-link menu-link {{ request()->is('admin/activity-logs*') ? 'active' : '' }}" href="{{ route('activity-logs.index') }}">
-                        <i class="ri-list-settings-line"></i>
+                        <i class="ri-list-settings-fill"></i>
                         <span>Activity Logs</span>
                     </a>
                 </li>

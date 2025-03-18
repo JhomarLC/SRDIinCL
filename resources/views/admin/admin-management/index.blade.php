@@ -43,17 +43,8 @@
                     <thead>
                         <tr>
                             <th data-ordering="false">Full Name</th>
-                            <!--
-                            <th data-ordering="false">First Name</th>
-                            <th data-ordering="false">Last Name</th>
-                            -->
-                            <th data-ordering="false">Suffix</th>
                             <th data-ordering="false">Email</th>
                             <th data-ordering="false">Status</th>
-                            <!--
-                            <th data-ordering="false">Updated</th>
-                            <th data-ordering="false">Created</th>
-                            -->
                             <th>Action</th>
                         </tr>
                     </thead>

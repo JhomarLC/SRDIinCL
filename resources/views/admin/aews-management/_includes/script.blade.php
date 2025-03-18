@@ -39,7 +39,6 @@
         });
     });
 
-
     // Address
     $(document).ready(function () {
         // Load regions on page load
@@ -370,6 +369,91 @@
             }
             // Show the modal
             $("#editAEWModal").modal("show");
+            // Show loading indicators & disable dropdowns
+            $("#update_region").html('<option>Loading...</option>').prop("disabled", true);
+            $("#update_province").html('<option>Loading...</option>').prop("disabled", true);
+            $("#update_municipality").html('<option>Loading...</option>').prop("disabled", true);
+            $("#update_barangay").html('<option>Loading...</option>').prop("disabled", true);
+
+            // ✅ Load Region First
+            $.ajax({
+                url: "https://psgc.gitlab.io/api/regions/",
+                method: "GET",
+                dataType: "json",
+                success: function (data) {
+                    $("#update_region").empty().append('<option selected disabled hidden>-- SELECT REGION --</option>').prop("disabled", false);
+                    data.forEach(region => {
+                        $("#update_region").append(`<option value="${region.code}">${region.name}</option>`);
+                    });
+
+                    if (regionCode) {
+                        $("#update_region").val(regionCode).trigger("change");
+
+                        // ✅ Load Province after Region is Selected
+                        $.ajax({
+                            url: `https://psgc.gitlab.io/api/regions/${regionCode}/provinces/`,
+                            method: "GET",
+                            dataType: "json",
+                            success: function (data) {
+                                $("#update_province").empty().append('<option selected disabled hidden>-- SELECT PROVINCE --</option>').prop("disabled", false);
+                                data.forEach(province => {
+                                    $("#update_province").append(`<option value="${province.code}">${province.name}</option>`);
+                                });
+
+                                if (provinceCode) {
+                                    $("#update_province").val(provinceCode).trigger("change");
+
+                                    // ✅ Load Municipality after Province is Selected
+                                    $.ajax({
+                                        url: `https://psgc.gitlab.io/api/provinces/${provinceCode}/cities-municipalities/`,
+                                        method: "GET",
+                                        dataType: "json",
+                                        success: function (data) {
+                                            $("#update_municipality").empty().append('<option selected disabled hidden>-- SELECT MUNICIPALITY --</option>').prop("disabled", false);
+                                            data.forEach(municipality => {
+                                                $("#update_municipality").append(`<option value="${municipality.code}">${municipality.name}</option>`);
+                                            });
+
+                                            if (municipalityCode) {
+                                                $("#update_municipality").val(municipalityCode).trigger("change");
+
+                                                // ✅ Load Barangay after Municipality is Selected
+                                                $.ajax({
+                                                    url: `https://psgc.gitlab.io/api/cities-municipalities/${municipalityCode}/barangays/`,
+                                                    method: "GET",
+                                                    dataType: "json",
+                                                    success: function (data) {
+                                                        $("#update_barangay").empty().append('<option selected disabled hidden>-- SELECT BARANGAY --</option>').prop("disabled", false);
+                                                        data.forEach(barangay => {
+                                                            $("#update_barangay").append(`<option value="${barangay.code}">${barangay.name}</option>`);
+                                                        });
+
+                                                        if (barangayCode) {
+                                                            $("#update_barangay").val(barangayCode).trigger("change");
+                                                        }
+                                                    },
+                                                    error: function () {
+                                                        console.error("Failed to load barangays.");
+                                                    }
+                                                });
+                                            }
+                                        },
+                                        error: function () {
+                                            console.error("Failed to load municipalities.");
+                                        }
+                                    });
+                                }
+                            },
+                            error: function () {
+                                console.error("Failed to load provinces.");
+                            }
+                        });
+                    }
+                },
+                error: function () {
+                    console.error("Failed to load regions.");
+                }
+            });
         });
 
 
@@ -386,6 +470,12 @@
                 email: $("#update_email").val(),
                 password: $('#update_password').val(),
                 password_confirmation: $('#update_password_confirmation').val(),
+
+                region: $('#update_region').val(),
+                province: $('#update_province').val(),
+                municipality: $('#update_municipality').val(),
+                barangay: $('#update_barangay').val(),
+
                 position_id: $('#update_position_id').val(),
                 employment_type_id: $('#update_employment_type_id').val(),
                 contact_number: $('#update_contact_number').val(),

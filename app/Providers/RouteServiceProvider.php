@@ -23,11 +23,22 @@ class RouteServiceProvider extends ServiceProvider
     public static function redirectTo()
     {
         if (Auth::check()) {
-            return Auth::user()->role === 'admin' ? '/admin/dashboard' : '/dashboard';
-        }
+            $user = Auth::user();
+
+            // Check if user is deactivated
+            if ($user->status === 'deactivated') {
+                Auth::logout();
+                session()->flash('error', 'Your account has been deactivated. Please contact support.');
+                return '/login';
+            }
+                // Redirect based on role
+                return $user->role === 'admin' ? '/admin/dashboard' : '/dashboard';
+            }
 
         return '/login';
     }
+
+
     /**
      * Define your route model bindings, pattern filters, and other route configuration.
      */

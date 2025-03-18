@@ -33,6 +33,26 @@
         <div class="card">
             <div class="card-header d-flex align-items-center">
                 <h5 class="card-title mb-0 flex-grow-1">Activity Logs</h5>
+                <div class="col-xxl-3">
+                    <label for="select_event" class="form-label">Filter by Events</label>
+                    <select class="form-control select2" id="select_event" name="select_event">
+                        <option selected value="">All Events</option>
+                        <option value="activated">Activated</option>
+                        <option value="deactivated">Deactivated</option>
+                        <option value="account_created">Account Created</option>
+                        <option value="account_updated">Account Updated</option>
+                        <option value="logged_in">Logged In</option>
+                        <option value="logged_out">Logged Out</option>
+                    </select>
+                </div>
+                <div class="col-xxl-3 m-1">
+                    <label for="select_role" class="form-label">Filter by Role</label>
+                    <select class="form-control select2" id="select_role" name="select_role">
+                        <option selected value="">All Role</option>
+                        <option value="aews">AEWs</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
             </div>
             <div class="card-body">
                 <table id="aews" class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">
@@ -40,10 +60,10 @@
                         <tr>
                             <th>Timestamp</th>
                             <th>Created At</th>
-                            <th>Event</th>
-                            <th>Causer</th>
-                            <th>Role</th>
                             <th>Description</th>
+                            <th>Event</th>
+                            <th>Performed By</th>
+                            <th>Role</th>
                             <th>Properties</th>
                         </tr>
                     </thead>

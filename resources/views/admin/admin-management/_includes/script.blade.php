@@ -10,7 +10,6 @@
                 { data: 'full_name', name: 'full_name' },
                 // { data: 'first_name', name: 'first_name' },
                 // { data: 'last_name', name: 'last_name' },
-                { data: 'suffix', name: 'suffix',  orderable: false, searchable: false },
                 { data: 'email', name: 'email' },
                 { data: 'status', name: 'status', orderable: false, searchable: false },
                 // { data: 'updated_at', name: 'updated_at' },

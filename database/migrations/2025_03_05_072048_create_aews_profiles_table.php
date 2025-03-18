@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('aews_profiles', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->bigInteger('region');
-            $table->bigInteger('province');
-            $table->bigInteger('municipality');
-            $table->bigInteger('barangay');
+            $table->string('region');
+            $table->string('province');
+            $table->string('municipality');
+            $table->string('barangay');
             $table->foreignId('position_id')->constrained()->onDelete('cascade');
             $table->foreignId('employment_type_id')->constrained()->onDelete('cascade');
             $table->string('contact_number');

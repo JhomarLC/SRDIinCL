@@ -158,7 +158,7 @@ class AEWSController extends Controller
             'role' => 'aews',
         ]);
 
-        $aews->profile()->create([
+        $profile = $aews->profile()->create([
             'region' => $validatedData['region'],
             'province' => $validatedData['province'],
             'municipality' => $validatedData['municipality'],
@@ -170,34 +170,31 @@ class AEWSController extends Controller
             // 'end_date' => $validatedData['end_date'],
         ]);
 
-        // Log a single activity for both user and profile creation
         activity()
             ->causedBy(auth()->user())
             ->performedOn($aews)
             ->event('account_created')
             ->withProperties([
-                'user' => $aews->only([
-                    'first_name',
-                    'middle_name',
-                    'last_name',
-                    'suffix',
-                    'email',
-                    'role',
-                    'status'
-                ]),
-                'profile' => optional($aews->profile)->only([
-                    'region',
-                    'province',
-                    'municipality',
-                    'barangay',
-                    'position_id',
-                    'employment_type_id',
-                    'contact_number',
-                    'start_date',
-                    'end_date',
-                ])
-            ])
-        ->log("New AEW account created for {$aews->first_name} {$aews->last_name} with profile details.");
+                'user' => [
+                    'first_name' => $aews->first_name,
+                    'middle_name' => $aews->middle_name,
+                    'last_name' => $aews->last_name,
+                    'suffix' => $aews->suffix,
+                    'email' => $aews->email,
+                    'role' => $aews->role,
+                ],
+                'profile' => [
+                    'region' => $profile->region,
+                    'province' => $profile->province,
+                    'municipality' => $profile->municipality,
+                    'barangay' => $profile->barangay,
+                    'position_id' => $profile->position_id,
+                    'employment_type_id' => $profile->employment_type_id,
+                    'contact_number' => $profile->contact_number,
+                    'start_date' => $profile->start_date,
+                ]
+        ])
+        ->log("AEW account for {$aews->first_name} {$aews->last_name} was created.");
 
         $aews->profile->updateStatus();
 
@@ -233,6 +230,12 @@ class AEWSController extends Controller
             'suffix' => 'nullable|string|max:10',
             'email' => 'required|string|email|max:255|unique:users,email,' . $aews_management,
             'password' => 'nullable|string|min:8|confirmed', // Password can be empty
+
+            'region' => 'required|string',
+            'province' => 'required|string',
+            'municipality' => 'required|string',
+            'barangay' => 'required|string',
+
             'position_id' => 'required|exists:positions,id',
             'employment_type_id' => 'required|exists:employment_types,id',
             'contact_number' => 'required|string|max:20',
@@ -252,6 +255,10 @@ class AEWSController extends Controller
         ]);
 
         $originalProfileData = $aews->profile->only([
+            'region',
+            'province',
+            'muncipality',
+            'barangay',
             'position_id',
             'employment_type_id',
             'contact_number',
@@ -269,6 +276,10 @@ class AEWSController extends Controller
 
         // Update profile details
         $aews->profile->update([
+            'region' => $validatedData['region'],
+            'province' => $validatedData['province'],
+            'municipality' => $validatedData['municipality'],
+            'barangay' => $validatedData['barangay'],
             'position_id' => $validatedData['position_id'],
             'employment_type_id' => $validatedData['employment_type_id'],
             'contact_number' => $validatedData['contact_number'],
@@ -280,22 +291,12 @@ class AEWSController extends Controller
             $aews->profile->updateStatus();
         }
 
-        // Only update password if a new one is provided
-        if ($request->filled('password')) {
-            $aews->update([
-                'password' => Hash::make($validatedData['password']),
-            ]);
-        }
-
-        // Reload user data to get updated values
-        $aews->load('profile');
-
         // Store only changed fields (old and new values)
         $changes = [];
 
         // Compare old and new user values
         foreach ($originalUserData as $key => $value) {
-            if ($value !== $aews->$key) {
+            if ((string) $value !== (string) $aews->$key)  {
                 $changes['user'][$key] = [
                     'old' => $value,
                     'new' => $aews->$key
@@ -305,12 +306,25 @@ class AEWSController extends Controller
 
         // Compare old and new profile values
         foreach ($originalProfileData as $key => $value) {
-            if ($value !== $aews->profile->$key) {
+            if ((string) $value !== (string) $aews->profile->$key) {
                 $changes['profile'][$key] = [
                     'old' => $value,
                     'new' => $aews->profile->$key
                 ];
             }
+        }
+
+        // Only update password if a new one is provided
+        if ($request->filled('password')) {
+            $aews->update([
+                'password' => Hash::make($validatedData['password']),
+            ]);
+
+            // Log password change with masked values
+            $changes['user']['password'] = [
+                'old' => '********',
+                'new' => '********'
+            ];
         }
 
         // Log only if there are changes
@@ -323,7 +337,11 @@ class AEWSController extends Controller
                 ->log("AEW account for {$aews->first_name} {$aews->last_name} was updated.");
         }
 
-        return response()->json(['status' => 'success', 'message' => 'AEW updated successfully!', 'aews' => $aews]);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'AEW updated successfully!',
+            'aews' => $aews,
+        ]);
     }
 
     /**
