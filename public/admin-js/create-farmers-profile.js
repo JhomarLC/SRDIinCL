@@ -21,29 +21,76 @@ if (document.querySelector("#profile-img-file-input"))
             reader.readAsDataURL(file);
     });
 
+
 if (document.querySelectorAll(".form-steps"))
     Array.from(document.querySelectorAll(".form-steps")).forEach(function (form) {
 
         // next tab
-        if (form.querySelectorAll(".nexttab")){
+        // Next button logic
+        if (form.querySelectorAll(".nexttab")) {
             Array.from(form.querySelectorAll(".nexttab")).forEach(function (nextButton) {
                 var tabEl = form.querySelectorAll('button[data-bs-toggle="pill"]');
+
                 Array.from(tabEl).forEach(function (item) {
                     item.addEventListener('show.bs.tab', function (event) {
                         event.target.classList.add('done');
                     });
                 });
+
                 nextButton.addEventListener("click", function () {
                     form.classList.add('was-validated');
-                    form.querySelectorAll(".tab-pane.show .form-control").forEach(function(elem){
+                    var isValid = true;
+
+                    // Validate inputs in the current step
+                    form.querySelectorAll(".tab-pane.show .form-control").forEach(function (elem) {
                         var validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-                        if(elem.value.length > 0 && elem.value.match(validRegex)){
-                            var nextTab = nextButton.getAttribute('data-nexttab');
-                            document.getElementById(nextTab).click();
-                            form.classList.remove('was-validated');
+                        var inputType = elem.getAttribute("type");
+
+                        if (inputType === "email") {
+                            if (!elem.value.match(validRegex)) {
+                                elem.classList.add("is-invalid");
+                                elem.classList.remove("is-valid");
+                                isValid = false;
+                            } else {
+                                elem.classList.remove("is-invalid");
+                                elem.classList.add("is-valid");
+                            }
+                        } else if (inputType === "password") {
+                            if (elem.value.length < 6) {
+                                elem.classList.add("is-invalid");
+                                elem.classList.remove("is-valid");
+                                isValid = false;
+                            } else {
+                                elem.classList.remove("is-invalid");
+                                elem.classList.add("is-valid");
+                            }
+                        } else if (inputType === "text") {
+                            if (elem.value.trim().length < 1) {
+                                elem.classList.add("is-invalid");
+                                elem.classList.remove("is-valid");
+                                isValid = false;
+                            } else {
+                                elem.classList.remove("is-invalid");
+                                elem.classList.add("is-valid");
+                            }
                         }
-                    })
-                })
+
+                        // Remove error when the user starts typing
+                        elem.addEventListener("input", function () {
+                            elem.classList.remove("is-invalid");
+                        });
+                    });
+
+                    // Proceed to the next tab only if the fields are valid
+                    if (isValid) {
+                        var nextTab = nextButton.getAttribute('data-nexttab');
+                        document.getElementById(nextTab).click();
+                        form.classList.remove('was-validated');
+
+                        // Mark previous step as "done" only if valid
+                        nextButton.closest("form").querySelector('button[data-bs-toggle="pill"].active').classList.add('done');
+                    }
+                });
             });
         }
 
@@ -86,3 +133,9 @@ if (document.querySelectorAll(".form-steps"))
                 });
             });
     });
+
+    $(document).ready(function () {
+        $('.select2').select2();
+    });
+
+

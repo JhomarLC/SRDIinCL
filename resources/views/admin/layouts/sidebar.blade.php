@@ -42,7 +42,8 @@
 
                 <li class="menu-title"><span>Forms</span></li>
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="dashboard">
+                    <a class="nav-link menu-link {{ request()->is('admin/farmers-profile*') ? 'active' : '' }}"
+                        href="{{ route('farmers-profile.index') }}">
                         <i class="ri-group-fill"></i>
                         <span>Farmers Profile</span>
                     </a>

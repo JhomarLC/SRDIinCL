@@ -37,6 +37,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
         return view('admin.index');
     })->name('admin.dashboard');
 
+    // FARMERS PROFILE
+    require __DIR__.'/admin/farmers-profile.php';
     // ADMIN MANAGEMENT
     require __DIR__.'/admin/admin-management.php';
     // AEWS MANAGEMENT
