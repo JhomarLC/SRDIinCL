@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('training_attendances', function (Blueprint $table) {
             $table->id();
-            $table->foreignId(column: 'participant_id ')->constrained()->onDelete('cascade');
-            $table->string('training_title ');
+            $table->foreignId(column: 'participant_id')->constrained()->onDelete('cascade');
+            $table->string('training_title');
             $table->string('training_year');
             $table->string('conducted_by');
-            $table->bollean('personally_paid');
+            $table->boolean('personally_paid');
             $table->timestamps();
         });
     }

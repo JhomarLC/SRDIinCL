@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class FarmingData extends Model
 {
     use HasFactory;
+
+    public function participant()
+    {
+        return $this->belongsToMany(Participant::class, 'participant_id');
+    }
 }

@@ -76,6 +76,6 @@ class AewsProfile extends Model
 
     public function trainings()
     {
-        return $this->belongsToMany(Training::class, 'profile_training');
+        return $this->belongsToMany(Training::class, 'position_id');
     }
 }

@@ -36,10 +36,11 @@ return new class extends Migration
             $table->string('religion');
             $table->boolean('is_indigenous');
             $table->string('tribe_name')->nullable();
-            $table->string('region');
             $table->string('province');
             $table->string('municipality');
             $table->string('barangay');
+            $table->string('zip_code');
+            $table->string('house_number_sitio_purok')->nullable();
             $table->enum('primary_sector', [
                 'Farmer/Seed Grower',
                 'Extension Worker',
@@ -52,7 +53,7 @@ return new class extends Migration
                 'Others'
             ]);
             $table->integer('years_in_farming');
-            $table->string('farmer_group ');
+            $table->string('farmer_association');
             $table->enum('education_level', [
                 'Elementary',
                 'High School',

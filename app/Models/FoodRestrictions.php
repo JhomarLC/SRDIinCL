@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class FoodRestrictions extends Model
 {
     use HasFactory;
+
+    public function participants()
+    {
+        return $this->belongsTo(EmploymentType::class, 'employment_type_id');
+    }
 }

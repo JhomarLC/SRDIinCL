@@ -14,8 +14,18 @@ return new class extends Migration
         Schema::create('farming_data', function (Blueprint $table) {
             $table->id();
             $table->foreignId(column: 'participant_id')->constrained()->onDelete('cascade');
-            $table->string('season');
+            $table->enum('season', [
+                'Wet Season',
+                'Dry Season'
+            ]);
             $table->string('year');
+            $table->decimal('farm_size_hectares');
+            $table->decimal('total_yield_caban');
+            $table->decimal('weight_per_caban_kg');
+            $table->decimal('price_per_kg');
+            $table->decimal('total_income');
+            $table->decimal('total_cost');
+            $table->decimal('other_crops');
             $table->timestamps();
         });
     }
