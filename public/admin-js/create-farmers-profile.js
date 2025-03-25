@@ -1,56 +1,68 @@
 
 if (document.querySelectorAll(".form-steps"))
     Array.from(document.querySelectorAll(".form-steps")).forEach(function (form) {
-
         // Next button logic
-        document.querySelectorAll(".nexttab").forEach(function (nextButton) {
-            nextButton.addEventListener("click", function () {
-                console.log('Next clicked');
+        // form.querySelectorAll(".nexttab").forEach(function (nextButton) {
+        //     nextButton.addEventListener("click", function (e) {
+        //         console.log('Next clicked');
 
-                let form = nextButton.closest("form");
-                let currentPane = form.querySelector(".tab-pane.show");
+        //         let form = nextButton.closest("form");
+        //         let currentTabId = nextButton.closest(".tab-pane").id; // THIS is more accurate than .active.show
+        //         let currentPane = document.getElementById(currentTabId);
+        //         console.log('Current tab:', currentPane?.id);
 
-                let formData = new FormData();
+        //         let formData = new FormData();
 
-                // Collect only inputs from the current pane
-                currentPane.querySelectorAll("input, select, textarea").forEach((input) => {
-                    if (input.name) {
-                        formData.append(input.name, input.value);
-                    }
-                });
+        //         // Reset all invalid feedback
+        //         currentPane.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
 
-                // Append current step name
-                formData.append("step", currentPane.id.replace("pills-", ""));
+        //         // Collect only inputs from the current pane
+        //         currentPane.querySelectorAll("input, select, textarea").forEach((input) => {
 
-                fetch("admin/validate-step", {
-                    method: "POST",
-                    headers: {
-                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content"),
-                    },
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // move to next tab
-                        document.getElementById(nextButton.getAttribute('data-nexttab')).click();
-                    }
-                })
-                .catch(async (error) => {
-                    if (error.status === 422) {
-                        let res = await error.json();
-                        Object.keys(res.errors).forEach(key => {
-                            let input = form.querySelector(`[name="${key}"]`);
-                            if (input) {
-                                input.classList.add("is-invalid");
-                                let feedback = input.parentNode.querySelector(".invalid-feedback");
-                                if (feedback) feedback.innerText = res.errors[key][0];
-                            }
-                        });
-                    }
-                });
-            });
-        });
+        //             // Skip unchecked radios
+        //             if (input.type === 'radio' && !input.checked) {
+        //                 return;
+        //             }
+
+        //             if (input.name) {
+        //                 let name = input.name.replace(/\[\d+\]$/, ''); // training_paid[0] → training_paid
+
+        //                 console.log(name, input.value);
+        //                 formData.append(name, input.value);
+        //             }
+        //         });
+        //         // Append current step name
+        //         formData.append("step", currentPane.id.replace("pills-", ""));
+
+        //         fetch("admin/validate-step", {
+        //             method: "POST",
+        //             headers: {
+        //                 "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content"),
+        //             },
+        //             body: formData
+        //         })
+        //         .then(response => response.json())
+        //         .then(data => {
+        //             if (data.success) {
+        //                 // move to next tab
+        //                 document.getElementById(nextButton.getAttribute('data-nexttab')).click();
+        //             }
+        //         })
+        //         .catch(async (error) => {
+        //             if (error.status === 422) {
+        //                 let res = await error.json();
+        //                 Object.keys(res.errors).forEach(key => {
+        //                     let input = form.querySelector(`[name="${key}"]`);
+        //                     if (input) {
+        //                         input.classList.add("is-invalid");
+        //                         let feedback = input.parentNode.querySelector(".invalid-feedback");
+        //                         if (feedback) feedback.innerText = res.errors[key][0];
+        //                     }
+        //                 });
+        //             }
+        //         });
+        //     });
+        // });
 
         // if (form.querySelectorAll(".nexttab")) {
         //     Array.from(form.querySelectorAll(".nexttab")).forEach(function (nextButton) {

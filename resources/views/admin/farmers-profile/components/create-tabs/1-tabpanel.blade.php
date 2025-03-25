@@ -10,27 +10,27 @@ aria-labelledby="pills-personal-info-tab">
             <div class="col-sm-3">
                 <label for="first_name" class="form-label">First name</label>
                 <input type="text" class="form-control" id="first_name" name="first_name"
-                    placeholder="Enter first name" value="" required>
+                    placeholder="Enter first name">
                 <div class="invalid-feedback">Please enter a first name</div>
             </div>
 
             <div class="col-sm-3">
                 <label for="middle_name" class="form-label">Middle name</label>
                 <input type="text" class="form-control" id="middle_name"
-                    placeholder="Enter middle name" value="" required>
+                    placeholder="Enter middle name">
                 <div class="invalid-feedback">Please enter a middle name</div>
             </div>
 
             <div class="col-sm-3">
                 <label for="last_name" class="form-label">Last name</label>
                 <input type="text" class="form-control" id="last_name" name="last_name"
-                    placeholder="Enter last name" value="" required>
+                    placeholder="Enter last name">
                 <div class="invalid-feedback">Please enter a last name</div>
             </div>
             <div class="col-sm-3">
                 <label for="suffix" class="form-label">Suffix</label>
                 <input type="text" class="form-control" id="suffix" name="suffix"
-                    placeholder="Enter Suffix" value="" required>
+                    placeholder="Enter Suffix">
                 <div class="invalid-feedback">Please enter Suffix</div>
             </div>
         </div>
@@ -40,7 +40,7 @@ aria-labelledby="pills-personal-info-tab">
             <div class="col-sm-3">
                 <label for="nickname" class="form-label">Nickname</label>
                 <input type="text" class="form-control" id="nickname"
-                    placeholder="Enter Nickname" value="" required>
+                    placeholder="Enter Nickname">
                 <div class="invalid-feedback">Please enter Nickname</div>
             </div>
             <div class="col-sm-3">
@@ -51,7 +51,7 @@ aria-labelledby="pills-personal-info-tab">
             <div class="col-sm-3">
                 <label for="age_label" class="form-label">Age</label>
                 <input type="text" class="form-control" id="age_label"
-                    placeholder="Enter Birtdate to see Age" value="" disabled>
+                    placeholder="Enter Birtdate to see Age" disabled>
                 <div class="invalid-feedback">Please enter Age</div>
             </div>
             <!-- Hidden input to store age value -->
@@ -87,12 +87,12 @@ aria-labelledby="pills-personal-info-tab">
             </div>
             <div class="col-sm-3">
                 <label for="religion" class="form-label">Religion</label>
-                <input type="text" class="form-control" id="religion" name="religion" placeholder="Enter Religion" required>
+                <input type="text" class="form-control" id="religion" name="religion" placeholder="Enter Religion" >
                 <div class="invalid-feedback">Please enter religion</div>
             </div>
             <div class="col-sm-3">
                 <label for="phone_number" class="form-label">Phone Number</label>
-                <input type="text" class="form-control" id="phone_number" name="phone_number" placeholder="Enter Phone Number" required>
+                <input type="text" class="form-control" id="phone_number" name="phone_number" placeholder="Enter Phone Number" >
                 <div class="invalid-feedback">Please enter Phone Number</div>
             </div>
             <div class="col-sm-3" >
@@ -198,12 +198,12 @@ aria-labelledby="pills-personal-info-tab">
         <div class="row g-3">
             <div class="col-sm-9">
                 <label for="house_number_sitio_purok" class="form-label">House Number/Sitio/Purok</label>
-                <input type="text" class="form-control" id="house_number_sitio_purok" name="house_number_sitio_purok" placeholder="Enter House Number" required>
+                <input type="text" class="form-control" id="house_number_sitio_purok" name="house_number_sitio_purok" placeholder="Enter House Number" >
                 <div class="invalid-feedback">Please enter House Number/Sitio/Purok</div>
             </div>
             <div class="col-sm-3">
                 <label for="zip_code" class="form-label">Zip Code</label>
-                <input type="number" class="form-control" id="zip_code" name="zip_code" placeholder="Enter Zip Code" required>
+                <input type="number" class="form-control" id="zip_code" name="zip_code" placeholder="Enter Zip Code" >
                 <div class="invalid-feedback">Please enter Zip Code</div>
             </div>
         </div>
@@ -232,12 +232,12 @@ aria-labelledby="pills-personal-info-tab">
             </div>
             <div class="col-sm-4">
                 <label for="years_in_farming" class="form-label">Number of years in Rice Farming</label>
-                <input type="number" class="form-control" id="years_in_farming" name="years_in_farming" placeholder="Enter Number of Years in Rice Farming" required>
+                <input type="number" class="form-control" id="years_in_farming" name="years_in_farming" placeholder="Enter Number of Years in Rice Farming" >
                 <div class="invalid-feedback">Please enter Years in Rice Farming</div>
             </div>
             <div class="col-sm-4">
                 <label for="farmer_association" class="form-label">Farmers' Association</label>
-                <input type="text" class="form-control" id="farmer_association" name="farmer_association" placeholder="Enter Farmers' Association" required>
+                <input type="text" class="form-control" id="farmer_association" name="farmer_association" placeholder="Enter Farmers' Association" >
                 <div class="invalid-feedback">Please enter Farmers' Association</div>
             </div>
         </div>
@@ -255,14 +255,14 @@ aria-labelledby="pills-personal-info-tab">
             </div>
             <div class="col-sm-6">
                 <label for="rsbsa_number" class="form-label">RSBSA Number</label>
-                <input type="text" class="form-control" id="rsbsa_number" name="rsbsa_number" placeholder="Enter Farmers' Association" required>
+                <input type="text" class="form-control" id="rsbsa_number" name="rsbsa_number" placeholder="Enter Farmers' Association" >
                 <div class="invalid-feedback">Please enter RSBSA Number</div>
             </div>
         </div>
     </div>
 </div>
 <div class="d-flex align-items-start gap-3 mt-4">
-    <button type="button" class="btn btn-success btn-label right ms-auto nexttab nexttab"
+    <button type="button" class="btn btn-success btn-label right ms-auto nexttab"
         data-nexttab="pills-trainings-tab"><i
             class="ri-arrow-right-line label-icon align-middle fs-16 ms-2"></i>Next</button>
 </div>

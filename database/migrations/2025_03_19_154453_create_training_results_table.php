@@ -17,10 +17,10 @@ return new class extends Migration
             $table->integer('pre_test_score');
             $table->integer('post_test_score');
             $table->integer('total_test_items');
-            $table->decimal('knowledge_gain');
+            $table->decimal('gain_in_knowledge');
             $table->string('certificate_type');
             $table->string('certificate_number');
-            $table->decimal('training_evaluation_score');
+            $table->decimal('overall_training_eval_score');
             $table->decimal('trainer_rating');
             $table->timestamps();
         });

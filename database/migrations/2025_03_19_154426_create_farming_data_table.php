@@ -18,7 +18,7 @@ return new class extends Migration
                 'Wet Season',
                 'Dry Season'
             ]);
-            $table->string('year');
+            $table->string('year_training_conducted');
             $table->decimal('farm_size_hectares');
             $table->decimal('total_yield_caban');
             $table->decimal('weight_per_caban_kg');

@@ -11,21 +11,21 @@ aria-labelledby="pills-training-result-tab">
 <div class="mt-3">
     <div class="row g-3">
         <div class="col-sm-4">
-            <label for="emergencyRelationship" class="form-label">Pre-Test (Written)</label>
-            <input type="text" class="form-control" id="emergencyRelationship"
-                placeholder="Enter Pre-Test" value="" required>
+            <label for="pre_test_score" class="form-label">Pre-Test (Written)</label>
+            <input type="number" class="form-control" id="pre_test_score" name="pre_test_score"
+                placeholder="Enter Pre-Test">
             <div class="invalid-feedback">Please enter pre-test</div>
         </div>
         <div class="col-sm-4">
-            <label for="emergencyPhoneNumber" class="form-label">Post-Test (Written)</label>
-            <input type="text" class="form-control" id="emergencyPhoneNumber"
-                placeholder="Enter Post-Test" value="" required>
+            <label for="post_test_score" class="form-label">Post-Test (Written)</label>
+            <input type="number" class="form-control" id="post_test_score" name="post_test_score"
+                placeholder="Enter Post-Test">
             <div class="invalid-feedback">Please enter post test</div>
         </div>
         <div class="col-sm-4">
-            <label for="emergencyPhoneNumber" class="form-label">Total no. of Test items</label>
-            <input type="text" class="form-control" id="emergencyPhoneNumber"
-                placeholder="Enter number of test items" value="" required>
+            <label for="total_test_items" class="form-label">Total no. of Test items</label>
+            <input type="number" class="form-control" id="total_test_items" name="total_test_items"
+                placeholder="Enter number of test items">
             <div class="invalid-feedback">Please enter number of test items</div>
         </div>
     </div>
@@ -33,21 +33,21 @@ aria-labelledby="pills-training-result-tab">
 <div class="mt-3">
     <div class="row g-3">
         <div class="col-sm-4">
-            <label for="gainKnowledge" class="form-label">Gain in Knowledge</label>
-            <input type="text" class="form-control" id="gainKnowledge"
-                placeholder="Enter Gain in Knowledge" value="" required>
-            <div class="invalid-feedback">Please enter gain in knowledge</div>
+            <label for="gain_in_knowledge" class="form-label">Gain in Knowledge</label>
+            <input type="text" class="form-control" id="gain_in_knowledge" name="gain_in_knowledge" disabled
+                placeholder="0.00%">
+            <div class="invalid-feedback">Calculated Gain in Knowledge</div>
         </div>
         <div class="col-sm-4">
-            <label for="typeOfCertificate" class="form-label">Type of Certificate</label>
-            <input type="text" class="form-control" id="typeOfCertificate"
-                placeholder="Enter type of certificate" value="" required>
+            <label for="certificate_type" class="form-label">Type of Certificate</label>
+            <input type="text" class="form-control" id="certificate_type" name="certificate_type"
+                placeholder="Enter type of certificate">
             <div class="invalid-feedback">Please enter type of certificate</div>
         </div>
         <div class="col-sm-4">
-            <label for="certificateNumber" class="form-label">Certificate number</label>
-            <input type="text" class="form-control" id="certificateNumber"
-                placeholder="Enter Certificate Number" value="" required>
+            <label for="certificate_number" class="form-label">Certificate number</label>
+            <input type="text" class="form-control" id="certificate_number" name="certificate_number"
+                placeholder="Enter Certificate Number">
             <div class="invalid-feedback">Please enter certificate number</div>
         </div>
     </div>
@@ -55,15 +55,15 @@ aria-labelledby="pills-training-result-tab">
 <div class="mt-3">
     <div class="row g-3">
         <div class="col-sm-6">
-            <label for="overallTrainingEval" class="form-label">Overall Training Evaluation</label>
-            <input type="text" class="form-control" id="overallTrainingEval"
-                placeholder="Enter Overall Training Evaluation" value="" required>
+            <label for="overall_training_eval_score" class="form-label">Overall Training Evaluation</label>
+            <input type="number" class="form-control" id="overall_training_eval_score" name="overall_training_eval_score"
+                placeholder="Enter Overall Training Evaluation">
             <div class="invalid-feedback">Please enter overall training evaluation</div>
         </div>
         <div class="col-sm-6">
-            <label for="ratingTrainingEval" class="form-label">TMT Rating in Training Evaluation</label>
-            <input type="text" class="form-control" id="ratingTrainingEval"
-                placeholder="Enter TMT Rating in Training Evaluation" value="" required>
+            <label for="trainer_rating" class="form-label">TMT Rating in Training Evaluation</label>
+            <input type="number" class="form-control" id="trainer_rating" name="trainer_rating"
+                placeholder="Enter TMT Rating in Training Evaluation">
             <div class="invalid-feedback">Please enter TMT Rating in Training Evaluation</div>
         </div>
     </div>

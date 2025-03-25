@@ -8,6 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class TrainingAttendance extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'participant_id',
+        'training_title',
+        'training_year',
+        'conducted_by',
+        'personally_paid',
+    ];
 
     public function participant()
     {
