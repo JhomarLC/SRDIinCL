@@ -10,11 +10,11 @@
             <div class="col-sm-3">
                 <label class="form-label">Select Farming Season</label>
                 <div class="form-check form-check-inline mt-2">
-                    <input class="form-check-input" type="radio" name="season[0]" id="seasonDry0" value="yes">
+                    <input class="form-check-input" type="radio" name="season[0]" id="seasonDry0" value="Dry Season">
                     <label class="form-check-label" for="seasonDry0">Dry</label>
                 </div>
                 <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="season[0]" id="seasonWet0" value="no" checked>
+                    <input class="form-check-input" type="radio" name="season[0]" id="seasonWet0" value="Wet Season" checked>
                     <label class="form-check-label" for="seasonWet0">Wet</label>
                 </div>
             </div>
@@ -23,6 +23,7 @@
                 <select class="form-control mb-3 select2" id="year_training_conducted0" name="year_training_conducted[0]">
                     <option selected disabled hidden>-- SELECT YEAR --</option>
                 </select>
+                <div class="invalid-feedback">Please select year</div>
             </div>
         </div>
 
@@ -30,32 +31,32 @@
             <div class="row g-3">
                 <div class="col-sm-3">
                     <label for="farm_size_hectares0" class="form-label">Farm Size</label>
-                    <input type="text" class="form-control" id="farm_size_hectares0" name="farm_size_hectares[0]" placeholder="Enter Farm Size">
+                    <input type="text" class="form-control" id="farm_size_hectares0" name="farm_size_hectares[0]" placeholder="Enter Farm Size" value="1">
                     <div class="invalid-feedback">Please enter farm size</div>
                 </div>
                 <div class="col-sm-3">
                     <label for="total_yield_caban0" class="form-label">Total yield caban (sacks)</label>
-                    <input type="text" class="form-control" id="total_yield_caban0" name="total_yield_caban[0]" placeholder="Enter Total Yield Caban (Sacks)">
+                    <input type="text" class="form-control" id="total_yield_caban0" name="total_yield_caban[0]" placeholder="Enter Total Yield Caban (Sacks)" value="750">
                     <div class="invalid-feedback">Please enter total yield caban (sacks)</div>
                 </div>
                 <div class="col-sm-3">
                     <label for="weight_per_caban_kg0" class="form-label">Weight per caban (kg)</label>
-                    <input type="text" class="form-control" id="weight_per_caban_kg0" name="weight_per_caban_kg[0]" placeholder="Enter Weight per caban (kg)">
+                    <input type="text" class="form-control" id="weight_per_caban_kg0" name="weight_per_caban_kg[0]" placeholder="Enter Weight per caban (kg)" value="60">
                     <div class="invalid-feedback">Please enter weight per caban (kg)</div>
                 </div>
                 <div class="col-sm-3">
                     <label for="price_per_kg0" class="form-label">Price per kilogram</label>
-                    <input type="text" class="form-control" id="price_per_kg0" name="price_per_kg[0]" placeholder="Enter Price per kilogram">
+                    <input type="text" class="form-control" id="price_per_kg0" name="price_per_kg[0]" placeholder="Enter Price per kilogram" value="15">
                     <div class="invalid-feedback">Please enter price per kilogram</div>
                 </div>
                 <div class="col-sm-4">
                     <label for="total_income0" class="form-label">Total income</label>
-                    <input type="text" class="form-control" id="total_income0" name="total_income[0]" placeholder="Enter Total Income">
+                    <input type="text" class="form-control" id="total_income0" name="total_income[0]" placeholder="Enter Total Income" value="76000">
                     <div class="invalid-feedback">Please enter total income</div>
                 </div>
                 <div class="col-sm-4">
                     <label for="total_cost0" class="form-label">Total Cost</label>
-                    <input type="text" class="form-control" id="total_cost0" name="total_cost[0]" placeholder="Enter Total Cost">
+                    <input type="text" class="form-control" id="total_cost0" name="total_cost[0]" placeholder="Enter Total Cost" value="26000">
                     <div class="invalid-feedback">Please enter total cost</div>
                 </div>
                 <div class="col-sm-4">
@@ -74,11 +75,11 @@
         <div class="col-sm-3">
             <label class="form-label">Select Farming Season</label>
             <div class="form-check form-check-inline mt-2">
-                <input class="form-check-input" type="radio" name="season[1]" id="seasonDry1" value="yes" checked>
+                <input class="form-check-input" type="radio" name="season[1]" id="seasonDry1" value="Wet Season" checked>
                 <label class="form-check-label" for="seasonDry1">Dry</label>
             </div>
             <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="season[1]" id="seasonWet1" value="no">
+                <input class="form-check-input" type="radio" name="season[1]" id="seasonWet1" value="Dry Season">
                 <label class="form-check-label" for="seasonWet1">Wet</label>
             </div>
         </div>
@@ -87,6 +88,7 @@
             <select class="form-control mb-3 select2" id="year_training_conducted1" name="year_training_conducted[1]">
                 <option selected disabled hidden>-- SELECT YEAR --</option>
             </select>
+            <div class="invalid-feedback">Please select year</div>
         </div>
     </div>
 
@@ -94,32 +96,32 @@
         <div class="row g-3">
             <div class="col-sm-3">
                 <label for="farm_size_hectares1" class="form-label">Farm Size</label>
-                <input type="text" class="form-control" id="farm_size_hectares1" name="farm_size_hectares[1]" placeholder="Enter Farm Size">
+                <input type="text" class="form-control" id="farm_size_hectares1" name="farm_size_hectares[1]" placeholder="Enter Farm Size" value="1">
                 <div class="invalid-feedback">Please enter farm size</div>
             </div>
             <div class="col-sm-3">
                 <label for="total_yield_caban1" class="form-label">Total yield caban (sacks)</label>
-                <input type="text" class="form-control" id="total_yield_caban1" name="total_yield_caban[1]" placeholder="Enter Total Yield Caban (Sacks)">
+                <input type="text" class="form-control" id="total_yield_caban1" name="total_yield_caban[1]" placeholder="Enter Total Yield Caban (Sacks)" value="500">
                 <div class="invalid-feedback">Please enter total yield caban (sacks)</div>
             </div>
             <div class="col-sm-3">
                 <label for="weight_per_caban_kg1" class="form-label">Weight per caban (kg)</label>
-                <input type="text" class="form-control" id="weight_per_caban_kg1" name="weight_per_caban_kg[1]" placeholder="Enter Weight per caban (kg)">
+                <input type="text" class="form-control" id="weight_per_caban_kg1" name="weight_per_caban_kg[1]" placeholder="Enter Weight per caban (kg)" value="60">
                 <div class="invalid-feedback">Please enter weight per caban (kg)</div>
             </div>
             <div class="col-sm-3">
                 <label for="price_per_kg1" class="form-label">Price per kilogram</label>
-                <input type="text" class="form-control" id="price_per_kg1" name="price_per_kg[1]" placeholder="Enter Price per kilogram">
+                <input type="text" class="form-control" id="price_per_kg1" name="price_per_kg[1]" placeholder="Enter Price per kilogram" value="15">
                 <div class="invalid-feedback">Please enter price per kilogram</div>
             </div>
             <div class="col-sm-4">
                 <label for="total_income1" class="form-label">Total income</label>
-                <input type="text" class="form-control" id="total_income1" name="total_income[1]" placeholder="Enter Total Income">
+                <input type="text" class="form-control" id="total_income1" name="total_income[1]" placeholder="Enter Total Income" value="50000">
                 <div class="invalid-feedback">Please enter total income</div>
             </div>
             <div class="col-sm-4">
                 <label for="total_cost1" class="form-label">Total Cost</label>
-                <input type="text" class="form-control" id="total_cost1" name="total_cost[1]" placeholder="Enter Total Cost">
+                <input type="text" class="form-control" id="total_cost1" name="total_cost[1]" placeholder="Enter Total Cost" value="20000">
                 <div class="invalid-feedback">Please enter total cost</div>
             </div>
             <div class="col-sm-4">

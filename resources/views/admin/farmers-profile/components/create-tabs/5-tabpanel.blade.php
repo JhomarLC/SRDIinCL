@@ -9,21 +9,21 @@ aria-labelledby="pills-emergency-contact-tab">
     <div class="row g-3">
         <div class="col-sm-3">
             <label for="ec_first_name" class="form-label">First name</label>
-            <input type="text" class="form-control" id="ec_first_name" name="ec_first_name"
+            <input type="text" class="form-control" id="ec_first_name" name="ec_first_name" value="Marilyn"
                 placeholder="Enter first name" >
             <div class="invalid-feedback">Please enter a first name</div>
         </div>
 
         <div class="col-sm-3">
             <label for="ec_middle_name" class="form-label">Middle name</label>
-            <input type="text" class="form-control" id="ec_middle_name" name="ec_middle_name"
+            <input type="text" class="form-control" id="ec_middle_name" name="ec_middle_name" value="Lapurga"
                 placeholder="Enter middle name" >
             <div class="invalid-feedback">Please enter a middle name</div>
         </div>
 
         <div class="col-sm-3">
             <label for="ec_last_name" class="form-label">Last name</label>
-            <input type="text" class="form-control" id="ec_last_name" name="ec_last_name"
+            <input type="text" class="form-control" id="ec_last_name" name="ec_last_name" value="Candelario"
                 placeholder="Enter last name" >
             <div class="invalid-feedback">Please enter a last name</div>
         </div>
@@ -46,7 +46,7 @@ aria-labelledby="pills-emergency-contact-tab">
 
                 <optgroup label="Family">
                     <option value="spouse">Spouse</option>
-                    <option value="parent">Parent</option>
+                    <option value="parent" selected>Parent</option>
                     <option value="child">Child</option>
                     <option value="sibling">Sibling</option>
                     <option value="grandparent">Grandparent</option>
@@ -75,7 +75,7 @@ aria-labelledby="pills-emergency-contact-tab">
         </div>
         <div class="col-sm-6">
             <label for="ec_contact_number" class="form-label">Telephone / Phone Number</label>
-            <input type="text" class="form-control" id="ec_contact_number" name="ec_contact_number"
+            <input type="text" class="form-control" id="ec_contact_number" name="ec_contact_number" value="09366181790"
                 placeholder="Enter phone number" >
             <div class="invalid-feedback">Please enter phone number</div>
         </div>

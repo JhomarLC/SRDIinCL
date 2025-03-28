@@ -19,7 +19,6 @@
 
     $(document).ready(function () {
         $('.select2').select2();
-
     });
 
     document.addEventListener('DOMContentLoaded', function () {
@@ -193,6 +192,77 @@
             });
         }
 
+        $("#submitFarmersProfile").on("click", function (e) {
+            e.preventDefault();
+
+            const formData1 = new FormData();
+
+            // 1. Handle all input fields except radios and checkboxes first
+            $('form :input').each(function () {
+                const type = $(this).attr('type');
+                const name = $(this).attr('name');
+
+                // Skip unchecked radio/checkbox here; we'll handle them separately
+                if ((type === 'radio' || type === 'checkbox') && !$(this).is(':checked')) {
+                    return;
+                }
+
+                formData1.append(name, $(this).val() || '');
+            });
+
+              // 2. Custom logic like .nexttab
+            const isPwd = $('input[name="is_pwd"]:checked').val();
+            const disability = $("#disability").val() || '';
+            formData1.set("is_pwd", isPwd || '');
+            formData1.set("disability", isPwd === "1" ? disability : '');
+
+            const isIndigenous = $('input[name="is_indigenous"]:checked').val();
+            const tribeName = $("#tribe_name").val() || '';
+            formData1.set("is_indigenous", isIndigenous || '');
+            formData1.set("tribe_name", isIndigenous === "1" ? tribeName : '');
+
+            console.log("🧾 FormData being sent:");
+            for (const pair of formData1.entries()) {
+                console.log(`${pair[0]}: ${pair[1]}`);
+            }
+            $.ajax({
+                url: "{{ route('farmers-profile.store') }}",
+                type: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+                },
+                data: formData1,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    console.log("✅ Server Response:", response);
+                    if (response.status === 'success') {
+                        showAlertModal(response.status, response.message);
+
+                        // Redirect after showing the success message
+                        setTimeout(function () {
+                            window.location.href = "/admin/farmers-profile"; // ← change this to your desired URL
+                        }, 1500); // Wait 1.5 seconds before redirecting
+                    }
+                },
+                error: function (xhr) {
+                    if (xhr.status === 422) {
+                        const res = xhr.responseJSON;
+                        console.warn("❌ Validation Errors:", res);
+
+                        if (res && res.status && res.message) {
+                            showAlertModal(res.status, res.message);
+                        } else {
+                            showAlertModal("error", "Validation failed. Please check all your inputs.");
+                        }
+                    } else {
+                        showAlertModal("error", "Unexpected error!");
+                        console.error("🚨 Unexpected error:", xhr);
+                    }
+                }
+            });
+        })
+
         $(".nexttab").on("click", function (e) {
             e.preventDefault();
 
@@ -201,6 +271,7 @@
             const step = currentPane.attr("id").replace("pills-", "");
 
             const formData = new FormData();
+
             if (step === "personal-info") {
                 // Manually append each field (or dynamically if needed)
                 formData.append("first_name", $("#first_name").val() || '');
@@ -283,6 +354,40 @@
                 }
             }
 
+            if (step === "data-ricefarming") {
+                // Loop through each record (you have two by default)
+                const entries = [0, 1]; // add more indices if needed for dynamic rows
+
+                entries.forEach(index => {
+                    const season = $(`input[name="season[${index}]"]:checked`).val();
+                    const yearConducted = $(`#year_training_conducted${index}`).val() || '';
+                    const farmSize = $(`#farm_size_hectares${index}`).val() || '';
+                    const totalYield = $(`#total_yield_caban${index}`).val() || '';
+                    const weightPerCaban = $(`#weight_per_caban_kg${index}`).val() || '';
+                    const pricePerKg = $(`#price_per_kg${index}`).val() || '';
+                    const totalIncome = $(`#total_income${index}`).val() || '';
+                    const totalCost = $(`#total_cost${index}`).val() || '';
+                    const otherCrops = $(`#other_crops${index}`).val() || '';
+
+                    formData.append(`season[${index}]`, season || '');
+                    formData.append(`year_training_conducted[${index}]`, yearConducted);
+                    formData.append(`farm_size_hectares[${index}]`, farmSize);
+                    formData.append(`total_yield_caban[${index}]`, totalYield);
+                    formData.append(`weight_per_caban_kg[${index}]`, weightPerCaban);
+                    formData.append(`price_per_kg[${index}]`, pricePerKg);
+                    formData.append(`total_income[${index}]`, totalIncome);
+                    formData.append(`total_cost[${index}]`, totalCost);
+                    formData.append(`other_crops[${index}]`, otherCrops);
+                });
+
+                formData.append("step", step);
+
+                console.log("🧾 Rice Farming FormData:");
+                for (const pair of formData.entries()) {
+                    console.log(`${pair[0]}: ${pair[1]}`);
+                }
+            }
+
             if (step === "emergency-contact") {
                 // Manually append each field (or dynamically if needed)
                 formData.append("ec_first_name", $("#ec_first_name").val() || '');
@@ -357,12 +462,6 @@
                                 input.siblings(".invalid-feedback").text(messages[0]);
                             }
                         });
-
-                        // $.each(errors, function (key, messages) {
-                        //     const input = currentPane.find(`[name="${key}"]`);
-                        //     input.addClass("is-invalid");
-                        //     input.siblings(".invalid-feedback").text(messages[0]);
-                        // });
                     } else {
                         console.error("🚨 Unexpected error:", xhr);
                     }
@@ -563,6 +662,7 @@
             gik = ((post - pre) / post) * 100;
         }
 
-        document.getElementById('gain_in_knowledge').value = gik.toFixed(2) + ' %';
+        document.getElementById('gain_in_knowledge_display').value = gik.toFixed(2) + ' %';
+        document.getElementById('gain_in_knowledge').value = gik.toFixed(2);
     });
 </script>

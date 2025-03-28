@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('participants', function (Blueprint $table) {
             $table->id();
             $table->string('first_name');
-            $table->string('middle_name');
+            $table->string('middle_name')->nullable();
             $table->string('last_name');
-            $table->string('suffix');
-            $table->string('nickname');
+            $table->string('suffix')->nullable();
+            $table->string('nickname')->nullable();
             $table->string('phone_number');
             $table->date('birth_date');
             $table->string('age_group');

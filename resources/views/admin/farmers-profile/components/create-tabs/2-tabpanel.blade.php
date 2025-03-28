@@ -19,14 +19,14 @@ aria-labelledby="pills-trainings-tab">
                 <div class="row g-3">
                     <div class="col-sm-7">
                         <label for="training_title" class="form-label">Title of the training/workshop</label>
-                        <input type="text" class="form-control" id="training_title" name="training_title[0]"
+                        <input type="text" class="form-control" id="training_title" name="training_title[0]" value="Sample Title"
                             placeholder="Enter title of the training/workshop"  >
                         <div class="invalid-feedback">Please enter training title</div>
                     </div>
                     <div class="col-sm-5">
                         {{-- <label for="training_year" class="form-label">Date</label> --}}
                             <label for="training_date" class="form-label">Training Date</label>
-                            <input type="date" class="form-control" id="training_year" name="training_year[0]">
+                            <input type="date" class="form-control" id="training_year" name="training_year[0]" value="2025-01-20">
 
                         <div class="invalid-feedback">Please select year conducted</div>
                             {{-- <div class="invalid-feedback">Please enter Birthdate</div> --}}
@@ -44,7 +44,7 @@ aria-labelledby="pills-trainings-tab">
                     <div class="col-sm-7">
                         <label for="conducted_by " class="form-label">Group or agency that conducted the training</label>
                         <input type="text" class="form-control" id="conducted_by" name="conducted_by[0]"
-                            placeholder="Enter group of agency that conducted the training" value="" >
+                            placeholder="Enter group of agency that conducted the training" value="Philrice" >
                         <div class="invalid-feedback">Please enter training title</div>
                     </div>
                     <div class="col-sm-5">

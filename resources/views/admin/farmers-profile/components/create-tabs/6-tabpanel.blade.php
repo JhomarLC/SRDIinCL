@@ -12,13 +12,13 @@ aria-labelledby="pills-training-result-tab">
     <div class="row g-3">
         <div class="col-sm-4">
             <label for="pre_test_score" class="form-label">Pre-Test (Written)</label>
-            <input type="number" class="form-control" id="pre_test_score" name="pre_test_score"
+            <input type="number" class="form-control" id="pre_test_score" name="pre_test_score" value="40"
                 placeholder="Enter Pre-Test">
             <div class="invalid-feedback">Please enter pre-test</div>
         </div>
         <div class="col-sm-4">
             <label for="post_test_score" class="form-label">Post-Test (Written)</label>
-            <input type="number" class="form-control" id="post_test_score" name="post_test_score"
+            <input type="number" class="form-control" id="post_test_score" name="post_test_score" value="60"
                 placeholder="Enter Post-Test">
             <div class="invalid-feedback">Please enter post test</div>
         </div>
@@ -33,20 +33,21 @@ aria-labelledby="pills-training-result-tab">
 <div class="mt-3">
     <div class="row g-3">
         <div class="col-sm-4">
-            <label for="gain_in_knowledge" class="form-label">Gain in Knowledge</label>
-            <input type="text" class="form-control" id="gain_in_knowledge" name="gain_in_knowledge" disabled
+            <label for="gain_in_knowledge_display" class="form-label">Gain in Knowledge</label>
+            <input type="text" id="gain_in_knowledge" name="gain_in_knowledge" value="33.33" hidden>
+            <input type="text" class="form-control" id="gain_in_knowledge_display" name="gain_in_knowledge_display" value="33.33 %" disabled
                 placeholder="0.00%">
-            <div class="invalid-feedback">Calculated Gain in Knowledge</div>
+            {{-- <div class="invalid-feedback">Calculated Gain in Knowledge</div> --}}
         </div>
         <div class="col-sm-4">
             <label for="certificate_type" class="form-label">Type of Certificate</label>
-            <input type="text" class="form-control" id="certificate_type" name="certificate_type"
+            <input type="text" class="form-control" id="certificate_type" name="certificate_type" value="Digital"
                 placeholder="Enter type of certificate">
             <div class="invalid-feedback">Please enter type of certificate</div>
         </div>
         <div class="col-sm-4">
             <label for="certificate_number" class="form-label">Certificate number</label>
-            <input type="text" class="form-control" id="certificate_number" name="certificate_number"
+            <input type="text" class="form-control" id="certificate_number" name="certificate_number" value="1029384"
                 placeholder="Enter Certificate Number">
             <div class="invalid-feedback">Please enter certificate number</div>
         </div>
@@ -74,11 +75,11 @@ aria-labelledby="pills-training-result-tab">
         data-previous="pills-emergency-contact-tab"><i
             class="ri-arrow-left-line label-icon align-middle fs-16 me-2"></i>
         Previous</button>
-    <button type="button"
+    <button type="button" id="submitFarmersProfile"
         class="btn btn-success btn-label right ms-auto nexttab nexttab"
         data-nexttab="pills-bill-finish"><i
-            class="ri-arrow-right-line label-icon align-middle fs-16 ms-2"></i>
-        Finish</button>
+            class="ri-save-line label-icon align-middle fs-16 ms-2"></i>
+        Submit</button>
 </div>
 </div>
 <!-- end tab pane -->

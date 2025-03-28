@@ -9,6 +9,17 @@ class EmergencyContact extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'participant_id',
+        'first_name',
+        'middle_name',
+        'last_name',
+        'suffix',
+        'relationship',
+        'contact_number',
+    ];
+
+
     public function participant()
     {
         return $this->belongsTo(Participant::class, 'participant_id');

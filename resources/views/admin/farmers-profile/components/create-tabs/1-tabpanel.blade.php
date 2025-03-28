@@ -9,21 +9,21 @@ aria-labelledby="pills-personal-info-tab">
         <div class="row g-3">
             <div class="col-sm-3">
                 <label for="first_name" class="form-label">First name</label>
-                <input type="text" class="form-control" id="first_name" name="first_name"
+                <input type="text" class="form-control" id="first_name" name="first_name" value="Jhomar"
                     placeholder="Enter first name">
                 <div class="invalid-feedback">Please enter a first name</div>
             </div>
 
             <div class="col-sm-3">
                 <label for="middle_name" class="form-label">Middle name</label>
-                <input type="text" class="form-control" id="middle_name"
+                <input type="text" class="form-control" id="middle_name" name="middle_name" value="Lapurga"
                     placeholder="Enter middle name">
                 <div class="invalid-feedback">Please enter a middle name</div>
             </div>
 
             <div class="col-sm-3">
                 <label for="last_name" class="form-label">Last name</label>
-                <input type="text" class="form-control" id="last_name" name="last_name"
+                <input type="text" class="form-control" id="last_name" name="last_name" value="Candelario"
                     placeholder="Enter last name">
                 <div class="invalid-feedback">Please enter a last name</div>
             </div>
@@ -39,13 +39,13 @@ aria-labelledby="pills-personal-info-tab">
         <div class="row g-3">
             <div class="col-sm-3">
                 <label for="nickname" class="form-label">Nickname</label>
-                <input type="text" class="form-control" id="nickname"
+                <input type="text" class="form-control" id="nickname" name="nickname"
                     placeholder="Enter Nickname">
                 <div class="invalid-feedback">Please enter Nickname</div>
             </div>
             <div class="col-sm-3">
                 <label for="birth_date" class="form-label">Birthdate</label>
-                <input type="date" class="form-control" id="birth_date" name="birth_date">
+                <input type="date" class="form-control" id="birth_date" name="birth_date" value="2003-01-20">
                 <div class="invalid-feedback">Please enter Birthdate</div>
             </div>
             <div class="col-sm-3">
@@ -55,15 +55,15 @@ aria-labelledby="pills-personal-info-tab">
                 <div class="invalid-feedback">Please enter Age</div>
             </div>
             <!-- Hidden input to store age value -->
-            <input type="hidden" name="age" id="age">
+            <input type="hidden" name="age" id="age" value="21">
             <!-- Hidden input to store age group -->
-            <input type="hidden" name="age_group" id="age_group">
+            <input type="hidden" name="age_group" id="age_group" value="18 - 30">
 
             <div class="col-sm-3">
                 <label for="gender" class="form-label">Gender</label>
                 <select class="form-control mb-3 select2" id="gender" name="gender">
                     <option selected disabled hidden>-- SELECT GENDER --</option>
-                    <option value="Male">Male</option>
+                    <option value="Male" selected>Male</option>
                     <option value="Female">Female</option>
                 </select>
                 <div class="invalid-feedback">Please select gender</div>
@@ -77,7 +77,7 @@ aria-labelledby="pills-personal-info-tab">
                 <label for="civil_status" class="form-label">Civil Status</label>
                 <select class="form-control select2" id="civil_status" name="civil_status">
                     <option selected disabled hidden>-- SELECT CIVIL STATUS --</option>
-                    <option value="Single">Single</option>
+                    <option value="Single" selected>Single</option>
                     <option value="Married">Married</option>
                     <option value="Separated">Separated</option>
                     <option value="Widow">Widow</option>
@@ -87,12 +87,12 @@ aria-labelledby="pills-personal-info-tab">
             </div>
             <div class="col-sm-3">
                 <label for="religion" class="form-label">Religion</label>
-                <input type="text" class="form-control" id="religion" name="religion" placeholder="Enter Religion" >
+                <input type="text" class="form-control" id="religion" name="religion" placeholder="Enter Religion" value="Roman Catholic">
                 <div class="invalid-feedback">Please enter religion</div>
             </div>
             <div class="col-sm-3">
                 <label for="phone_number" class="form-label">Phone Number</label>
-                <input type="text" class="form-control" id="phone_number" name="phone_number" placeholder="Enter Phone Number" >
+                <input type="text" class="form-control" id="phone_number" name="phone_number" placeholder="Enter Phone Number" value="09982369196">
                 <div class="invalid-feedback">Please enter Phone Number</div>
             </div>
             <div class="col-sm-3" >
@@ -102,13 +102,12 @@ aria-labelledby="pills-personal-info-tab">
                     <option value="Elementary">Elementary</option>
                     <option value="High School">High School</option>
                     <option value="Vocational">Vocational</option>
-                    <option value="College Degree">College Degree</option>
+                    <option value="College Degree" selected>College Degree</option>
                     <option value="Master's Degree">Master's Degree</option>
                     <option value="Doctorate Degree">Doctorate Degree</option>
                     <option value="Undergraduate">Undergraduate</option>
                     <option value="Others">Others</option>
                 </select>
-
                 <div class="invalid-feedback">Please select civil education</div>
             </div>
         </div>
@@ -220,7 +219,7 @@ aria-labelledby="pills-personal-info-tab">
                     <option selected disabled hidden>-- SELECT PRIMARY SECTOR --</option>
                     <option value="Farmer/Seed Grower">Farmer or Seed grower</option>
                     <option value="Extension Worker">Extension workers and other intermediaries (e.g. LFT, trainer, extension worker)</option>
-                    <option value="Researcher">Researcher</option>
+                    <option value="Researcher" selected>Researcher</option>
                     <option value="Educator">Educator (elementary/high school/college teachers)</option>
                     <option value="Student">Student (e.g. college student, post-graduate student)</option>
                     <option value="Policy Maker">Policy maker (e.g. local chief executive)</option>
@@ -232,12 +231,12 @@ aria-labelledby="pills-personal-info-tab">
             </div>
             <div class="col-sm-4">
                 <label for="years_in_farming" class="form-label">Number of years in Rice Farming</label>
-                <input type="number" class="form-control" id="years_in_farming" name="years_in_farming" placeholder="Enter Number of Years in Rice Farming" >
+                <input type="number" class="form-control" id="years_in_farming" name="years_in_farming" placeholder="Enter Number of Years in Rice Farming" value="3">
                 <div class="invalid-feedback">Please enter Years in Rice Farming</div>
             </div>
             <div class="col-sm-4">
                 <label for="farmer_association" class="form-label">Farmers' Association</label>
-                <input type="text" class="form-control" id="farmer_association" name="farmer_association" placeholder="Enter Farmers' Association" >
+                <input type="text" class="form-control" id="farmer_association" name="farmer_association" placeholder="Enter Farmers' Association" value="Sample Association">
                 <div class="invalid-feedback">Please enter Farmers' Association</div>
             </div>
         </div>
@@ -246,16 +245,16 @@ aria-labelledby="pills-personal-info-tab">
         <div class="row g-3">
             <div class="col-sm-6" >
                 <label for="farm_role" class="form-label">Farm Ownership Status</label>
-                <select class="form-control select2" id="farm_role" aria-label="Default select example">
+                <select class="form-control select2" id="farm_role" name="farm_role" aria-label="Default select example">
                     <option selected disabled hidden>-- SELECT FARM OWNERSHIP STATUS --</option>
-                    <option value="Farm Owner">Owner/Farm Owner</option>
+                    <option value="Farm Owner" selected>Owner/Farm Owner</option>
                     <option value="Relative of Farm Owner">Relative of the Owner/Farm Owner</option>
                 </select>
                 <div class="invalid-feedback">Please select ownership status</div>
             </div>
             <div class="col-sm-6">
                 <label for="rsbsa_number" class="form-label">RSBSA Number</label>
-                <input type="text" class="form-control" id="rsbsa_number" name="rsbsa_number" placeholder="Enter Farmers' Association" >
+                <input type="text" class="form-control" id="rsbsa_number" name="rsbsa_number" placeholder="Enter Farmers' Association" value="102938">
                 <div class="invalid-feedback">Please enter RSBSA Number</div>
             </div>
         </div>
