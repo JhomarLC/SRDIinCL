@@ -8,9 +8,11 @@ aria-labelledby="pills-other-info-tab">
         <div class="row g-3">
             <div class="col-sm-12">
                 <label for="food_restriction" class="form-label">List the foods that cannot be eaten due to allergies,
-                    illness, religion, and beliefs (Separate them by comma).</label>
-                <input type="text" class="form-control" id="food_restriction" name="food_restriction"
-                    placeholder="Enter Food Restriction">
+                    illness, religion, and beliefs.</label>
+                {{-- <input type="text" class="form-control" id="food_restriction" name="food_restriction"
+                    placeholder="Enter Food Restriction"> --}}
+                <input class="form-control" id="food_restriction" name="food_restriction" data-choices data-choices-removeItem type="text"
+                placeholder="Enter Food Restriction" />
                 <div class="invalid-feedback">Please enter food restrictions</div>
             </div>
         </div>
@@ -20,8 +22,10 @@ aria-labelledby="pills-other-info-tab">
             <div class="col-sm-12">
                 <label for="medical_condition" class="form-label">List any medical condition or illness, if any,
                     that may affect your participation in specific training activities.</label>
-                <input type="text" class="form-control" id="medical_condition" name="medical_condition"
-                    placeholder="Enter Medical Condition or Illness">
+                {{-- <input type="text" class="form-control" id="medical_condition" name="medical_condition"
+                    placeholder="Enter Medical Condition or Illness"> --}}
+                    <input class="form-control" id="medical_condition" name="medical_condition" data-choices data-choices-removeItem type="text"
+                    placeholder="Enter Medical Condition or Illness" />
                 <div class="invalid-feedback">Please enter medical condition or illness</div>
             </div>
         </div>

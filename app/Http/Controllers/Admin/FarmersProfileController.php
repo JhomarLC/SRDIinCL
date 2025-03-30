@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\EmergencyContact;
 use App\Models\FarmingData;
+use App\Models\FoodRestrictions;
+use App\Models\MedicalConditions;
 use App\Models\Participant;
 use App\Models\Training;
 use App\Models\TrainingAttendance;
@@ -468,7 +470,27 @@ class FarmersProfileController extends Controller
             }
 
             // 3. Other Info
+            // 🔍 Step 2: Save Food Restrictions
+            if ($request->filled('food_restriction')) {
+                $foodRestrictions = explode(',', $request->input('food_restriction'));
+                foreach ($foodRestrictions as $item) {
+                    FoodRestrictions::create([
+                        'participant_id' => $participant->id,
+                        'food_restriction' => trim($item),
+                    ]);
+                }
+            }
 
+            // 🏥 Step 3: Save Medical Conditions
+            if ($request->filled('medical_condition')) {
+                $medicalConditions = explode(',', $request->input('medical_condition'));
+                foreach ($medicalConditions as $item) {
+                    MedicalConditions::create([
+                        'participant_id' => $participant->id,
+                        'medical_condition' => trim($item),
+                    ]);
+                }
+            }
 
             // 4. Rice Farming Data
             foreach ($validated['season'] as $i => $season) {

@@ -118,5 +118,7 @@
 
 <script src="{{ URL::asset('admin-js/admin.js') }}"></script>
 @include('admin.farmers-profile._includes.script')
+<script src='{{ URL::asset('build/libs/choices.js/public/assets/scripts/choices.min.js') }}'></script>
 <script src="{{ URL::asset('build/js/app.js') }}"></script>
+
 @endsection

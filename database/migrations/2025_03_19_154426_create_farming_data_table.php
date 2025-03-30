@@ -25,7 +25,7 @@ return new class extends Migration
             $table->decimal('price_per_kg');
             $table->decimal('total_income');
             $table->decimal('total_cost');
-            $table->decimal('other_crops');
+            $table->decimal('other_crops')->nullable();
             $table->timestamps();
         });
     }
