@@ -13,6 +13,7 @@ use App\Models\TrainingAttendance;
 use App\Models\TrainingResults;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\DataTables;
 
 class FarmersProfileController extends Controller
 {
@@ -37,9 +38,9 @@ class FarmersProfileController extends Controller
                 'gender' => 'required|string',
                 'civil_status' => 'required|string',
                 'religion' => 'required|string',
-                'province' => 'required|string',
-                'municipality' => 'required|string',
-                'barangay' => 'required|string',
+                'province_code' => 'required|string',
+                'municipality_code' => 'required|string',
+                'barangay_code' => 'required|string',
                 'zip_code' => 'required|digits_between:4,6',
                 'house_number_sitio_purok' => 'nullable|string',
                 'primary_sector' => 'required|in:Farmer/Seed Grower,Extension Worker,Researcher,Educator,Student,Policy Maker,Media,Industry Player,Others',
@@ -230,6 +231,27 @@ class FarmersProfileController extends Controller
         return view('admin.farmers-profile.index');
     }
 
+
+    public function getIndex()
+    {
+        $participants = Participant::latest()->get();
+
+        return DataTables::of($participants)
+            ->editColumn('full_name', function ($participants) {
+                $middleName = $participants->middle_name ? ' ' . $participants->middle_name : ''; // Add middle name if available
+                $extName = $participants->suffix ? ' ' . $participants->suffix : ''; // Add middle name if available
+                return "{$participants->first_name} {$middleName} {$participants->last_name} {$extName}";
+            })
+            ->addColumn('phone_number', function ($participants) {
+                return $participants->phone_number ?? 'N/A'; // Safely access profile attribute
+            })
+            ->addColumn('address', function ($participants) {
+                // Combine barangay, municipality, province
+                return "{$participants->barangay->name}, {$participants->municipality->name}, {$participants->province->name}";
+            })
+            ->rawColumns(['full_name', 'phone_number', 'address'])
+            ->make(true);
+    }
     /**
      * Show the form for creating a new resource.
      */
@@ -261,9 +283,9 @@ class FarmersProfileController extends Controller
             'gender' => 'required|string',
             'civil_status' => 'required|string',
             'religion' => 'required|string',
-            'province' => 'required|string',
-            'municipality' => 'required|string',
-            'barangay' => 'required|string',
+            'province_code' => 'required|string',
+            'municipality_code' => 'required|string',
+            'barangay_code' => 'required|string',
             'zip_code' => 'required|digits_between:4,6',
             'house_number_sitio_purok' => 'nullable|string',
             'primary_sector' => 'required|in:Farmer/Seed Grower,Extension Worker,Researcher,Educator,Student,Policy Maker,Media,Industry Player,Others',
@@ -443,9 +465,9 @@ class FarmersProfileController extends Controller
                 'gender' => $validated['gender'],
                 'civil_status' => $validated['civil_status'],
                 'religion' => $validated['religion'],
-                'province' => $validated['province'],
-                'municipality' => $validated['municipality'],
-                'barangay' => $validated['barangay'],
+                'province_code' => $validated['province_code'],
+                'municipality_code' => $validated['municipality_code'],
+                'barangay_code' => $validated['barangay_code'],
                 'zip_code' => $validated['zip_code'],
                 'house_number_sitio_purok' => $validated['house_number_sitio_purok'] ?? null,
                 'primary_sector' => $validated['primary_sector'],

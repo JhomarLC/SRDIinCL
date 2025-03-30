@@ -24,9 +24,9 @@ class Participant extends Model
         'religion',
         'is_indigenous',
         'tribe_name',
-        'province',
-        'municipality',
-        'barangay',
+        'province_code',
+        'municipality_code',
+        'barangay_code',
         'zip_code',
         'house_number_sitio_purok',
         'primary_sector',
@@ -36,6 +36,22 @@ class Participant extends Model
         'farm_role',
         'rsbsa_number',
     ];
+    public function region() {
+        return $this->belongsTo(Region::class, 'region_code', 'code');
+    }
+
+    public function province() {
+        return $this->belongsTo(Province::class, 'province_code', 'code');
+    }
+
+    public function municipality() {
+        return $this->belongsTo(Municipality::class, 'municipality_code', 'code');
+    }
+
+    public function barangay() {
+        return $this->belongsTo(Barangay::class, 'barangay_code', 'code');
+    }
+
     public function training_attendance()
     {
         return $this->hasMany(TrainingAttendance::class, 'participant_id');

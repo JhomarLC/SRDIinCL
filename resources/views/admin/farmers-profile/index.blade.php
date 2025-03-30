@@ -38,12 +38,13 @@
                 </a>
             </div>
             <div class="card-body">
-                <table id="admins" class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">
+                <table id="farmers" class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">
                     <thead>
                         <tr>
                             <th data-ordering="false">Full Name</th>
-                            <th data-ordering="false">Email</th>
-                            <th data-ordering="false">Status</th>
+                            <th data-ordering="false">Gender</th>
+                            <th data-ordering="false">Phone Number</th>
+                            <th data-ordering="false">Address</th>
                             <th>Action</th>
                         </tr>
                     </thead>

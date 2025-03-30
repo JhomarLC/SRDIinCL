@@ -172,21 +172,21 @@ aria-labelledby="pills-personal-info-tab">
         <div class="row g-3">
             <div class="col-sm-4" >
                 <label for="civilStatus" class="form-label">Province</label>
-                <select class="form-control select2" id="province" name="province" aria-label="Default select example">
+                <select class="form-control select2" id="province" name="province_code" aria-label="Default select example">
                     <option selected disabled hidden>-- SELECT PROVINCE --</option>
                 </select>
                 <div class="invalid-feedback">Please select province</div>
             </div>
             <div class="col-sm-4" >
                 <label for="civilStatus" class="form-label">Municipality</label>
-                <select class="form-control select2" id="municipality" name="municipality" aria-label="Default select example" disabled>
+                <select class="form-control select2" id="municipality" name="municipality_code" aria-label="Default select example" disabled>
                     <option selected disabled hidden>-- SELECT MUNICIPALITY --</option>
                 </select>
                 <div class="invalid-feedback">Please select civil municipality</div>
             </div>
             <div class="col-sm-4" >
                 <label for="barangay" class="form-label">Barangay</label>
-                <select class="form-control select2" id="barangay" name="barangay" aria-label="Default select example" disabled>
+                <select class="form-control select2" id="barangay" name="barangay_code" aria-label="Default select example" disabled>
                     <option selected disabled hidden>-- SELECT BARANGAY --</option>
                 </select>
                 <div class="invalid-feedback">Please select civil barangay</div>

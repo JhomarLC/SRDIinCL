@@ -36,9 +36,10 @@ return new class extends Migration
             $table->string('religion');
             $table->boolean('is_indigenous');
             $table->string('tribe_name')->nullable();
-            $table->string('province');
-            $table->string('municipality');
-            $table->string('barangay');
+            $table->string('province_code');
+            $table->string('municipality_code');
+            $table->string('barangay_code');
+            $table->string('region_code')->nullable(); // Optional, if used
             $table->string('zip_code');
             $table->string('house_number_sitio_purok')->nullable();
             $table->enum('primary_sector', [

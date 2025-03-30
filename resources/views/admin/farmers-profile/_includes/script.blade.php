@@ -1,18 +1,16 @@
 <script>
     // VIEW
     $(document).ready(function () {
-        $('.select2').select2();
-        $("#admins").DataTable({
+        $("#farmers").DataTable({
             processing: true,
             serverSide: true,
             responsive: true,
-            ajax: "{{ route('admin-management.get-index') }}",
+            ajax: "{{ route('farmers-profile.get-index') }}",
             columns: [
                 { data: 'full_name', name: 'full_name' },
-                { data: 'email', name: 'email' },
-                { data: 'status', name: 'status', orderable: false, searchable: false },
-
-                { data: 'actions', name: 'actions', orderable: false, searchable: false }
+                { data: 'gender', name: 'gender' },
+                { data: 'phone_number', name: 'phone_number' },
+                { data: 'address', name: 'address' }
             ]
         });
     });
@@ -299,9 +297,9 @@
                 formData.append("is_indigenous", isIndigenous);
                 formData.append("tribe_name", $("#tribe_name").val() || '');
 
-                formData.append("province", $("#province").val() || '');
-                formData.append("municipality", $("#municipality").val() || '');
-                formData.append("barangay", $("#barangay").val() || '');
+                formData.append("province_code", $("#province").val() || '');
+                formData.append("municipality_code", $("#municipality").val() || '');
+                formData.append("barangay_code", $("#barangay").val() || '');
                 formData.append("house_number_sitio_purok", $("#house_number_sitio_purok").val() || '');
                 formData.append("zip_code", $("#zip_code").val() || '');
                 formData.append("primary_sector", $("#primary_sector").val() || '');

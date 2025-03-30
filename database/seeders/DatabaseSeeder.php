@@ -32,5 +32,12 @@ class DatabaseSeeder extends Seeder
             EmploymentTypeSeeder::class, // Register the custom seeder
             TrainingsSeeder::class, // Register the custom seeder
         ]);
+
+        $this->call([
+            RegionSeeder::class,
+            ProvinceSeeder::class,
+            MunicipalitySeeder::class,
+            BarangaySeeder::class,
+        ]);
     }
 }
