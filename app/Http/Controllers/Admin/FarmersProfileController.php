@@ -60,14 +60,16 @@ class FarmersProfileController extends Controller
         if ($step == 'trainings') {
             $rules = [
                 'training_title.*' => 'required|string|max:255',
-                'training_year.*' => 'required|string',
+                'training_date.*' => 'required|string',
+                'training_location.*' => 'required|string',
                 'conducted_by.*' => 'required|string|max:255',
                 'personally_paid.*' => 'required|in:yes,no',
             ];
 
             $messages = [
                 'training_title.*.required' => 'Please enter the training title.',
-                'training_year.*.required' => 'Please enter the date of training was conducted.',
+                'training_date.*.required' => 'Please enter the date of training was conducted.',
+                'training_location.*.required' => 'Please enter the location of the training.',
                 'conducted_by.*.required' => 'Please enter the agency name.',
                 'personally_paid.*.required' => 'Please indicate if you paid for the training.',
             ];
@@ -246,10 +248,56 @@ class FarmersProfileController extends Controller
                 return $participants->phone_number ?? 'N/A'; // Safely access profile attribute
             })
             ->addColumn('address', function ($participants) {
-                // Combine barangay, municipality, province
-                return "{$participants->barangay->name}, {$participants->municipality->name}, {$participants->province->name}";
+                $addressParts = [];
+
+                // Add house number/sitio/purok only if it exists
+                if (!empty($participants->house_number_sitio_purok)) {
+                    $addressParts[] = $participants->house_number_sitio_purok;
+                }
+
+                // Add other parts (assuming they always exist, otherwise add checks here too)
+                $addressParts[] = optional($participants->barangay)->name;
+                $addressParts[] = optional($participants->municipality)->name;
+                $addressParts[] = optional($participants->province)->name;
+                $addressParts[] = $participants->zip_code;
+
+                return implode(', ', array_filter($addressParts));
             })
-            ->rawColumns(['full_name', 'phone_number', 'address'])
+            ->addColumn('actions', function ($participants) {
+                return '
+                <a href="' . route('farmers-profile.show', $participants->id) . '" class="btn btn-sm btn-secondary editAdmin">
+                    <i class="ri-eye-fill"></i> View
+                </a>
+                <button class="btn btn-sm btn-danger status-deactivate">
+                    <i class="ri-archive-fill"></i> Delete
+                </button>
+            ';
+            })
+            ->rawColumns(['full_name', 'phone_number', 'address', 'actions'])
+            ->make(true);
+    }
+
+    public function getTrainings()
+    {
+        $trainings = Training::latest()->get();
+        return DataTables::of($trainings)
+            ->addColumn('training_date', function ($trainings) {
+                return $trainings->training_date_formatted;
+            })
+            ->addColumn('personally_paid', function ($trainings) {
+                return $trainings->personally_paid ? 'Yes' : 'No';
+            })
+            ->addColumn('actions', function ($trainings) {
+                return '
+                <a href="' . route('farmers-profile.show', 1) . '" class="btn btn-sm btn-secondary editAdmin">
+                    <i class="ri-eye-fill"></i> View
+                </a>
+                <button class="btn btn-sm btn-danger status-deactivate">
+                    <i class="ri-archive-fill"></i> Delete
+                </button>
+            ';
+            })
+            ->rawColumns(['actions'])
             ->make(true);
     }
     /**
@@ -297,7 +345,8 @@ class FarmersProfileController extends Controller
 
             // Trainings
             'training_title.*' => 'required|string|max:255',
-            'training_year.*' => 'required|string',
+            'training_date.*' => 'required|string',
+            'training_location.*' => 'required|string',
             'conducted_by.*' => 'required|string|max:255',
             'personally_paid.*' => 'required|in:yes,no',
 
@@ -343,7 +392,8 @@ class FarmersProfileController extends Controller
 
             // Trainings
             'training_title.*.required' => 'Please enter the training title.',
-            'training_year.*.required' => 'Please enter the date of training was conducted.',
+            'training_date.*.required' => 'Please enter the date of training was conducted.',
+            'training_location.*.required' => 'Please enter the location of the training.',
             'conducted_by.*.required' => 'Please enter the agency name.',
             'personally_paid.*.required' => 'Please indicate if you paid for the training.',
 
@@ -482,10 +532,11 @@ class FarmersProfileController extends Controller
 
             // 2. Save trainings
             foreach ($validated['training_title'] as $index => $title) {
-                TrainingAttendance::create([
+                Training::create([
                     'participant_id' => $participant->id,
                     'training_title' => $title,
-                    'training_year' => $validated['training_year'][$index],
+                    'training_date' => $validated['training_date'][$index],
+                    'training_location' =>  $validated['training_location'][$index],
                     'conducted_by' => $validated['conducted_by'][$index],
                     'personally_paid' => $validated['personally_paid'][$index] === 'yes',
                 ]);
@@ -543,7 +594,7 @@ class FarmersProfileController extends Controller
 
             // 6. Save training results
             TrainingResults::create([
-                'participant_id' => $participant->id,
+                'training_id' => $participant->id,
                 'pre_test_score' => $validated['pre_test_score'],
                 'post_test_score' => $validated['post_test_score'],
                 'total_test_items' => $validated['total_test_items'],
@@ -553,7 +604,6 @@ class FarmersProfileController extends Controller
                 'overall_training_eval_score' => $validated['overall_training_eval_score'],
                 'trainer_rating' => $validated['trainer_rating'],
             ]);
-
 
             DB::commit();
 
@@ -571,7 +621,21 @@ class FarmersProfileController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $participant = Participant::with([
+            'trainings.training_result' => function ($query) {
+                $query->latest();
+            },
+            'food_restrictions',
+            'medical_conditions',
+            'emergency_contact',
+            'farming_data'
+        ])->findOrFail($id);
+
+
+        // Get most recent GIK score
+        $recentGIK = optional($participant->trainings->first())->gik_score;
+
+        return view('admin.farmers-profile.show',  compact(['participant', 'recentGIK']));
     }
 
     /**

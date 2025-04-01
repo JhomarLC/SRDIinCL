@@ -75,11 +75,11 @@
         <div class="col-sm-3">
             <label class="form-label">Select Farming Season</label>
             <div class="form-check form-check-inline mt-2">
-                <input class="form-check-input" type="radio" name="season[1]" id="seasonDry1" value="Wet Season" checked>
+                <input class="form-check-input" type="radio" name="season[1]" id="seasonDry1" value="Dry Season" checked>
                 <label class="form-check-label" for="seasonDry1">Dry</label>
             </div>
             <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="season[1]" id="seasonWet1" value="Dry Season">
+                <input class="form-check-input" type="radio" name="season[1]" id="seasonWet1" value="Wet Season">
                 <label class="form-check-label" for="seasonWet1">Wet</label>
             </div>
         </div>

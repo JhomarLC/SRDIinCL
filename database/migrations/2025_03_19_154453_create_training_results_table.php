@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('training_results', function (Blueprint $table) {
             $table->id();
-            $table->foreignId(column: 'participant_id')->constrained()->onDelete('cascade');
+            $table->foreignId('training_id')->constrained()->onDelete('cascade');
             $table->integer('pre_test_score');
             $table->integer('post_test_score');
             $table->integer('total_test_items');

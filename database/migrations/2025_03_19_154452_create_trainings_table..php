@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('training_attendances', function (Blueprint $table) {
+        Schema::create('trainings', function (Blueprint $table) {
             $table->id();
             $table->foreignId(column: 'participant_id')->constrained()->onDelete('cascade');
             $table->string('training_title');
-            $table->string('training_year');
+            $table->string('training_date');
+            $table->string('training_location');
             $table->string('conducted_by');
             $table->boolean('personally_paid');
             $table->timestamps();
@@ -27,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('training_attendances');
+        Schema::dropIfExists('trainings');
     }
 };

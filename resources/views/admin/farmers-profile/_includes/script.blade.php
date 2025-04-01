@@ -8,9 +8,23 @@
             ajax: "{{ route('farmers-profile.get-index') }}",
             columns: [
                 { data: 'full_name', name: 'full_name' },
-                { data: 'gender', name: 'gender' },
                 { data: 'phone_number', name: 'phone_number' },
-                { data: 'address', name: 'address' }
+                { data: 'gender', name: 'gender' },
+                { data: 'civil_status', name: 'civil_status' },
+                { data: 'address', name: 'address' },
+                { data: 'actions', name: 'actions' }
+            ]
+        });
+        $("#trainings").DataTable({
+            processing: true,
+            serverSide: true,
+            responsive: true,
+            ajax: "{{ route('farmers-profile.get-trainings') }}",
+            columns: [
+                { data: 'training_title', name: 'training_title' },
+                { data: 'training_date', name: 'training_date' },
+                { data: 'personally_paid', name: 'personally_paid' },
+                { data: 'actions', name: 'actions' }
             ]
         });
     });
@@ -323,11 +337,13 @@
                 $("#trainingContainer .training-entry").each(function (index) {
                     const title = $(this).find('[name^="training_title"]').val();
                     const year = $(this).find('[name^="training_year"]').val();
+                    const location = $(this).find('[name^="training_location"]').val();
                     const conductedBy = $(this).find('[name^="conducted_by"]').val();
                     const paid = $(this).find(`input[name="personally_paid[${index}]"]:checked`).val();
 
                     formData.append(`training_title[${index}]`, title || '');
                     formData.append(`training_year[${index}]`, year || '');
+                    formData.append(`training_location[${index}]`, location || '');
                     formData.append(`conducted_by[${index}]`, conductedBy || '');
                     formData.append(`personally_paid[${index}]`, paid || '');
                 });

@@ -24,6 +24,6 @@ class FarmingData extends Model
 
     public function participant()
     {
-        return $this->belongsToMany(Participant::class, 'participant_id');
+        return $this->belongsTo(Participant::class, 'participant_id');
     }
 }

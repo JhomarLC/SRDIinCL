@@ -19,6 +19,11 @@ class EmergencyContact extends Model
         'contact_number',
     ];
 
+    // In EmergencyContact.php
+    public function getFullNameAttribute()
+    {
+        return trim("{$this->first_name} {$this->middle_name} {$this->last_name} {$this->suffix}");
+    }
 
     public function participant()
     {

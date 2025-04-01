@@ -45,30 +45,30 @@ aria-labelledby="pills-emergency-contact-tab">
                 <option selected disabled hidden>-- SELECT RELATIONSHIP --</option>
 
                 <optgroup label="Family">
-                    <option value="spouse">Spouse</option>
-                    <option value="parent" selected>Parent</option>
-                    <option value="child">Child</option>
-                    <option value="sibling">Sibling</option>
-                    <option value="grandparent">Grandparent</option>
-                    <option value="grandchild">Grandchild</option>
-                    <option value="aunt_uncle">Aunt / Uncle</option>
-                    <option value="cousin">Cousin</option>
-                    <option value="niece_nephew">Niece / Nephew</option>
-                    <option value="in_law">In-law</option>
+                    <option value="Spouse">Spouse</option>
+                    <option value="Parent" selected>Parent</option>
+                    <option value="Child">Child</option>
+                    <option value="Sibling">Sibling</option>
+                    <option value="Grandparent">Grandparent</option>
+                    <option value="Grandchild">Grandchild</option>
+                    <option value="Aunt_uncle">Aunt / Uncle</option>
+                    <option value="Cousin">Cousin</option>
+                    <option value="Niece_nephew">Niece / Nephew</option>
+                    <option value="In_law">In-law</option>
                 </optgroup>
 
                 <optgroup label="Non-Family">
-                    <option value="friend">Friend</option>
-                    <option value="partner">Partner</option>
-                    <option value="roommate">Roommate</option>
-                    <option value="neighbor">Neighbor</option>
-                    <option value="coworker">Coworker</option>
-                    <option value="supervisor">Supervisor</option>
+                    <option value="Friend">Friend</option>
+                    <option value="Partner">Partner</option>
+                    <option value="Roommate">Roommate</option>
+                    <option value="Neighbor">Neighbor</option>
+                    <option value="Coworker">Coworker</option>
+                    <option value="Supervisor">Supervisor</option>
                 </optgroup>
 
                 <optgroup label="Other / Legal">
-                    <option value="legal_guardian">Legal Guardian</option>
-                    <option value="caregiver">Caregiver</option>
+                    <option value="Legal_guardian">Legal Guardian</option>
+                    <option value="Caregiver">Caregiver</option>
                 </optgroup>
             </select>
             <div class="invalid-feedback">Please enter relationship</div>

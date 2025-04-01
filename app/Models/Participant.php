@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -36,6 +37,26 @@ class Participant extends Model
         'farm_role',
         'rsbsa_number',
     ];
+    // In Participants.php model
+    public function getFullNameAttribute()
+    {
+        $middleName = $this->middle_name ? ' ' . $this->middle_name : '';
+        $suffix = $this->suffix ? ' ' . $this->suffix : '';
+        return "{$this->first_name}{$middleName} {$this->last_name}{$suffix}";
+    }
+
+    public function getAgeAttribute()
+    {
+        return Carbon::parse($this->birth_date)->age;
+    }
+    public function getRecentGikAttribute()
+    {
+        $recentTraining = $this->trainings()->latest()->first();
+
+        return optional($recentTraining?->training_result)->gain_in_knowledge;
+    }
+
+
     public function region() {
         return $this->belongsTo(Region::class, 'region_code', 'code');
     }
@@ -52,9 +73,9 @@ class Participant extends Model
         return $this->belongsTo(Barangay::class, 'barangay_code', 'code');
     }
 
-    public function training_attendance()
+    public function trainings()
     {
-        return $this->hasMany(TrainingAttendance::class, 'participant_id');
+        return $this->hasMany(Training::class, 'participant_id');
     }
 
     public function food_restrictions()

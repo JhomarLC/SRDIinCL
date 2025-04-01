@@ -30,7 +30,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             PositionSeeder::class, // Register the custom seeder
             EmploymentTypeSeeder::class, // Register the custom seeder
-            TrainingsSeeder::class, // Register the custom seeder
+            // TrainingsSeeder::class, // Register the custom seeder
         ]);
 
         $this->call([

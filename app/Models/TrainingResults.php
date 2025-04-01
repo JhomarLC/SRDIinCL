@@ -10,7 +10,7 @@ class TrainingResults extends Model
     use HasFactory;
 
     protected $fillable = [
-        'participant_id',
+        'training_id',
         'pre_test_score',
         'post_test_score',
         'total_test_items',
@@ -21,8 +21,8 @@ class TrainingResults extends Model
         'trainer_rating',
     ];
 
-    public function participant()
+    public function training()
     {
-        return $this->belongsToMany(Participant::class, 'participant_id');
+        return $this->belongsTo(Training::class, 'training_id');
     }
 }

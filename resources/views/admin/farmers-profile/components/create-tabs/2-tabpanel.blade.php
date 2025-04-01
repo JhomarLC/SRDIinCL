@@ -24,18 +24,10 @@ aria-labelledby="pills-trainings-tab">
                         <div class="invalid-feedback">Please enter training title</div>
                     </div>
                     <div class="col-sm-5">
-                        {{-- <label for="training_year" class="form-label">Date</label> --}}
+                        {{-- <label for="training_date" class="form-label">Date</label> --}}
                             <label for="training_date" class="form-label">Training Date</label>
-                            <input type="date" class="form-control" id="training_year" name="training_year[0]" value="2025-01-20">
-
-                        <div class="invalid-feedback">Please select year conducted</div>
-                            {{-- <div class="invalid-feedback">Please enter Birthdate</div> --}}
-                        {{-- <select class="form-control mb-3 select2" name="training_year[0]" aria-label="Default select example">
-                            <option selected disabled hidden>-- SELECT YEAR --</option>
-                            <option value="2023">2023</option>
-                            <option value="2024">2024</option>
-                            <option value="2025">2025</option>
-                        </select> --}}
+                            <input type="date" class="form-control" id="training_date" name="training_date[0]" value="2025-01-20">
+                            <div class="invalid-feedback">Please select year conducted</div>
                     </div>
                 </div>
             </div>
@@ -57,6 +49,12 @@ aria-labelledby="pills-trainings-tab">
                             <input class="form-check-input" type="radio" name="personally_paid[0]" id="paid_no" value="no" checked>
                             <label class="form-check-label" for="paid_no">No</label>
                         </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <label for="training_location " class="form-label">Training Location</label>
+                        <input type="text" class="form-control" id="training_location" name="training_location[0]"
+                            placeholder="Enter group of agency that conducted the training">
+                        <div class="invalid-feedback">Please enter training location</div>
                     </div>
                 </div>
             </div>

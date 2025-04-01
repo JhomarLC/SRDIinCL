@@ -11,6 +11,6 @@ class FoodRestrictions extends Model
     protected $fillable = ['participant_id', 'food_restriction'];
     public function participants()
     {
-        return $this->belongsTo(EmploymentType::class, 'employment_type_id');
+        return $this->belongsTo(Participant::class, 'participant_id');
     }
 }

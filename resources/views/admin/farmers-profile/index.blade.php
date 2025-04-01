@@ -42,8 +42,9 @@
                     <thead>
                         <tr>
                             <th data-ordering="false">Full Name</th>
-                            <th data-ordering="false">Gender</th>
                             <th data-ordering="false">Phone Number</th>
+                            <th data-ordering="false">Gender</th>
+                            <th data-ordering="false">Civil Status</th>
                             <th data-ordering="false">Address</th>
                             <th>Action</th>
                         </tr>
