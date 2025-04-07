@@ -23,8 +23,8 @@ return new class extends Migration
             $table->decimal('total_yield_caban');
             $table->decimal('weight_per_caban_kg');
             $table->decimal('price_per_kg');
-            $table->decimal('total_income');
-            $table->decimal('total_cost');
+            $table->decimal('total_income')->nullable();
+            $table->decimal('total_cost')->nullable();
             $table->decimal('other_crops')->nullable();
             $table->timestamps();
         });

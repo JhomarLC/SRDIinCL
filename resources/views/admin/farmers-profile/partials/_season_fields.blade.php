@@ -20,11 +20,11 @@
     </div>
     <div class="col-12 col-md-4 mt-4">
         <p class="mb-1 fw-bold">Total Income :</p>
-        <input type="text" class="form-control" value="{{ $data->total_income }}" disabled>
+        <input type="text" class="form-control" placeholder="Add Baseline Monitoring" disabled>
     </div>
     <div class="col-12 col-md-4 mt-4">
         <p class="mb-1 fw-bold">Total Cost :</p>
-        <input type="text" class="form-control" value="{{ $data->total_cost }}" disabled>
+        <input type="text" class="form-control" placeholder="Add Baseline Monitoring" disabled>
     </div>
 </div>
 

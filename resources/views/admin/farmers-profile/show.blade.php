@@ -102,7 +102,7 @@
                     </li>
                 </ul>
                 <div class="flex-shrink-0">
-                    <a href="pages-profile-settings" class="btn btn-success"><i
+                    <a href="{{ route('farmers-profile.edit', $participant->id) }}" class="btn btn-success"><i
                             class="ri-edit-box-line align-bottom"></i> Edit Profile</a>
                 </div>
             </div>

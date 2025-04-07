@@ -103,7 +103,7 @@ aria-labelledby="pills-personal-info-tab">
                     <option value="High School">High School</option>
                     <option value="Vocational">Vocational</option>
                     <option value="College Degree" selected>College Degree</option>
-                    <option value="Master's Degree">Master's Degree</option>
+                    <option value="Masters Degree">Masters Degree</option>
                     <option value="Doctorate Degree">Doctorate Degree</option>
                     <option value="Undergraduate">Undergraduate</option>
                     <option value="Others">Others</option>
@@ -129,8 +129,8 @@ aria-labelledby="pills-personal-info-tab">
 
             <!-- Disability Selection Dropdown -->
             <div class="col-sm-3" id="disabilitySelectContainer" >
-                <label for="disability" class="form-label">If Yes, Select Disability</label>
-                <select class="form-control mb-3 select2" id="disability" name="disability" aria-label="Default select example" disabled>
+                <label for="disability_type" class="form-label">If Yes, Select Disability</label>
+                <select class="form-control mb-3 select2" id="disability_type" name="disability_type" aria-label="Default select example" disabled>
                     <option selected disabled hidden>-- SELECT DISABILITY --</option>
                     <option value="Visual Impairment">1 - Visual Impairment</option>
                     <option value="Hearing Loss">2 - Hearing Loss</option>
@@ -217,9 +217,9 @@ aria-labelledby="pills-personal-info-tab">
                 <label for="primary_sector" class="form-label">Primary sector involved in</label>
                 <select class="form-control select2" id="primary_sector" name="primary_sector" aria-label="Default select example">
                     <option selected disabled hidden>-- SELECT PRIMARY SECTOR --</option>
-                    <option value="Farmer/Seed Grower">Farmer or Seed grower</option>
+                    <option value="Farmer/Seed Grower" selected>Farmer or Seed grower</option>
                     <option value="Extension Worker">Extension workers and other intermediaries (e.g. LFT, trainer, extension worker)</option>
-                    <option value="Researcher" selected>Researcher</option>
+                    <option value="Researcher">Researcher</option>
                     <option value="Educator">Educator (elementary/high school/college teachers)</option>
                     <option value="Student">Student (e.g. college student, post-graduate student)</option>
                     <option value="Policy Maker">Policy maker (e.g. local chief executive)</option>
@@ -254,7 +254,7 @@ aria-labelledby="pills-personal-info-tab">
             </div>
             <div class="col-sm-6">
                 <label for="rsbsa_number" class="form-label">RSBSA Number</label>
-                <input type="text" class="form-control" id="rsbsa_number" name="rsbsa_number" placeholder="Enter Farmers' Association" value="102938">
+                <input type="text" class="form-control" id="rsbsa_number" name="rsbsa_number" placeholder="Enter Farmers' Association">
                 <div class="invalid-feedback">Please enter RSBSA Number</div>
             </div>
         </div>

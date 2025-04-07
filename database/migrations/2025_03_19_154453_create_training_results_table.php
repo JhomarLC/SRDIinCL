@@ -13,7 +13,10 @@ return new class extends Migration
     {
         Schema::create('training_results', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('training_id')->constrained()->onDelete('cascade');
+            $table->foreignId('participant_id')->constrained()->onDelete('cascade');
+            $table->string('training_title_main')->default('Training on Pests and Nutrient Management (PNM)');
+            $table->date('training_date_main');
+            $table->string('training_location_main');
             $table->integer('pre_test_score');
             $table->integer('post_test_score');
             $table->integer('total_test_items');

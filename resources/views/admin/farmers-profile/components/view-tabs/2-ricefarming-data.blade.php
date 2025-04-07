@@ -3,6 +3,12 @@
         <div class="card-body">
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3">
                 <h5 class="card-title mb-2 mb-md-0">Data on Rice Farming</h5>
+                <div class="text-muted overflow-hidden">
+                    <button class="btn btn-success">
+                        <i class="ri-file-add-fill"></i>
+                        Add Baseline Monitoring
+                    </button>
+                </div>
             </div>
             @php
                 // Group Wet/Dry by year
@@ -30,7 +36,7 @@
                                 <div class="flex-grow-1 text-muted overflow-hidden">
                                     <div class="badge bg-secondary-subtle text-secondary fs-12">Wet Season</div>
                                     <p class="text-muted mb-0 mt-2">Date : <span class="fw-semibold text-body">
-                                        March 16 - September 15 {{ $seasons['Wet Season']->year_training_conducted }}
+                                        March 16, {{ $seasons['Wet Season']->year_training_conducted }} - September 15, {{ $seasons['Wet Season']->year_training_conducted }}
                                     </span></p>
                                 </div>
                             </div>
@@ -50,7 +56,7 @@
                                 <div class="flex-grow-1 text-muted overflow-hidden">
                                     <div class="badge bg-primary-subtle text-primary fs-12">Dry Season</div>
                                     <p class="text-muted mb-0 mt-2">Date : <span class="fw-semibold text-body">
-                                        September 16 - March 15 {{ (int) explode('-', $seasons['Dry Season']->year_training_conducted)[1] ?? ((int) $seasons['Dry']->year_training_conducted + 1) }}
+                                        September 16, {{ (int) explode('-', $seasons['Dry Season']->year_training_conducted)[0] ?? ((int) $seasons['Dry']->year_training_conducted + 1) }} - March 15, {{ (int) explode('-', $seasons['Dry Season']->year_training_conducted)[1] ?? ((int) $seasons['Dry']->year_training_conducted + 1) }}
                                     </span></p>
                                 </div>
                             </div>

@@ -60,7 +60,7 @@ return new class extends Migration
                 'High School',
                 'Vocational',
                 'College Degree',
-                'Master’s Degree',
+                "Masters Degree",
                 'Doctorate Degree',
                 'Undergraduate',
                 'Others'
@@ -69,7 +69,7 @@ return new class extends Migration
                 'Farm Owner',
                 'Relative of Farm Owner'
             ]);
-            $table->string('rsbsa_number');
+            $table->string('rsbsa_number')->nullable();
             $table->timestamps();
         });
     }

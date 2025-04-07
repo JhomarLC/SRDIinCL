@@ -8,117 +8,141 @@
 <!--datatable responsive css-->
 <link href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap.min.css" rel="stylesheet" type="text/css" />
 <link href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css" rel="stylesheet" type="text/css" />
+<!-- select2  -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" type="text/css" />
+<meta name="csrf-token" content="{{ csrf_token() }}">
 @endsection
 @section('content')
 
 @component('components.breadcrumb')
     @slot('breadcrumbs', [
         ['label' => 'Admin', 'route' => 'dashboard'],
-        ['label' => 'Admin Account Management', 'route' => 'admin-management.index']
+        ['label' => 'Farmers Profile', 'route' => 'farmers-profile.index']
     ])
     @slot('title')
-        Update Account
+        Update Farmers Profile
     @endslot
 @endcomponent
-@component('components.alert')
-@endcomponent
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-lg-6">
-            <div class="card">
-                <div class="card-body p-4">
-                    <form method="POST" action="{{ route('admin-management.update', $admin->id) }}">
-                        @csrf
-                        @method('PUT')
 
-                        <div class="card-header">
-                            <div class="mb-3">
-                                <label for="name" class="form-label">Full Name <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control @error('name') is-invalid @enderror" value="{{ old('name', $admin->name) }}" disabled id="name" name="name" placeholder="Enter name">
-                                @error('name')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="username" class="form-label">Email <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control @error('email') is-invalid @enderror" value="{{ old('email', $admin->email) }}" disabled id="email" name="email" placeholder="Enter username">
-                                @error('email')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label" for="password">Password <span class="text-danger">*</span></label>
-                                <div class="position-relative auth-pass-inputgroup mb-3">
-                                    <input type="password" value="{{ old('password') }}" class="form-control password-input pe-5 @error('password') is-invalid @enderror" name="password" placeholder="Enter password" id="password">
-                                    <button class="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted password-addon" type="button" id="password-addon"><i class="ri-eye-fill align-middle"></i></button>
-                                    @error('password')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label" for="password_confirmation">Confirm Password <span class="text-danger">*</span></label>
-                                <div class="position-relative auth-pass-inputgroup mb-3">
-                                    <input type="password" value="{{ old('password_confirmation') }}" class="form-control password-input pe-5 @error('password_confirmation') is-invalid @enderror" name="password_confirmation" placeholder="Enter password" id="password_confirmation">
-                                    <button class="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted password-addon" type="button" id="password-addon"><i class="ri-eye-fill align-middle"></i></button>
-                                    @error('password_confirmation')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card-body">
-                            <div class="text-end">
-                                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#myModal"><i class="ri-user-add-line"></i> Update Admin</button>
-                            </div>
-                        </div>
-
-                        <!-- Default Modals -->
-                        <div id="myModal" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                    <h5 class="modal-title" id="myModalLabel">Confirm Action</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"> </button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <div class="mb-3">
-                                            <label class="form-label" for="admin_password">Enter your admin password <span class="text-danger">*</span></label>
-                                            <div class="position-relative auth-pass-inputgroup mb-3">
-                                                <input type="password" class="form-control password-input pe-5 @error('admin_password') is-invalid @enderror" name="admin_password" placeholder="Enter admin password" id="password_admin">
-                                                <button class="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted password-addon" type="button" id="password-addon"><i class="ri-eye-fill align-middle"></i></button>
-                                                @error('admin_password')
-                                                    <span class="invalid-feedback" role="alert">
-                                                        <strong>{{ $message }}</strong>
-                                                    </span>
-                                                @enderror
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-primary">Save Changes</button>
-                                    </div>
-                                </div><!-- /.modal-content -->
-                            </div><!-- /.modal-dialog -->
-                        </div><!-- /.modal -->
-                    </form>
-                </div>
+<div class="profile-foreground position-relative mx-n4 mt-n4">
+    <div class="profile-wid-bg">
+        <img src="{{ URL::asset('images/philrice.jpg') }}" alt="" class="profile-wid-img" />
+    </div>
+</div>
+<div class="pt-4 mb-4 mb-lg-3 pb-lg-4 profile-wrapper">
+    <div class="row g-4">
+        <div class="col-auto">
+            <div class="avatar-lg">
+                <img src="@if (Auth::user()->avatar != '') {{ URL::asset('images/' . Auth::user()->avatar) }}@else{{ URL::asset('build/images/users/user-dummy-img.jpg') }} @endif"
+                    alt="user-img" class="img-thumbnail rounded-circle" />
             </div>
         </div>
+        <!--end col-->
+        <div class="col">
+            <div class="p-2">
+                <h3 class="text-white mb-1">{{ $participant->full_name }}</h3>
+                <p class="text-white text-opacity-75">Farmer</p>
+                <div class="hstack text-white-50 gap-1">
+                    <div class="me-2">
+                        <i class="ri-map-pin-user-line me-1 text-white text-opacity-75 fs-16 align-middle"></i>
+                        {{ $participant->barangay->name ?? '' }}, {{ $participant->municipality->name ?? '' }}, {{ $participant->province->name ?? '' }}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!--end col-->
+        {{-- <div class="col-12 col-lg-auto order-last order-lg-0">
+            <div class="row text text-white-50 text-center">
+                <div class="col-6 p-2">
+                    <h4 class="text-white mb-1">{{ $participant->trainings->count() }}</h4>
+                    <p class="fs-14 mb-0">Total No. of Trainings</p>
+                </div>
+
+                <div class="col-6 p-2">
+                    <h4 class="text-white mb-1">{{ $participant->recent_gik ?? 'N/A' }}%</h4>
+                    <p class="fs-14 mb-0">Recent GIK</p>
+                </div>
+            </div>
+        </div> --}}
+        <!--end col-->
+
     </div>
+    <!--end row-->
+</div>
+<div class="row justify-content-center">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title mb-0">Farmers Profile</h4>
+            </div><!-- end card header -->
+            <div class="card-body">
+                <form action="#" id="updateFarmersProfileForm" class="form-steps" autocomplete="off">
+                    <div class="text-center pt-3 pb-4 mb-1">
+                        <h5>Fillout Farmers Profile</h5>
+                    </div>
+                    <div id="custom-progress-bar" class="progress-nav mb-4">
+                        <div class="progress" style="height: 1px;">
+                            <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0"
+                                aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+
+                        <ul class="nav nav-pills progress-bar-tab custom-nav" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link rounded-pill active" data-progressbar="custom-progress-bar"
+                                    id="pills-personal-info-tab" data-bs-toggle="pill" data-bs-target="#pills-personal-info"
+                                    type="button" role="tab" aria-controls="pills-personal-info"
+                                    aria-selected="true">1</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link rounded-pill" data-progressbar="custom-progress-bar"
+                                    id="pills-trainings-tab" data-bs-toggle="pill" data-bs-target="#pills-trainings"
+                                    type="button" role="tab" aria-controls="pills-trainings"
+                                    aria-selected="false">2</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link rounded-pill" data-progressbar="custom-progress-bar"
+                                    id="pills-other-info-tab" data-bs-toggle="pill" data-bs-target="#pills-other-info"
+                                    type="button" role="tab" aria-controls="pills-other-info"
+                                    aria-selected="false">3</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link rounded-pill" data-progressbar="custom-progress-bar"
+                                    id="pills-data-ricefarming-tab" data-bs-toggle="pill" data-bs-target="#pills-data-ricefarming"
+                                    type="button" role="tab" aria-controls="pills-data-ricefarming"
+                                    aria-selected="false">4</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link rounded-pill" data-progressbar="custom-progress-bar"
+                                    id="pills-emergency-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-emergency-contact"
+                                    type="button" role="tab" aria-controls="pills-emergency-contact"
+                                    aria-selected="false">5</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link rounded-pill" data-progressbar="custom-progress-bar"
+                                    id="pills-training-result-tab" data-bs-toggle="pill" data-bs-target="#pills-training-result"
+                                    type="button" role="tab" aria-controls="pills-training-result"
+                                    aria-selected="false">6</button>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="tab-content">
+                        @include('admin.farmers-profile.components.update-tabs.1-tabpanel')
+                        @include('admin.farmers-profile.components.update-tabs.2-tabpanel')
+                        @include('admin.farmers-profile.components.update-tabs.3-tabpanel')
+                        @include('admin.farmers-profile.components.update-tabs.4-tabpanel')
+                        @include('admin.farmers-profile.components.update-tabs.5-tabpanel')
+                        @include('admin.farmers-profile.components.update-tabs.6-tabpanel')
+                    </div>
+                    <!-- end tab content -->
+                </form>
+            </div>
+            <!-- end card body -->
+        </div>
+        <!-- end card -->
+    </div>
+
 </div>
 @endsection
 @section('script')
@@ -136,7 +160,11 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
 
-<script src="{{ URL::asset('build/js/pages/datatables.init.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
+<script src="{{ URL::asset('admin-js/admin.js') }}"></script>
+<script src='{{ URL::asset('build/libs/choices.js/public/assets/scripts/choices.min.js') }}'></script>
 <script src="{{ URL::asset('build/js/app.js') }}"></script>
+@include('admin.farmers-profile._includes.script')
+@include('admin.farmers-profile._includes.update-script')
 @endsection

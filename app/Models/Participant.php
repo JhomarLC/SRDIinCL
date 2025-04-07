@@ -56,6 +56,21 @@ class Participant extends Model
         return optional($recentTraining?->training_result)->gain_in_knowledge;
     }
 
+    public function getFullAddressAttribute()
+    {
+        $addressParts = [];
+
+        if (!empty($this->house_number_sitio_purok)) {
+            $addressParts[] = $this->house_number_sitio_purok;
+        }
+
+        $addressParts[] = optional($this->barangay)->name;
+        $addressParts[] = optional($this->municipality)->name;
+        $addressParts[] = optional($this->province)->name;
+        $addressParts[] = $this->zip_code;
+
+        return implode(', ', array_filter($addressParts));
+    }
 
     public function region() {
         return $this->belongsTo(Region::class, 'region_code', 'code');
@@ -100,6 +115,6 @@ class Participant extends Model
 
     public function training_results()
     {
-        return $this->hasMany(TrainingResults::class, 'participant_id');
+        return $this->hasOne(TrainingResults::class, 'participant_id');
     }
 }

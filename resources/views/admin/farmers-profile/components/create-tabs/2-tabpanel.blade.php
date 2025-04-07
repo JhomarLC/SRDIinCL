@@ -12,6 +12,9 @@ aria-labelledby="pills-trainings-tab">
     <div id="trainingContainer">
         <div class="training-entry position-relative border p-3 mb-4">
             <!-- Inside each .training-entry -->
+            <button type="button" class="btn btn-warning btn-sm position-absolute top-0 end-0 m-2 clear-training" data-index="0">
+                Clear
+            </button>
             <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2 remove-training d-none">
                 Remove
             </button>
@@ -19,14 +22,14 @@ aria-labelledby="pills-trainings-tab">
                 <div class="row g-3">
                     <div class="col-sm-7">
                         <label for="training_title" class="form-label">Title of the training/workshop</label>
-                        <input type="text" class="form-control" id="training_title" name="training_title[0]" value="Sample Title"
+                        <input type="text" class="form-control" id="training_title" name="training_title[0]"
                             placeholder="Enter title of the training/workshop"  >
                         <div class="invalid-feedback">Please enter training title</div>
                     </div>
                     <div class="col-sm-5">
                         {{-- <label for="training_date" class="form-label">Date</label> --}}
                             <label for="training_date" class="form-label">Training Date</label>
-                            <input type="date" class="form-control" id="training_date" name="training_date[0]" value="2025-01-20">
+                            <input type="date" class="form-control" id="training_date" name="training_date[0]">
                             <div class="invalid-feedback">Please select year conducted</div>
                     </div>
                 </div>
@@ -36,29 +39,22 @@ aria-labelledby="pills-trainings-tab">
                     <div class="col-sm-7">
                         <label for="conducted_by " class="form-label">Group or agency that conducted the training</label>
                         <input type="text" class="form-control" id="conducted_by" name="conducted_by[0]"
-                            placeholder="Enter group of agency that conducted the training" value="Philrice" >
+                            placeholder="Enter group of agency that conducted the training">
                         <div class="invalid-feedback">Please enter training title</div>
                     </div>
                     <div class="col-sm-5">
                         <label for="payForTraining" class="form-label">Did you personally pay for attending the training?</label>
                         <div class="form-check form-check-inline mt-2">
-                            <input class="form-check-input" type="radio" name="personally_paid[0]" id="paid_yes" value="yes">
+                            <input class="form-check-input" type="radio" name="personally_paid[0]" id="paid_yes" value="1">
                             <label class="form-check-label" for="paid_yes">Yes</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="personally_paid[0]" id="paid_no" value="no" checked>
+                            <input class="form-check-input" type="radio" name="personally_paid[0]" id="paid_no" value="0">
                             <label class="form-check-label" for="paid_no">No</label>
                         </div>
                     </div>
-                    <div class="col-sm-12">
-                        <label for="training_location " class="form-label">Training Location</label>
-                        <input type="text" class="form-control" id="training_location" name="training_location[0]"
-                            placeholder="Enter group of agency that conducted the training">
-                        <div class="invalid-feedback">Please enter training location</div>
-                    </div>
                 </div>
             </div>
-            <hr>
         </div>
     </div>
     <hr>

@@ -41,6 +41,21 @@ class AewsProfile extends Model
     //     ->logOnlyDirty();
     // }
 
+    public function region() {
+        return $this->belongsTo(Region::class, 'region_code', 'code');
+    }
+
+    public function province() {
+        return $this->belongsTo(Province::class, 'province_code', 'code');
+    }
+
+    public function municipality() {
+        return $this->belongsTo(Municipality::class, 'municipality_code', 'code');
+    }
+
+    public function barangay() {
+        return $this->belongsTo(Barangay::class, 'barangay_code', 'code');
+    }
     // Compute years of service dynamically
     public function getYearsOfServiceAttribute()
     {

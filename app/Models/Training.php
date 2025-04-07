@@ -17,7 +17,6 @@ class Training extends Model
     protected $fillable = [
         'participant_id',
         'training_title',
-        'training_location',
         'training_date',
         'conducted_by',
         'personally_paid',

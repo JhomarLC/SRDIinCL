@@ -10,6 +10,23 @@ aria-labelledby="pills-training-result-tab">
 
 <div class="mt-3">
     <div class="row g-3">
+        <div class="col-sm-7">
+            <label for="training_title_main" class="form-label">Title of the training/workshop</label>
+            <input type="text" class="form-control" id="training_title_main" name="training_title_main" value="Training on Pests and Nutrient Management (PNM)"
+                placeholder="Training on Pests and Nutrient Management (PNM)" disabled >
+            <div class="invalid-feedback">Please enter training title</div>
+        </div>
+        <div class="col-sm-5">
+            <label for="training_date_main" class="form-label">Training Date</label>
+            <input type="date" class="form-control" id="training_date_main" name="training_date_main">
+            <div class="invalid-feedback">Please select year conducted</div>
+        </div>
+        <div class="col-sm-12">
+            <label for="training_location_main" class="form-label">Training Location</label>
+            <input type="text" class="form-control" id="training_location_main" name="training_location_main"
+                placeholder="Enter training location">
+            <div class="invalid-feedback">Please enter training location</div>
+        </div>
         <div class="col-sm-4">
             <label for="pre_test_score" class="form-label">Pre-Test (Written)</label>
             <input type="number" class="form-control" id="pre_test_score" name="pre_test_score" value="40"

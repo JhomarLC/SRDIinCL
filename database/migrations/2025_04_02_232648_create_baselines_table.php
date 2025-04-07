@@ -11,13 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('trainings', function (Blueprint $table) {
+        Schema::create('baselines', function (Blueprint $table) {
             $table->id();
-            $table->foreignId(column: 'participant_id')->constrained()->onDelete('cascade');
-            $table->string('training_title');
-            $table->string('training_date');
-            $table->string('conducted_by');
-            $table->boolean('personally_paid');
             $table->timestamps();
         });
     }
@@ -27,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('trainings');
+        Schema::dropIfExists('baselines');
     }
 };

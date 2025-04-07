@@ -32,7 +32,7 @@ class FarmersProfileController extends Controller
                 'birth_date' => 'required|date|before:today',
                 'age_group' => 'required|string',
                 'is_pwd' => 'required|boolean',
-                'disability' => 'nullable|required_if:is_pwd,1|string',
+                'disability_type' => 'nullable|required_if:is_pwd,1|string',
                 'is_indigenous' => 'required|boolean',
                 'tribe_name' => 'nullable|required_if:is_indigenous,1|string',
                 'gender' => 'required|string',
@@ -46,33 +46,32 @@ class FarmersProfileController extends Controller
                 'primary_sector' => 'required|in:Farmer/Seed Grower,Extension Worker,Researcher,Educator,Student,Policy Maker,Media,Industry Player,Others',
                 'years_in_farming' => 'required|integer|min:0|max:100',
                 'farmer_association' => 'required|string',
-                'education_level' => 'required|in:Elementary,High School,Vocational,College Degree,Master’s Degree,Doctorate Degree,Undergraduate,Others',
+                'education_level' => 'required|in:Elementary,High School,Vocational,College Degree,Masters Degree,Doctorate Degree,Undergraduate,Others',
                 'farm_role' => 'required|in:Farm Owner,Relative of Farm Owner',
-                'rsbsa_number' => 'required|string|max:50',
+                'rsbsa_number' => 'nullable|string|max:50',
             ];
             $messages = [
                 'tribe_name.required_if' => 'Please enter tribe name if the person is indigenous.',
-                'disability.required_if' => 'Please select type of disability if the person is PWD.',
+                'disability_type.required_if' => 'Please select type of disability_type if the person is PWD.',
                 'zip_code.number' => 'The ZIP code must be a valid number.',
             ];
         }
 
         if ($step == 'trainings') {
             $rules = [
-                'training_title.*' => 'required|string|max:255',
-                'training_date.*' => 'required|string',
-                'training_location.*' => 'required|string',
-                'conducted_by.*' => 'required|string|max:255',
-                'personally_paid.*' => 'required|in:yes,no',
+               'training_title.*' => 'nullable|required_with:training_date.*,conducted_by.*,personally_paid.*|string|max:255',
+                'training_date.*' => 'nullable|required_with:training_title.*,conducted_by.*,personally_paid.*|date',
+                'conducted_by.*' => 'nullable|required_with:training_title.*,training_date.*,personally_paid.*|string|max:255',
+                'personally_paid.*' => 'nullable|required_with:training_title.*,training_date.*,conducted_by.*',
             ];
 
             $messages = [
-                'training_title.*.required' => 'Please enter the training title.',
-                'training_date.*.required' => 'Please enter the date of training was conducted.',
-                'training_location.*.required' => 'Please enter the location of the training.',
-                'conducted_by.*.required' => 'Please enter the agency name.',
-                'personally_paid.*.required' => 'Please indicate if you paid for the training.',
+                'training_title.*.required_with' => 'Please enter the training title if you filled in date, agency, or payment information.',
+                'training_date.*.required_with' => 'Please provide the training date if you entered title, agency, or payment info.',
+                'conducted_by.*.required_with' => 'Please enter who conducted the training if you filled in title, date, or payment.',
+                'personally_paid.*.required_with' => 'Please select whether you paid for the training if other training fields are filled.',
             ];
+
         }
 
         if ($step == 'other-info') {
@@ -95,8 +94,8 @@ class FarmersProfileController extends Controller
                 'total_yield_caban.*' => 'required|numeric|min:0',
                 'weight_per_caban_kg.*' => 'required|numeric|min:0',
                 'price_per_kg.*' => 'required|numeric|min:0',
-                'total_income.*' => 'required|numeric|min:0',
-                'total_cost.*' => 'required|numeric|min:0',
+                // 'total_income.*' => 'required|numeric|min:0',
+                // 'total_cost.*' => 'required|numeric|min:0',
                 'other_crops.*' => 'nullable|string|max:255',
             ];
 
@@ -123,19 +122,18 @@ class FarmersProfileController extends Controller
                 'price_per_kg.*.numeric' => 'Price per kilogram must be a number.',
                 'price_per_kg.*.min' => 'Price per kilogram must be 0 or greater.',
 
-                'total_income.*.required' => 'Please enter total income.',
-                'total_income.*.numeric' => 'Total income must be a number.',
-                'total_income.*.min' => 'Total income must be 0 or greater.',
+                // 'total_income.*.required' => 'Please enter total income.',
+                // 'total_income.*.numeric' => 'Total income must be a number.',
+                // 'total_income.*.min' => 'Total income must be 0 or greater.',
 
-                'total_cost.*.required' => 'Please enter total cost.',
-                'total_cost.*.numeric' => 'Total cost must be a number.',
-                'total_cost.*.min' => 'Total cost must be 0 or greater.',
+                // 'total_cost.*.required' => 'Please enter total cost.',
+                // 'total_cost.*.numeric' => 'Total cost must be a number.',
+                // 'total_cost.*.min' => 'Total cost must be 0 or greater.',
 
                 'other_crops.*.string' => 'Other crops must be a valid string.',
                 'other_crops.*.max' => 'Other crops must not exceed 255 characters.',
             ];
         }
-
 
         if ($step == 'emergency-contact') {
             $rules = [
@@ -174,6 +172,9 @@ class FarmersProfileController extends Controller
 
         if ($step == 'training-result') {
             $rules = [
+                'training_title_main' => 'required|string|max:255',
+                'training_date_main' => 'required|date',
+                'training_location_main' => 'required|string|max:255',
                 'pre_test_score' => 'required|numeric|min:0',
                 'post_test_score' => 'required|numeric|min:0',
                 'total_test_items' => 'required|numeric|min:1',
@@ -248,25 +249,16 @@ class FarmersProfileController extends Controller
                 return $participants->phone_number ?? 'N/A'; // Safely access profile attribute
             })
             ->addColumn('address', function ($participants) {
-                $addressParts = [];
 
-                // Add house number/sitio/purok only if it exists
-                if (!empty($participants->house_number_sitio_purok)) {
-                    $addressParts[] = $participants->house_number_sitio_purok;
-                }
-
-                // Add other parts (assuming they always exist, otherwise add checks here too)
-                $addressParts[] = optional($participants->barangay)->name;
-                $addressParts[] = optional($participants->municipality)->name;
-                $addressParts[] = optional($participants->province)->name;
-                $addressParts[] = $participants->zip_code;
-
-                return implode(', ', array_filter($addressParts));
+                return $participants->full_address;
             })
             ->addColumn('actions', function ($participants) {
                 return '
                 <a href="' . route('farmers-profile.show', $participants->id) . '" class="btn btn-sm btn-secondary editAdmin">
                     <i class="ri-eye-fill"></i> View
+                </a>
+                <a href="' . route('farmers-profile.edit', $participants->id) . '" class="btn btn-sm btn-success">
+                    <i class="ri-eye-fill"></i> Update
                 </a>
                 <button class="btn btn-sm btn-danger status-deactivate">
                     <i class="ri-archive-fill"></i> Delete
@@ -277,29 +269,29 @@ class FarmersProfileController extends Controller
             ->make(true);
     }
 
-    public function getTrainings()
-    {
-        $trainings = Training::latest()->get();
-        return DataTables::of($trainings)
-            ->addColumn('training_date', function ($trainings) {
-                return $trainings->training_date_formatted;
-            })
-            ->addColumn('personally_paid', function ($trainings) {
-                return $trainings->personally_paid ? 'Yes' : 'No';
-            })
-            ->addColumn('actions', function ($trainings) {
-                return '
-                <a href="' . route('farmers-profile.show', 1) . '" class="btn btn-sm btn-secondary editAdmin">
-                    <i class="ri-eye-fill"></i> View
-                </a>
-                <button class="btn btn-sm btn-danger status-deactivate">
-                    <i class="ri-archive-fill"></i> Delete
-                </button>
-            ';
-            })
-            ->rawColumns(['actions'])
-            ->make(true);
-    }
+    // public function getTrainings()
+    // {
+    //     $trainings = Training::latest()->get();
+    //     return DataTables::of($trainings)
+    //         ->addColumn('training_date', function ($trainings) {
+    //             return $trainings->training_date_formatted;
+    //         })
+    //         ->addColumn('personally_paid', function ($trainings) {
+    //             return $trainings->personally_paid ? 'Yes' : 'No';
+    //         })
+    //         ->addColumn('actions', function ($trainings) {
+    //             return '
+    //             <a href="' . route('farmers-profile.show', 1) . '" class="btn btn-sm btn-secondary editAdmin">
+    //                 <i class="ri-eye-fill"></i> View
+    //             </a>
+    //             <button class="btn btn-sm btn-danger status-deactivate">
+    //                 <i class="ri-archive-fill"></i> Delete
+    //             </button>
+    //         ';
+    //         })
+    //         ->rawColumns(['actions'])
+    //         ->make(true);
+    // }
     /**
      * Show the form for creating a new resource.
      */
@@ -325,7 +317,7 @@ class FarmersProfileController extends Controller
             'birth_date' => 'required|date|before:today',
             'age_group' => 'required|string',
             'is_pwd' => 'required|boolean',
-            'disability' => 'nullable|required_if:is_pwd,1|string',
+            'disability_type' => 'nullable|required_if:is_pwd,1|string',
             'is_indigenous' => 'required|boolean',
             'tribe_name' => 'nullable|required_if:is_indigenous,1|string',
             'gender' => 'required|string',
@@ -339,16 +331,15 @@ class FarmersProfileController extends Controller
             'primary_sector' => 'required|in:Farmer/Seed Grower,Extension Worker,Researcher,Educator,Student,Policy Maker,Media,Industry Player,Others',
             'years_in_farming' => 'required|integer|min:0|max:100',
             'farmer_association' => 'required|string',
-            'education_level' => 'required|in:Elementary,High School,Vocational,College Degree,Master’s Degree,Doctorate Degree,Undergraduate,Others',
+            'education_level' => 'required|in:Elementary,High School,Vocational,College Degree,Masters Degree,Doctorate Degree,Undergraduate,Others',
             'farm_role' => 'required|in:Farm Owner,Relative of Farm Owner',
-            'rsbsa_number' => 'required|string|max:50',
+            'rsbsa_number' => 'nullable|string|max:50',
 
             // Trainings
-            'training_title.*' => 'required|string|max:255',
-            'training_date.*' => 'required|string',
-            'training_location.*' => 'required|string',
-            'conducted_by.*' => 'required|string|max:255',
-            'personally_paid.*' => 'required|in:yes,no',
+            'training_title.*' => 'nullable|required_with:training_date.*,conducted_by.*,personally_paid.*|string|max:255',
+            'training_date.*' => 'nullable|required_with:training_title.*,conducted_by.*,personally_paid.*|date',
+            'conducted_by.*' => 'nullable|required_with:training_title.*,training_date.*,personally_paid.*|string|max:255',
+            'personally_paid.*' => 'nullable|required_with:training_title.*,training_date.*,conducted_by.*',
 
             // Other-Information
             'food_restriction' => 'nullable|string',
@@ -361,8 +352,8 @@ class FarmersProfileController extends Controller
             'total_yield_caban.*' => 'required|numeric|min:0',
             'weight_per_caban_kg.*' => 'required|numeric|min:0',
             'price_per_kg.*' => 'required|numeric|min:0',
-            'total_income.*' => 'required|numeric|min:0',
-            'total_cost.*' => 'required|numeric|min:0',
+            // 'total_income.*' => 'required|numeric|min:0',
+            // 'total_cost.*' => 'required|numeric|min:0',
             'other_crops.*' => 'nullable|string|max:255',
 
             // Emergency Contact
@@ -374,6 +365,9 @@ class FarmersProfileController extends Controller
             'ec_contact_number' => 'required|string|max:11',
 
             // Training Result
+            'training_title_main' => 'required|string|max:255',
+            'training_date_main' => 'required|date',
+            'training_location_main' => 'required|string|max:255',
             'pre_test_score' => 'required|numeric|min:0',
             'post_test_score' => 'required|numeric|min:0',
             'total_test_items' => 'required|numeric|min:1',
@@ -387,15 +381,14 @@ class FarmersProfileController extends Controller
         $messages = [
             // Personal Information
             'tribe_name.required_if' => 'Please enter tribe name if the person is indigenous.',
-            'disability.required_if' => 'Please select type of disability if the person is PWD.',
+            'disability_type.required_if' => 'Please select type of disability_type if the person is PWD.',
             'zip_code.number' => 'The ZIP code must be a valid number.',
 
             // Trainings
-            'training_title.*.required' => 'Please enter the training title.',
-            'training_date.*.required' => 'Please enter the date of training was conducted.',
-            'training_location.*.required' => 'Please enter the location of the training.',
-            'conducted_by.*.required' => 'Please enter the agency name.',
-            'personally_paid.*.required' => 'Please indicate if you paid for the training.',
+            'training_title.*.required_with' => 'Please enter the training title if you filled in date, agency, or payment information.',
+            'training_date.*.required_with' => 'Please provide the training date if you entered title, agency, or payment info.',
+            'conducted_by.*.required_with' => 'Please enter who conducted the training if you filled in title, date, or payment.',
+            'personally_paid.*.required_with' => 'Please select whether you paid for the training if other training fields are filled.',
 
             // Other Informations
             'food_restriction.string' => 'Food restriction must be a valid string.',
@@ -447,13 +440,13 @@ class FarmersProfileController extends Controller
             'price_per_kg.*.numeric' => 'Price per kilogram must be a number.',
             'price_per_kg.*.min' => 'Price per kilogram must be 0 or greater.',
 
-            'total_income.*.required' => 'Please enter total income.',
-            'total_income.*.numeric' => 'Total income must be a number.',
-            'total_income.*.min' => 'Total income must be 0 or greater.',
+            // 'total_income.*.required' => 'Please enter total income.',
+            // 'total_income.*.numeric' => 'Total income must be a number.',
+            // 'total_income.*.min' => 'Total income must be 0 or greater.',
 
-            'total_cost.*.required' => 'Please enter total cost.',
-            'total_cost.*.numeric' => 'Total cost must be a number.',
-            'total_cost.*.min' => 'Total cost must be 0 or greater.',
+            // 'total_cost.*.required' => 'Please enter total cost.',
+            // 'total_cost.*.numeric' => 'Total cost must be a number.',
+            // 'total_cost.*.min' => 'Total cost must be 0 or greater.',
 
             'other_crops.*.string' => 'Other crops must be a valid string.',
             'other_crops.*.max' => 'Other crops must not exceed 255 characters.',
@@ -509,7 +502,7 @@ class FarmersProfileController extends Controller
                 'birth_date' => $validated['birth_date'],
                 'age_group' => $validated['age_group'],
                 'is_pwd' => $validated['is_pwd'],
-                'disability' => $validated['disability'] ?? null,
+                'disability_type' => $validated['disability_type'] ?? null,
                 'is_indigenous' => $validated['is_indigenous'],
                 'tribe_name' => $validated['tribe_name'] ?? null,
                 'gender' => $validated['gender'],
@@ -532,13 +525,21 @@ class FarmersProfileController extends Controller
 
             // 2. Save trainings
             foreach ($validated['training_title'] as $index => $title) {
+                $date = $validated['training_date'][$index] ?? null;
+                $conductedBy = $validated['conducted_by'][$index] ?? null;
+                $paid = $validated['personally_paid'][$index] ?? null;
+
+                // ✅ Skip if all fields are empty/null
+                if (empty($title) && empty($date) && empty($conductedBy) && empty($paid)) {
+                    continue;
+                }
+                // 🧠 Optional: only require `title` at minimum
                 Training::create([
                     'participant_id' => $participant->id,
                     'training_title' => $title,
-                    'training_date' => $validated['training_date'][$index],
-                    'training_location' =>  $validated['training_location'][$index],
-                    'conducted_by' => $validated['conducted_by'][$index],
-                    'personally_paid' => $validated['personally_paid'][$index] === 'yes',
+                    'training_date' => $date,
+                    'conducted_by' => $conductedBy,
+                    'personally_paid' => $paid,
                 ]);
             }
 
@@ -575,8 +576,8 @@ class FarmersProfileController extends Controller
                     'total_yield_caban' => $validated['total_yield_caban'][$i],
                     'weight_per_caban_kg' => $validated['weight_per_caban_kg'][$i],
                     'price_per_kg' => $validated['price_per_kg'][$i],
-                    'total_income' => $validated['total_income'][$i],
-                    'total_cost' => $validated['total_cost'][$i],
+                    // 'total_income' => $validated['total_income'][$i],
+                    // 'total_cost' => $validated['total_cost'][$i],
                     'other_crops' => $validated['other_crops'][$i] ?? null,
                 ]);
             }
@@ -594,7 +595,10 @@ class FarmersProfileController extends Controller
 
             // 6. Save training results
             TrainingResults::create([
-                'training_id' => $participant->id,
+                'participant_id' => $participant->id,
+                'training_title_main' => $validated['training_title_main'],
+                'training_date_main' => $validated['training_date_main'],
+                'training_location_main' => $validated['training_location_main'],
                 'pre_test_score' => $validated['pre_test_score'],
                 'post_test_score' => $validated['post_test_score'],
                 'total_test_items' => $validated['total_test_items'],
@@ -622,20 +626,16 @@ class FarmersProfileController extends Controller
     public function show(string $id)
     {
         $participant = Participant::with([
-            'trainings.training_result' => function ($query) {
+            'training_results' => function ($query) {
                 $query->latest();
             },
             'food_restrictions',
             'medical_conditions',
             'emergency_contact',
-            'farming_data'
+            'farming_data',
         ])->findOrFail($id);
 
-
-        // Get most recent GIK score
-        $recentGIK = optional($participant->trainings->first())->gik_score;
-
-        return view('admin.farmers-profile.show',  compact(['participant', 'recentGIK']));
+        return view('admin.farmers-profile.show',  compact(['participant']));
     }
 
     /**
@@ -643,7 +643,18 @@ class FarmersProfileController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $participant = Participant::with([
+            'training_results' => function ($query) {
+                $query->latest();
+            },
+            'food_restrictions',
+            'medical_conditions',
+            'emergency_contact',
+            'farming_data',
+            'trainings'
+        ])->findOrFail($id);
+
+        return view('admin.farmers-profile.update', compact(['participant']));
     }
 
     /**
@@ -651,8 +662,319 @@ class FarmersProfileController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        // Step 1: Validate the request
+        $rules = [
+            // Personal Information
+            'first_name' => 'required|string|max:255',
+            'middle_name' => 'nullable|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'suffix' => 'nullable|string|max:50',
+            'nickname' => 'nullable|string|max:100',
+            'phone_number' => 'required|string|regex:/^[0-9]{10,15}$/',
+            'birth_date' => 'required|date|before:today',
+            'age_group' => 'required|string',
+            'is_pwd' => 'required|boolean',
+            'disability_type' => 'nullable|required_if:is_pwd,1|string',
+            'is_indigenous' => 'required|boolean',
+            'tribe_name' => 'nullable|required_if:is_indigenous,1|string',
+            'gender' => 'required|string',
+            'civil_status' => 'required|string',
+            'religion' => 'required|string',
+            'province_code' => 'required|string',
+            'municipality_code' => 'required|string',
+            'barangay_code' => 'required|string',
+            'zip_code' => 'required|digits_between:4,6',
+            'house_number_sitio_purok' => 'nullable|string',
+            'primary_sector' => 'required|in:Farmer/Seed Grower,Extension Worker,Researcher,Educator,Student,Policy Maker,Media,Industry Player,Others',
+            'years_in_farming' => 'required|integer|min:0|max:100',
+            'farmer_association' => 'required|string',
+            'education_level' => 'required|in:Elementary,High School,Vocational,College Degree,Master’s Degree,Doctorate Degree,Undergraduate,Others',
+            'farm_role' => 'required|in:Farm Owner,Relative of Farm Owner',
+            'rsbsa_number' => 'nullable|string|max:50',
+
+            // Trainings
+            'training_title.*' => 'nullable|required_with:training_date.*,conducted_by.*,personally_paid.*|string|max:255',
+            'training_date.*' => 'nullable|required_with:training_title.*,conducted_by.*,personally_paid.*|date',
+            'conducted_by.*' => 'nullable|required_with:training_title.*,training_date.*,personally_paid.*|string|max:255',
+            'personally_paid.*' => 'nullable|required_with:training_title.*,training_date.*,conducted_by.*',
+
+            // Other-Information
+            'food_restriction' => 'nullable|string',
+            'medical_condition' => 'nullable|string',
+
+            // Rice Farming Data
+            'season.*' => 'required|string|in:Wet Season,Dry Season',
+            'year_training_conducted.*' => 'required|string',
+            'farm_size_hectares.*' => 'required|numeric|min:0',
+            'total_yield_caban.*' => 'required|numeric|min:0',
+            'weight_per_caban_kg.*' => 'required|numeric|min:0',
+            'price_per_kg.*' => 'required|numeric|min:0',
+            // 'total_income.*' => 'required|numeric|min:0',
+            // 'total_cost.*' => 'required|numeric|min:0',
+            'other_crops.*' => 'nullable|string|max:255',
+
+            // Emergency Contact
+            'ec_first_name' => 'required|string|max:255',
+            'ec_middle_name' => 'nullable|string|max:255',
+            'ec_last_name' => 'required|string|max:255',
+            'ec_suffix' => 'nullable|string|max:50',
+            'ec_relationship' => 'required|string|max:50',
+            'ec_contact_number' => 'required|string|max:11',
+
+            // Training Result
+            'training_title_main' => 'required|string|max:255',
+            'training_date_main' => 'required|date',
+            'training_location_main' => 'required|string|max:255',
+            'pre_test_score' => 'required|numeric|min:0',
+            'post_test_score' => 'required|numeric|min:0',
+            'total_test_items' => 'required|numeric|min:1',
+            'gain_in_knowledge' => 'required|numeric|min:0',
+            'certificate_type' => 'required|string|max:100',
+            'certificate_number' => 'required|string|max:100',
+            'overall_training_eval_score' => 'required|numeric|min:0|max:100',
+            'trainer_rating' => 'required|numeric|min:1|max:5',
+        ];
+
+        $messages = [
+            // Personal Information
+            'tribe_name.required_if' => 'Please enter tribe name if the person is indigenous.',
+            'disability_type.required_if' => 'Please select type of disability_type if the person is PWD.',
+            'zip_code.number' => 'The ZIP code must be a valid number.',
+
+            // Trainings
+            'training_title.*.required_with' => 'Please enter the training title if you filled in date, agency, or payment information.',
+            'training_date.*.required_with' => 'Please provide the training date if you entered title, agency, or payment info.',
+            'conducted_by.*.required_with' => 'Please enter who conducted the training if you filled in title, date, or payment.',
+            'personally_paid.*.required_with' => 'Please select whether you paid for the training if other training fields are filled.',
+
+            // Other Informations
+            'food_restriction.string' => 'Food restriction must be a valid string.',
+            'medical_condition.string' => 'Medical condition must be a valid string.',
+
+            // Emergency Contact
+            'ec_first_name.required' => 'First name is required.',
+            'ec_first_name.string' => 'First name must be a valid string.',
+            'ec_first_name.max' => 'First name may not be greater than 255 characters.',
+
+            'ec_middle_name.string' => 'Middle name must be a valid string.',
+            'ec_middle_name.max' => 'Middle name may not be greater than 255 characters.',
+
+            'ec_last_name.required' => 'Last name is required.',
+            'ec_last_name.string' => 'Last name must be a valid string.',
+            'ec_last_name.max' => 'Last name may not be greater than 255 characters.',
+
+            'ec_suffix.string' => 'Suffix must be a valid string.',
+            'ec_suffix.max' => 'Suffix may not be greater than 50 characters.',
+
+            'ec_relationship.required' => 'Relationship is required.',
+            'ec_relationship.string' => 'Relationship must be a valid string.',
+            'ec_relationship.max' => 'Relationship may not be greater than 50 characters.',
+
+            'ec_contact_number.required' => 'Contact number is required.',
+            'ec_contact_number.string' => 'Contact number must be a valid string.',
+            'ec_contact_number.max' => 'Contact number may not be more than 11 digits.',
+
+            // Rice Farming Data
+            'season.*.required' => 'Please select the farming season.',
+            'season.*.in' => 'Farming season must be either "Dry" or "Wet".',
+
+            'year_training_conducted.*.required' => 'Please select the year conducted.',
+            'year_training_conducted.*.date_format' => 'Year must be in YYYY format.',
+
+            'farm_size_hectares.*.required' => 'Please enter farm size.',
+            'farm_size_hectares.*.numeric' => 'Farm size must be a valid number.',
+            'farm_size_hectares.*.min' => 'Farm size must be 0 or greater.',
+
+            'total_yield_caban.*.required' => 'Please enter total yield caban.',
+            'total_yield_caban.*.numeric' => 'Total yield caban must be a number.',
+            'total_yield_caban.*.min' => 'Total yield caban must be 0 or greater.',
+
+            'weight_per_caban_kg.*.required' => 'Please enter weight per caban.',
+            'weight_per_caban_kg.*.numeric' => 'Weight per caban must be a number.',
+            'weight_per_caban_kg.*.min' => 'Weight per caban must be 0 or greater.',
+
+            'price_per_kg.*.required' => 'Please enter price per kilogram.',
+            'price_per_kg.*.numeric' => 'Price per kilogram must be a number.',
+            'price_per_kg.*.min' => 'Price per kilogram must be 0 or greater.',
+
+            // 'total_income.*.required' => 'Please enter total income.',
+            // 'total_income.*.numeric' => 'Total income must be a number.',
+            // 'total_income.*.min' => 'Total income must be 0 or greater.',
+
+            // 'total_cost.*.required' => 'Please enter total cost.',
+            // 'total_cost.*.numeric' => 'Total cost must be a number.',
+            // 'total_cost.*.min' => 'Total cost must be 0 or greater.',
+
+            'other_crops.*.string' => 'Other crops must be a valid string.',
+            'other_crops.*.max' => 'Other crops must not exceed 255 characters.',
+
+            // Training Result
+            'pre_test_score.required' => 'Pre-test score is required.',
+            'pre_test_score.numeric' => 'Pre-test score must be a number.',
+            'pre_test_score.min' => 'Pre-test score cannot be negative.',
+
+            'post_test_score.required' => 'Post-test score is required.',
+            'post_test_score.numeric' => 'Post-test score must be a number.',
+            'post_test_score.min' => 'Post-test score cannot be negative.',
+
+            'total_test_items.required' => 'Total number of test items is required.',
+            'total_test_items.numeric' => 'Total test items must be a number.',
+            'total_test_items.min' => 'There must be at least 1 test item.',
+
+            'gain_in_knowledge.required' => 'Gain in knowledge is required.',
+            'gain_in_knowledge.numeric' => 'Gain in knowledge must be a number.',
+            'gain_in_knowledge.min' => 'Gain in knowledge cannot be negative.',
+
+            'certificate_type.required' => 'Certificate type is required.',
+            'certificate_type.string' => 'Certificate type must be a valid string.',
+            'certificate_type.max' => 'Certificate type may not be greater than 100 characters.',
+
+            'certificate_number.required' => 'Certificate number is required.',
+            'certificate_number.string' => 'Certificate number must be a valid string.',
+            'certificate_number.max' => 'Certificate number may not be greater than 100 characters.',
+
+            'overall_training_eval_score.required' => 'Training evaluation score is required.',
+            'overall_training_eval_score.numeric' => 'Training evaluation score must be a number.',
+            'overall_training_eval_score.min' => 'Evaluation score cannot be negative.',
+            'overall_training_eval_score.max' => 'Evaluation score cannot exceed 100.',
+
+            'trainer_rating.required' => 'Trainer rating is required.',
+            'trainer_rating.numeric' => 'Trainer rating must be a number.',
+            'trainer_rating.min' => 'Trainer rating must be at least 1.',
+            'trainer_rating.max' => 'Trainer rating may not exceed 5.',
+        ];
+
+        $validated = $request->validate($rules, $messages);
+
+        DB::beginTransaction();
+        try {
+            // 1. Find the participant
+            $participant = Participant::findOrFail($id);
+
+            // 2. Update participant data
+            $participant->update([
+                'first_name' => $validated['first_name'],
+                'middle_name' => $validated['middle_name'] ?? null,
+                'last_name' => $validated['last_name'],
+                'suffix' => $validated['suffix'] ?? null,
+                'nickname' => $validated['nickname'] ?? null,
+                'phone_number' => $validated['phone_number'],
+                'birth_date' => $validated['birth_date'],
+                'age_group' => $validated['age_group'],
+                'is_pwd' => $validated['is_pwd'],
+                'disability_type' => $validated['disability_type'] ?? null,
+                'is_indigenous' => $validated['is_indigenous'],
+                'tribe_name' => $validated['tribe_name'] ?? null,
+                'gender' => $validated['gender'],
+                'civil_status' => $validated['civil_status'],
+                'religion' => $validated['religion'],
+                'province_code' => $validated['province_code'],
+                'municipality_code' => $validated['municipality_code'],
+                'barangay_code' => $validated['barangay_code'],
+                'zip_code' => $validated['zip_code'],
+                'house_number_sitio_purok' => $validated['house_number_sitio_purok'] ?? null,
+                'primary_sector' => $validated['primary_sector'],
+                'years_in_farming' => $validated['years_in_farming'],
+                'farmer_association' => $validated['farmer_association'],
+                'education_level' => $validated['education_level'],
+                'farm_role' => $validated['farm_role'],
+                'rsbsa_number' => $validated['rsbsa_number'],
+                'food_restriction' => $validated['food_restriction'] ?? null,
+                'medical_condition' => $validated['medical_condition'] ?? null,
+            ]);
+
+            // 3. Update Trainings (delete existing ones and create new ones)
+            $participant->trainings()->delete(); // Remove existing trainings
+            foreach ($validated['training_title'] as $index => $title) {
+                $date = $validated['training_date'][$index] ?? null;
+                $conductedBy = $validated['conducted_by'][$index] ?? null;
+                $paid = $validated['personally_paid'][$index] ?? null;
+
+                if (empty($title) && empty($date) && empty($conductedBy) && empty($paid)) {
+                    continue;
+                }
+
+                Training::create([
+                    'participant_id' => $participant->id,
+                    'training_title' => $title,
+                    'training_date' => $date,
+                    'conducted_by' => $conductedBy,
+                    'personally_paid' => $paid,
+                ]);
+            }
+
+            // 4. Update other information (Food Restrictions, Medical Conditions)
+            $participant->food_restrictions()->delete();
+            if ($request->filled('food_restriction')) {
+                $foodRestrictions = explode(',', $request->input('food_restriction'));
+                foreach ($foodRestrictions as $item) {
+                    FoodRestrictions::create([
+                        'participant_id' => $participant->id,
+                        'food_restriction' => trim($item),
+                    ]);
+                }
+            }
+
+            $participant->medical_conditions()->delete();
+            if ($request->filled('medical_condition')) {
+                $medicalConditions = explode(',', $request->input('medical_condition'));
+                foreach ($medicalConditions as $item) {
+                    MedicalConditions::create([
+                        'participant_id' => $participant->id,
+                        'medical_condition' => trim($item),
+                    ]);
+                }
+            }
+
+            // 5. Update Rice Farming Data
+            $participant->farming_data()->delete();
+            foreach ($validated['season'] as $i => $season) {
+                FarmingData::create([
+                    'participant_id' => $participant->id,
+                    'season' => $season,
+                    'year_training_conducted' => $validated['year_training_conducted'][$i],
+                    'farm_size_hectares' => $validated['farm_size_hectares'][$i],
+                    'total_yield_caban' => $validated['total_yield_caban'][$i],
+                    'weight_per_caban_kg' => $validated['weight_per_caban_kg'][$i],
+                    'price_per_kg' => $validated['price_per_kg'][$i],
+                    'other_crops' => $validated['other_crops'][$i] ?? null,
+                ]);
+            }
+
+            // 6. Update Emergency Contact
+            $participant->emergency_contact()->update([
+                'first_name' => $validated['ec_first_name'],
+                'middle_name' => $validated['ec_middle_name'] ?? null,
+                'last_name' => $validated['ec_last_name'],
+                'suffix' => $validated['ec_suffix'] ?? null,
+                'relationship' => $validated['ec_relationship'],
+                'contact_number' => $validated['ec_contact_number'],
+            ]);
+
+            // 7. Update Training Results
+            $participant->training_results()->update([
+                'training_title_main' => $validated['training_title_main'],
+                'training_date_main' => $validated['training_date_main'],
+                'training_location_main' => $validated['training_location_main'],
+                'pre_test_score' => $validated['pre_test_score'],
+                'post_test_score' => $validated['post_test_score'],
+                'total_test_items' => $validated['total_test_items'],
+                'gain_in_knowledge' => $validated['gain_in_knowledge'],
+                'certificate_type' => $validated['certificate_type'],
+                'certificate_number' => $validated['certificate_number'],
+                'overall_training_eval_score' => $validated['overall_training_eval_score'],
+                'trainer_rating' => $validated['trainer_rating'],
+            ]);
+
+            DB::commit();
+
+            return response()->json(['status' => 'success', 'message' => 'Participant updated successfully!']);
+        } catch (Exception $e) {
+            DB::rollback();
+            return response()->json(['status' => 'error', 'message' => 'Failed to update participant.', 'error' => $e->getMessage()], 500);
+        }
     }
+
 
     /**
      * Remove the specified resource from storage.

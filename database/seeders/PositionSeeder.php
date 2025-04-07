@@ -26,7 +26,12 @@ class PositionSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'position_name' => 'Rice AEW',
+                'position_name' => 'Rice AEW Provincial',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'position_name' => 'Rice AEW Municipal/City',
                 'created_at' => now(),
                 'updated_at' => now(),
             ]

@@ -15,49 +15,39 @@
                             March 16 - September 15
                         </span></p>
                     </div>
-                    <input class="form-check-input" type="radio" name="season[0]" id="seasonDry0" value="Dry Season" hidden>
-                    <input class="form-check-input" type="radio" name="season[0]" id="seasonWet0" value="Wet Season" checked hidden>
+                    <input class="form-check-input" type="radio" name="season[0]" id="seasonDry0" value="Dry Season" {{ old('season[0]', $participant->farming_data[0]->season ?? '') == 'Dry Season' ? 'checked' : '' }} hidden>
+                    <input class="form-check-input" type="radio" name="season[0]" id="seasonWet0" value="Wet Season" {{ old('season[0]', $participant->farming_data[0]->season ?? '') == 'Wet Season' ? 'checked' : '' }} hidden>
                     <div class="col-sm-3">
                         <label for="year_training_conducted0" class="form-label">Year Conducted</label>
-                        <select class="form-control mb-3 select2" id="year_training_conducted0" name="year_training_conducted[0]">
-                            <option selected disabled hidden>-- SELECT YEAR --</option>
+                            <select class="form-control mb-3 select2"
+                                id="year_training_conducted0"
+                                name="year_training_conducted[0]"
+                                data-selected="{{ old('year_training_conducted[0]', $participant->farming_data[0]->year_training_conducted ?? '') }}">
+                            <option disabled hidden selected>-- SELECT YEAR --</option>
                         </select>
                         <div class="invalid-feedback">Please select year</div>
                     </div>
                 </div>
-                {{-- <div class="row g-3">
-                    <div class="col-sm-3">
-                        <label class="form-label">Wet Farming Season</label>
-                        <div class="form-check form-check-inline mt-2">
-                            <input class="form-check-input" type="radio" name="season[0]" id="seasonDry0" value="Dry Season" hidden>
-                            <label class="form-check-label" for="seasonDry0">Dry</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="season[0]" id="seasonWet0" value="Wet Season" checked hidden>
-                            <label class="form-check-label" for="seasonWet0">Wet</label>
-                        </div>
-                    </div>
-                </div> --}}
                 <div class="mt-3">
                     <div class="row g-3">
                         <div class="col-sm-3">
                             <label for="farm_size_hectares0" class="form-label">Farm Size</label>
-                            <input type="text" class="form-control" id="farm_size_hectares0" name="farm_size_hectares[0]" placeholder="Enter Farm Size" value="1">
+                            <input type="text" class="form-control" id="farm_size_hectares0" name="farm_size_hectares[0]" placeholder="Enter Farm Size" value="{{ old('farm_size_hectares[0]', $participant->farming_data[0]->farm_size_hectares ?? '') }}">
                             <div class="invalid-feedback">Please enter farm size</div>
                         </div>
                         <div class="col-sm-3">
                             <label for="total_yield_caban0" class="form-label">Total yield caban (sacks)</label>
-                            <input type="text" class="form-control" id="total_yield_caban0" name="total_yield_caban[0]" placeholder="Enter Total Yield Caban (Sacks)" value="750">
+                            <input type="text" class="form-control" id="total_yield_caban0" name="total_yield_caban[0]" placeholder="Enter Total Yield Caban (Sacks)" value="{{ old('total_yield_caban[0]', $participant->farming_data[0]->total_yield_caban ?? '') }}">
                             <div class="invalid-feedback">Please enter total yield caban (sacks)</div>
                         </div>
                         <div class="col-sm-3">
                             <label for="weight_per_caban_kg0" class="form-label">Weight per caban (kg)</label>
-                            <input type="text" class="form-control" id="weight_per_caban_kg0" name="weight_per_caban_kg[0]" placeholder="Enter Weight per caban (kg)" value="60">
+                            <input type="text" class="form-control" id="weight_per_caban_kg0" name="weight_per_caban_kg[0]" placeholder="Enter Weight per caban (kg)" value="{{ old('weight_per_caban_kg[0]', $participant->farming_data[0]->weight_per_caban_kg ?? '') }}">
                             <div class="invalid-feedback">Please enter weight per caban (kg)</div>
                         </div>
                         <div class="col-sm-3">
                             <label for="price_per_kg0" class="form-label">Price per kilogram</label>
-                            <input type="text" class="form-control" id="price_per_kg0" name="price_per_kg[0]" placeholder="Enter Price per kilogram" value="15">
+                            <input type="text" class="form-control" id="price_per_kg0" name="price_per_kg[0]" placeholder="Enter Price per kilogram" value="{{ old('price_per_kg[0]', $participant->farming_data[0]->price_per_kg ?? '') }}">
                             <div class="invalid-feedback">Please enter price per kilogram</div>
                         </div>
                         <div class="col-sm-4">
@@ -72,13 +62,13 @@
                         </div>
                         <div class="col-sm-4">
                             <label for="other_crops0" class="form-label">Other Crops</label>
-                            <input type="text" class="form-control" id="other_crops0" name="other_crops[0]" placeholder="Enter Other Crops">
+                            <input type="text" class="form-control" id="other_crops0" name="other_crops[0]" placeholder="Enter Other Crops" value="{{ old('other_crops[0]', $participant->farming_data[0]->other_crops ?? '') }}">
                             <div class="invalid-feedback">Please enter other crops</div>
                         </div>
                     </div>
                 </div>
 
-      </div>
+            </div>
         </div>
     </div>
 
@@ -95,12 +85,15 @@
                             September 16 - March 15
                         </span></p>
                     </div>
-                    <input class="form-check-input" type="radio" name="season[1]" id="seasonDry1" value="Dry Season" checked hidden>
-                    <input class="form-check-input" type="radio" name="season[1]" id="seasonWet1" value="Wet Season" hidden>
+                    <input class="form-check-input" type="radio" name="season[1]" id="seasonDry1" value="Dry Season" {{ old('season[1]', $participant->farming_data[1]->season ?? '') == 'Dry Season' ? 'checked' : '' }} hidden>
+                    <input class="form-check-input" type="radio" name="season[1]" id="seasonWet1" value="Wet Season" {{ old('season[1]', $participant->farming_data[1]->season ?? '') == 'Wet Season' ? 'checked' : '' }} hidden>
                     <div class="col-sm-3">
                         <label for="year_training_conducted1" class="form-label">Year Conducted</label>
-                        <select class="form-control mb-3 select2" id="year_training_conducted1" name="year_training_conducted[1]">
-                            <option selected disabled hidden>-- SELECT YEAR --</option>
+                        <select class="form-control mb-3 select2"
+                                id="year_training_conducted1"
+                                name="year_training_conducted[1]"
+                                data-selected="{{ old('year_training_conducted[1]', $participant->farming_data[1]->year_training_conducted ?? '') }}">
+                            <option disabled hidden selected>-- SELECT YEAR --</option>
                         </select>
                         <div class="invalid-feedback">Please select year</div>
                     </div>
@@ -109,22 +102,22 @@
                     <div class="row g-3">
                         <div class="col-sm-3">
                             <label for="farm_size_hectares1" class="form-label">Farm Size</label>
-                            <input type="text" class="form-control" id="farm_size_hectares1" name="farm_size_hectares[1]" placeholder="Enter Farm Size" value="1">
+                            <input type="text" class="form-control" id="farm_size_hectares1" name="farm_size_hectares[1]" placeholder="Enter Farm Size" value="{{ old('farm_size_hectares[1]', $participant->farming_data[1]->farm_size_hectares ?? '') }}">
                             <div class="invalid-feedback">Please enter farm size</div>
                         </div>
                         <div class="col-sm-3">
                             <label for="total_yield_caban1" class="form-label">Total yield caban (sacks)</label>
-                            <input type="text" class="form-control" id="total_yield_caban1" name="total_yield_caban[1]" placeholder="Enter Total Yield Caban (Sacks)" value="500">
+                            <input type="text" class="form-control" id="total_yield_caban1" name="total_yield_caban[1]" placeholder="Enter Total Yield Caban (Sacks)" value="{{ old('total_yield_caban[1]', $participant->farming_data[1]->total_yield_caban ?? '') }}">
                             <div class="invalid-feedback">Please enter total yield caban (sacks)</div>
                         </div>
                         <div class="col-sm-3">
                             <label for="weight_per_caban_kg1" class="form-label">Weight per caban (kg)</label>
-                            <input type="text" class="form-control" id="weight_per_caban_kg1" name="weight_per_caban_kg[1]" placeholder="Enter Weight per caban (kg)" value="60">
+                            <input type="text" class="form-control" id="weight_per_caban_kg1" name="weight_per_caban_kg[1]" placeholder="Enter Weight per caban (kg)" value="{{ old('weight_per_caban_kg[1]', $participant->farming_data[1]->weight_per_caban_kg ?? '') }}">
                             <div class="invalid-feedback">Please enter weight per caban (kg)</div>
                         </div>
                         <div class="col-sm-3">
                             <label for="price_per_kg1" class="form-label">Price per kilogram</label>
-                            <input type="text" class="form-control" id="price_per_kg1" name="price_per_kg[1]" placeholder="Enter Price per kilogram" value="15">
+                            <input type="text" class="form-control" id="price_per_kg1" name="price_per_kg[1]" placeholder="Enter Price per kilogram" value="{{ old('price_per_kg[1]', $participant->farming_data[1]->price_per_kg ?? '') }}">
                             <div class="invalid-feedback">Please enter price per kilogram</div>
                         </div>
                         <div class="col-sm-4">
@@ -139,7 +132,7 @@
                         </div>
                         <div class="col-sm-4">
                             <label for="other_crops1" class="form-label">Other Crops</label>
-                            <input type="text" class="form-control" id="other_crops1" name="other_crops[1]" placeholder="Enter Other Crops">
+                            <input type="text" class="form-control" id="other_crops1" name="other_crops[1]" placeholder="Enter Other Crops" value="{{ old('other_crops[1]', $participant->farming_data[1]->other_crops ?? '') }}">
                             <div class="invalid-feedback">Please enter other crops</div>
                         </div>
                     </div>

@@ -16,7 +16,7 @@
                     <div class="d-flex mt-4">
                         <div class="flex-grow-1 overflow-hidden">
                             <p class="mb-1 fw-bold">Nickname :</p>
-                            <input type="text" class="form-control" value="{{ $participant->nickname ?? 'N/A' }}" disabled>
+                            <input type="text" class="form-control" value="{{ $participant->nickname ?? '' }}" disabled>
                         </div>
                     </div>
                 </div>
@@ -83,7 +83,8 @@
                     <div class="d-flex mt-4">
                         <div class="flex-grow-1 overflow-hidden">
                             <p class="mb-1 fw-bold">Address :</p>
-                            <input type="text" class="form-control" value="{{ $participant->barangay->name ?? '' }}, {{ $participant->municipality->name ?? '' }}, {{ $participant->province->name ?? '' }}" disabled>
+                            <input type="text" class="form-control"
+                            value="{{ $participant->full_address }}" disabled>
                         </div>
                     </div>
                 </div>
@@ -157,7 +158,7 @@
                     <div class="d-flex mt-4">
                         <div class="flex-grow-1 overflow-hidden">
                             <p class="mb-1 fw-bold">RSBSA Number :</p>
-                            <input type="text" class="form-control" value="{{ $participant->rsbsa_number }}" disabled>
+                            <input type="text" class="form-control" value="{{ $participant->rsbsa_number ?? 'N/A' }}" disabled>
                         </div>
                     </div>
                 </div>

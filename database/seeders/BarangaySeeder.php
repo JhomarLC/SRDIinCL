@@ -6,6 +6,7 @@ use App\Models\Barangay;
 use File;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Log;
 
 class BarangaySeeder extends Seeder
 {
@@ -19,9 +20,12 @@ class BarangaySeeder extends Seeder
 
         foreach ($barangays as $barangay) {
              // Skip if parent municipality doesn't exist
-            if (!\App\Models\Municipality::where('code', $barangay['municipalityCode'])->exists()) {
-                continue;
-            }
+             $parentCode = $barangay['municipalityCode'] ?? $barangay['cityCode'] ?? null;
+
+             if (!$parentCode || !\App\Models\Municipality::where('code', $parentCode)->exists()) {
+                 Log::warning("Skipped Barangay: {$barangay['name']} - Missing Parent Code: {$parentCode}");
+                 continue;
+             }
 
             Barangay::create([
                 'code' => $barangay['code'],
