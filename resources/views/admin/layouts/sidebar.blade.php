@@ -49,7 +49,8 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="dashboard">
+                    <a class="nav-link menu-link {{ request()->is('admin/speaker-management*') ? 'active' : '' }}"
+                        href="{{ route('speaker-management.index') }}">
                         <i class="ri-user-voice-fill"></i>
                         <span>Speaker Evaluation</span>
                     </a>

@@ -39,6 +39,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
 
     // FARMERS PROFILE
     require __DIR__.'/admin/farmers-profile.php';
+    // SPEAKER EVAL
+    require __DIR__.'/admin/speaker-management.php';
     // ADMIN MANAGEMENT
     require __DIR__.'/admin/admin-management.php';
     // AEWS MANAGEMENT
