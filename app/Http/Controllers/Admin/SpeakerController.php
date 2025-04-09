@@ -31,11 +31,12 @@ class SpeakerController extends Controller
                     return '<span class="badge bg-info text-black">Add Speaker Evaluation</span>';
             })
             ->addColumn('actions', function ($speaker)  {
-                $viewButton =  '<button class="btn btn-sm btn-secondary"
-                                    data-id="' . $speaker->id . '">
-                                    <i class="ri-eye-fill"></i>
-                                    View
-                                </button>';
+                $viewButton  = ($speaker->status !== 'archived')
+                        ? '<a href="' . route('speaker-topics.index', $speaker->id) . '"
+                                class="btn btn-sm btn-secondary">
+                                <i class="ri-eye-fill"></i> View Topics
+                            </a>'
+                        : '';
 
                 $editButton = '<button class="btn btn-sm btn-success editSpeaker"
                                     data-id="' . $speaker->id . '"

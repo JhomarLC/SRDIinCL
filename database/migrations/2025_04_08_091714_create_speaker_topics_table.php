@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId( 'speaker_id')->constrained()->onDelete('cascade');
             $table->string('topic_discussed');
             $table->date('topic_date');
+            $table->enum('status', ['active', 'archived'])->default('active');
             $table->timestamps();
         });
     }

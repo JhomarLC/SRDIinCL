@@ -1,5 +1,5 @@
  <!-- Modal -->
- <div class="modal fade zoomIn" id="unarchiveAccountModal" tabindex="-1" aria-hidden="true">
+ <div class="modal fade zoomIn" id="unarchiveTopicModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -16,12 +16,12 @@
                     </lord-icon>
                     <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
                         <h4>Are you Sure ?</h4>
-                        <p class="text-muted mx-4 mb-0">Are you sure you want to unarchive speaker?</p>
+                        <p class="text-muted mx-4 mb-0">Are you sure you want to unarchive speaker topic?</p>
                     </div>
                 </div>
                 <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
                     <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal">Close</button>
-                    <form id="activateSpeakerForm" method="POST" style="display:inline;">
+                    <form id="activateTopicForm" method="POST" style="display:inline;">
                         @csrf
                         @method('PUT')
                         <input type="text" hidden id="unarchive-edit-id">
@@ -37,7 +37,7 @@
 <!--end modal -->
 
 <!-- Modal -->
-<div class="modal fade zoomIn" id="archiveAccountModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade zoomIn" id="archiveTopicModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -54,12 +54,12 @@
                     </lord-icon>
                     <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
                         <h4>Are you Sure ?</h4>
-                        <p class="text-muted mx-4 mb-0">Are you sure you want to archive speaker?</p>
+                        <p class="text-muted mx-4 mb-0">Are you sure you want to archive speaker topic?</p>
                     </div>
                 </div>
                 <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
                     <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal">Close</button>
-                    <form id="archiveSpeakerForm" method="POST" style="display:inline;">
+                    <form id="archiveTopicForm" method="POST" style="display:inline;">
                         @csrf
                         @method('PUT')
                         <input type="text" hidden id="archive-edit-id">

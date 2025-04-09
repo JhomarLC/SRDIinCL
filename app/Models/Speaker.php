@@ -16,5 +16,14 @@ class Speaker extends Model
         'suffix',
         'status'
     ];
-
+    public function getFullNameAttribute()
+    {
+        $middleName = $this->middle_name ? ' ' . $this->middle_name : '';
+        $suffix = $this->suffix ? ' ' . $this->suffix : '';
+        return "{$this->first_name}{$middleName} {$this->last_name}{$suffix}";
+    }
+    public function speaker_topics()
+    {
+        return $this->hasMany(SpeakerTopic::class, 'speaker_id');
+    }
 }

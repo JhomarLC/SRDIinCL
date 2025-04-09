@@ -1,24 +1,24 @@
 <script>
     // VIEW
     $(document).ready(function () {
-        $("#speakers").DataTable({
+        $("#topics").DataTable({
             processing: true,
             serverSide: true,
             responsive: true,
-            ajax: "{{ route('speaker-management.get-index') }}",
+            ajax: "{{ route('speaker-topics.get-index', $speaker->id) }}",
             columns: [
-                { data: 'full_name', name: 'full_name' },
-                { data: 'training_title', name: 'training_title' },
-                { data: 'total_rating', name: 'total_rating' },
-                { data: 'status', name: 'status', orderable: false, searchable: false },
+                { data: 'topic_discussed', name: 'topic_discussed' },
+                { data: 'topic_date', name: 'topic_date' },
+                { data: 'status', name: 'status' },
                 { data: 'actions', name: 'actions', orderable: false, searchable: false }
             ]
         });
+        $('.select2').select2();
     });
 
     // CREATE
     $(document).ready(function () {
-        $('#createSpeakerForm').submit(function (e) {
+        $('#createTopicForm').submit(function (e) {
             e.preventDefault();
 
             // Clear previous errors
@@ -26,23 +26,21 @@
             $('.invalid-feedback').text(''); // Clear error messages
 
             let formData = {
-                first_name: $('#first_name').val(),
-                middle_name: $('#middle_name').val(),
-                last_name: $('#last_name').val(),
-                suffix: $('#suffix').val(),
+                topic_discussed: $('#topic_discussed').val(),
+                topic_date: $('#topic_date').val(),
                 _token: $('meta[name="csrf-token"]').attr('content')
             };
 
             $.ajax({
-                url: "{{ route('speaker-management.store') }}", // Laravel route for storing speaker
+                url: "{{ route('speaker-topics.store', $speaker->id) }}", // Laravel route for storing speaker
                 type: "POST",
                 data: formData,
                 dataType: "json",
                 success: function (response) {
                     if (response.status === "success") {
-                        $('#addnewspeakermodal').modal('hide'); // Hide modal
-                        $('#createSpeakerForm')[0].reset(); // Reset form
-                        $('#speakers').DataTable().ajax.reload(); // Reload DataTable
+                        $('#addnewtopicmodal').modal('hide'); // Hide modal
+                        $('#createTopicForm')[0].reset(); // Reset form
+                        $('#topics').DataTable().ajax.reload(); // Reload DataTable
                     }
                     showAlertModal(response.status, response.message);
                 },
@@ -69,52 +67,49 @@
     // UPDATE
     $(document).ready(function () {
         // Handle the Edit button click
-        $(document).on("click", ".editSpeaker", function () {
+        $(document).on("click", ".editTopic", function () {
             // Remove error messages on input change
             $(".form-control").removeClass("is-invalid"); // Remove all error borders
             $(".error-message").text(""); // Clear all error messages
 
             // Get data from the button attributes
-            let userId = $(this).data("id");
-            let firstName = $(this).data("first_name");
-            let middleName = $(this).data("middle_name");
-            let lastName = $(this).data("last_name");
-            let suffix = $(this).data("suffix");
+            let topicId = $(this).data("id");
+            let topic_discussed = $(this).data("topic_discussed");
+            let topic_date = $(this).data("topic_date");
 
             // Populate the modal fields
-            $("#edit_id").val(userId);
-            $("#update_first_name").val(firstName);
-            $("#update_middle_name").val(middleName);
-            $("#update_last_name").val(lastName);
-            $("#update_suffix").val(suffix);
+            $("#edit_id").val(topicId);
+            // $("#update_topic_discussed").val(topic_discussed);
+            $("#update_topic_discussed").val(topic_discussed).trigger('change');
+
+            $("#update_topic_date").val(topic_date);
 
             // Show the modal
-            $("#editSpeakerModal").modal("show");
+            $("#editTopicModal").modal("show");
         });
 
-        $("#updateSpeakerForm").submit(function (e) {
+        $("#updateTopicForm").submit(function (e) {
             e.preventDefault(); // Prevent default form submission
 
-            let userId = $("#edit_id").val(); // Get the admin ID
+            let topicId = $("#edit_id").val(); // Get the admin ID
 
             let formData = {
-                first_name: $("#update_first_name").val(),
-                middle_name: $("#update_middle_name").val(),
-                last_name: $("#update_last_name").val(),
-                suffix: $("#update_suffix").val(),
+                topic_discussed: $("#update_topic_discussed").val(),
+                topic_date: $("#update_topic_date").val(),
                 _token: $('meta[name="csrf-token"]').attr("content") // CSRF Token
             };
 
+            let speakerId = $("#speaker_id").val();
             $.ajax({
-                url: "/admin/speaker-management/" + userId, // Laravel route for updating admin
+                url: "/admin/speaker-management/" + speakerId + "/topics/" + topicId,
                 type: "PUT",
                 data: formData,
                 dataType: "json",
                 success: function (response) {
                     if (response.status === "success") {
-                        $("#editSpeakerModal").modal("hide"); // Hide modal
-                        $('#updateSpeakerForm')[0].reset(); // Reset form
-                        $("#speakers").DataTable().ajax.reload(); // Reload DataTable
+                        $("#editTopicModal").modal("hide"); // Hide modal
+                        $('#updateTopicForm')[0].reset(); // Reset form
+                        $("#topics").DataTable().ajax.reload(); // Reload DataTable
                     }
                     showAlertModal(response.status, response.message);
                 },
@@ -151,28 +146,28 @@
             $("#unarchive-edit-id").val(userId);
 
             // Show the modal
-            $("#unarchiveAccountModal").modal("show");
+            $("#unarchiveTopicModal").modal("show");
         });
 
-        $("#activateSpeakerForm").submit(function (e) {
+        $("#activateTopicForm").submit(function (e) {
             e.preventDefault(); // Prevent default form submission
 
-            let userId = $("#unarchive-edit-id").val(); // Get the admin ID
+            let topicId = $("#unarchive-edit-id").val(); // Get the admin ID
 
             let formData = {
                 _token: $('meta[name="csrf-token"]').attr('content')
             };
-
+            let speakerId = $("#speaker_id").val();
             $.ajax({
-                url: "/admin/speaker-management/" + userId + "/unarchive", // Laravel route for updating admin
+                url: "/admin/speaker-management/" + speakerId + "/topics/" + topicId + "/unarchive",
                 type: "PUT",
                 data: formData,
                 dataType: "json",
                 success: function (response) {
                     if (response.status === "success") {
-                        $("#speakers").DataTable().ajax.reload(); // Reload DataTable
+                        $("#topics").DataTable().ajax.reload(); // Reload DataTable
                     }
-                    $("#unarchiveAccountModal").modal("hide");
+                    $("#unarchiveTopicModal").modal("hide");
                     showAlertModal(response.status, response.message);
 
                 },
@@ -186,34 +181,34 @@
         // Handle the Edit button click
         $(document).on("click", ".status-archive", function () {
             // Get data from the button attributes
-            let userId = $(this).data("id");
+            let topicId = $(this).data("id");
 
             // Populate the modal fields
-            $("#archive-edit-id").val(userId);
+            $("#archive-edit-id").val(topicId);
 
             // Show the modal
-            $("#archiveAccountModal").modal("show");
+            $("#archiveTopicModal").modal("show");
         });
 
-        $("#archiveSpeakerForm").submit(function (e) {
+        $("#archiveTopicForm").submit(function (e) {
             e.preventDefault(); // Prevent default form submission
 
-            let userId = $("#archive-edit-id").val(); // Get the admin ID
+            let topicId = $("#archive-edit-id").val(); // Get the admin ID
 
             let formData = {
                 _token: $('meta[name="csrf-token"]').attr('content')
             };
-
+            let speakerId = $("#speaker_id").val();
             $.ajax({
-                url: "/admin/speaker-management/" + userId + "/archive", // Laravel route for updating admin
+                url: "/admin/speaker-management/" + speakerId + "/topics/" + topicId + "/archive",
                 type: "PUT",
                 data: formData,
                 dataType: "json",
                 success: function (response) {
                     if (response.status === "success") {
-                        $("#speakers").DataTable().ajax.reload(); // Reload DataTable
+                        $("#topics").DataTable().ajax.reload(); // Reload DataTable
                     }
-                    $("#archiveAccountModal").modal("hide"); // Hide modal
+                    $("#archiveTopicModal").modal("hide"); // Hide modal
                     showAlertModal(response.status, response.message);
                 },
                 error: function (xhr) {
