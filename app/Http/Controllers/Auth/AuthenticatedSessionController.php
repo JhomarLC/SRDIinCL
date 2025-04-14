@@ -31,20 +31,45 @@ class AuthenticatedSessionController extends Controller
 
         // Get the authenticated user
         $user = Auth::user();
-        // Log the activity
+
+        // Check if user status is declined or pending
+        if (in_array($user->status, ['declined', 'pending'])) {
+            // Log the failed attempt
+            activity()
+                ->causedBy($user)
+                ->performedOn($user)
+                ->event('login_blocked')
+                ->withProperties([
+                    'ip_address' => request()->ip(),
+                    'user_agent' => request()->header('User-Agent'),
+                    'status' => $user->status,
+                ])
+                ->log("{$user->first_name} {$user->last_name} login blocked due to '{$user->status}' status.");
+
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect()->route('login')->withErrors([
+                'email' => 'Your account status is ' . $user->status . '. Please contact administrators.',
+            ]);
+        }
+
+        // Log the successful login
         activity()
             ->causedBy($user)
             ->performedOn($user)
-            ->event('logged_in') // Corrected event name
+            ->event('logged_in')
             ->withProperties([
                 'ip_address' => request()->ip(),
                 'user_agent' => request()->header('User-Agent'),
-                'status' => 'success', // Log successful login
+                'status' => 'success',
             ])
             ->log("{$user->first_name} {$user->last_name} logged in successfully.");
 
         return redirect()->intended(RouteServiceProvider::redirectTo());
     }
+
 
     /**
      * Destroy an authenticated session.

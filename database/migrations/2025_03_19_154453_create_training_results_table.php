@@ -23,8 +23,8 @@ return new class extends Migration
             $table->decimal('gain_in_knowledge');
             $table->string('certificate_type');
             $table->string('certificate_number');
-            $table->decimal('overall_training_eval_score');
-            $table->decimal('trainer_rating');
+            // $table->decimal('overall_training_eval_score');
+            // $table->decimal('trainer_rating');
             $table->timestamps();
         });
     }

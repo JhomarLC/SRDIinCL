@@ -48,7 +48,7 @@
                         <div class="col-lg-12">
                             <div class="hstack gap-2 justify-content-end">
                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-secondary"> <i class="ri-chat-new-fill"></i> Add speaker topic</button>
+                                <button type="submit" class="btn btn-secondary"> <i class="ri-add-circle-fill"></i> Add speaker topic</button>
                             </div>
                         </div>
                     </div>

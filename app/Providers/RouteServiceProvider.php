@@ -31,6 +31,11 @@ class RouteServiceProvider extends ServiceProvider
                 session()->flash('error', 'Your account has been deactivated. Please contact support.');
                 return '/login';
             }
+            if ($user->status === 'pending') {
+                Auth::logout();
+                session()->flash('pending', 'Your account is currently pending approval. Please wait for an administrator to approve your access.');
+                return '/login';
+            }
                 // Redirect based on role
                 return $user->role === 'admin' ? '/admin/dashboard' : '/dashboard';
             }

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('speaker_evaluations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('speaker_topic_id')->constrained()->onDelete('cascade');
+            $table->integer('knowledge_score');
             $table->integer('teaching_method_score');
             $table->integer('audiovisual_score');
             $table->integer('clarity_score');
@@ -21,8 +22,16 @@ return new class extends Migration
             $table->integer('audience_connection_score');
             $table->integer('content_relevance_score');
             $table->integer('goal_achievement_score');
-            $table->longText('low_score_comment')->nullable();
+            $table->longText('knowledge_score_comment')->nullable();
+            $table->longText('teaching_method_comment')->nullable();
+            $table->longText('audiovisual_comment')->nullable();
+            $table->longText('clarity_comment')->nullable();
+            $table->longText('question_handling_comment')->nullable();
+            $table->longText('audience_connection_comment')->nullable();
+            $table->longText('content_relevance_comment')->nullable();
+            $table->longText('goal_achievement_comment')->nullable();
             $table->longText('additional_feedback')->nullable();
+            $table->enum('status', ['active', 'archived'])->default('active');
             $table->timestamps();
         });
     }

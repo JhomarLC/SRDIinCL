@@ -49,7 +49,7 @@
                 <div class="hstack text-white-50 gap-1">
                     <div class="me-2">
                         <i class="ri-map-pin-user-line me-1 text-white text-opacity-75 fs-16 align-middle"></i>
-                        {{ $participant->barangay->name ?? '' }}, {{ $participant->municipality->name ?? '' }}, {{ $participant->province->name ?? '' }}
+                        {{ $participant->full_address }}
                     </div>
                 </div>
 

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AEWSController;
 use App\Http\Controllers\Admin\SpeakerController;
+use App\Http\Controllers\Admin\SpeakerEvaluationController;
 use App\Http\Controllers\Admin\SpeakerTopicController;
 use Illuminate\Support\Facades\Route;
 
@@ -15,6 +16,8 @@ Route::prefix('speaker-management')->group(function () {
 
     Route::put('/{id}/archive', [SpeakerController::class, 'archive'])->name('speaker-management.archive');
     Route::put('/{id}/unarchive', [SpeakerController::class, 'unarchive'])->name('speaker-management.unarchive');
+
+    Route::post('/validate-step', [SpeakerEvaluationController::class, 'validateStep'])->name('speaker-eval.validateStep');
 
     // Nested topics under a specific speaker
     Route::prefix('{speaker}/topics')->group(function () {
@@ -29,6 +32,10 @@ Route::prefix('speaker-management')->group(function () {
 
         // Nested evaluations under a specific topic
         Route::prefix('{topic}/evaluations')->group(function () {
+            Route::get('/', [SpeakerEvaluationController::class, 'index'])->name('speaker-eval.index');
+            Route::get('/get-index', [SpeakerEvaluationController::class, 'getIndex'])->name('speaker-eval.get-index');
+
+            Route::get('/create', [SpeakerEvaluationController::class, 'create'])->name('speaker-eval.create');
 
         });
     });

@@ -1,17 +1,19 @@
-<div class="modal fade" id="addnewtopicmodal" tabindex="-1" aria-labelledby="exampleModalgridLabel" aria-modal="true">
+<div class="modal fade" id="editTopicModal" tabindex="-1" aria-labelledby="exampleModalgridLabel" aria-modal="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalgridLabel">Add Speaker Topics</h5>
+                <h5 class="modal-title" id="exampleModalgridLabel">Update Speaker</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <form id="createTopicForm">
+            <div class="modal-body" >
+                <form id="updateTopicForm" method="POST">
                     @csrf  <!-- CSRF Token for security -->
+                    @method('PUT')
                     <div class="row g-3">
                         <div class="col-xxl-12">
                             <label for="topic_discussed" class="form-label">Training Topic <span class="text-danger">*</span></label>
-                            <select class="form-control select2" id="topic_discussed" name="topic_discussed" aria-label="Select session topic">
+                            {{-- <input type="text" class="form-control" name="topic_discussed" id="update_topic_discussed" placeholder="Enter training topic"> --}}
+                            <select class="form-control select2" id="update_topic_discussed" name="topic_discussed" aria-label="Select session topic">
                                 <option selected disabled hidden>-- SELECT TOPIC DISCUSSED --</option>
 
                                 <optgroup label="A. Overview of the PalayCheck System">
@@ -38,17 +40,18 @@
                                 </optgroup>
 
                             </select>
+                            <input type="hidden" id="speaker_id" value="{{ $speaker->id }}">
+                            <input type="hidden" id="edit_id">
                             <span class="invalid-feedback" id="topic_discussed_error" role="alert"></span>
                         </div>
-
                         <div class="col-xxl-12">
                             <label for="topic_date" class="form-label">Date <span class="text-danger">*</span></label>
-                            <input type="date" class="form-control" id="topic_date" name="topic_date">
+                            <input type="date" class="form-control" id="update_topic_date" name="topic_date">
                         </div>
                         <div class="col-lg-12">
                             <div class="hstack gap-2 justify-content-end">
                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-secondary"> <i class="ri-chat-new-fill"></i> Add speaker topic</button>
+                                <button type="submit" class="btn btn-success"> <i class="ri-checkbox-circle-fill"></i>Update speaker account</button>
                             </div>
                         </div>
                     </div>

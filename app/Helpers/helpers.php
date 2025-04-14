@@ -28,3 +28,14 @@ if (!function_exists('getAddressName')) {
         return 'Unknown';
     }
 }
+
+if (! function_exists('scoreLabel')) {
+    function scoreLabel($score)
+    {
+        if ($score >= 4.5) return 'Excellent';
+        if ($score >= 4.0) return 'Very Good';
+        if ($score >= 3.0) return 'Good';
+        if ($score >= 2.0) return 'Needs Improvement';
+        return 'Poor';
+    }
+}

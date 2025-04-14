@@ -60,7 +60,7 @@ aria-labelledby="pills-personal-info-tab">
             <input type="hidden" name="age_group" id="age_group" value="18 - 30">
 
             <div class="col-sm-3">
-                <label for="gender" class="form-label">Gender</label>
+                <label for="gender" class="form-label">Sex</label>
                 <select class="form-control mb-3 select2" id="gender" name="gender">
                     <option selected disabled hidden>-- SELECT GENDER --</option>
                     <option value="Male" selected>Male</option>

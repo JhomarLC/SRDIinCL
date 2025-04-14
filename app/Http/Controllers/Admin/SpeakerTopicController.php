@@ -20,20 +20,20 @@ class SpeakerTopicController extends Controller
         return view('admin.speaker-management.speaker-topics.index', compact('speaker'));
     }
 
-    public function getIndex(string $id)
+    public function getIndex(string $speakerId)
     {
         // Get only topics for the specific speaker, eager load speaker relationship
         $speaker_topics = SpeakerTopic::with('speaker')
-                        ->where('speaker_id', $id)->get();
+                        ->where('speaker_id', $speakerId)->get();
+
         return DataTables::of($speaker_topics)
-            ->addColumn('actions', function ($topic)  {
+            ->addColumn('actions', function ($topic) use ($speakerId)  {
                 $viewButton  = ($topic->status !== 'archived')
-                    ?  '<button class="btn btn-sm btn-secondary"
-                            data-id="' . $topic->id . '">
-                            <i class="ri-eye-fill"></i>
-                            View Evaluations
-                        </button>'
-                    : '';
+                        ? '<a href="' . route('speaker-eval.index', [$speakerId, $topic->id]) . '"
+                                class="btn btn-sm btn-secondary">
+                                <i class="ri-eye-fill"></i> View Evaluations
+                            </a>'
+                        : '';
 
                 $editButton = '<button class="btn btn-sm btn-success editTopic"
                                     data-id="' . $topic->id . '"
@@ -62,6 +62,9 @@ class SpeakerTopicController extends Controller
             })
             ->editColumn('topic_date', function ($topic) {
                 return $topic->formatted_topic_date;
+            })
+            ->editColumn('topic_discussed', function ($topic) {
+                return SpeakerTopic::getTopicLabel($topic->topic_discussed);
             })
             ->editColumn('status', function ($topic) {
                 return $topic->status === 'active'

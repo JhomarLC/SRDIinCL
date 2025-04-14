@@ -11,8 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->enum('status', ['active', 'deactivated', 'pending', 'declined'])->default('active');
+        Schema::create('speaker_evaluations_infos', function (Blueprint $table) {
+            $table->id();
+            // $table->foreignId('speaker_evaluations_id')->constrained()->onDelete('cascade');
+            $table->timestamps();
         });
     }
 
@@ -21,8 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('status');
-        });
+        Schema::dropIfExists('speaker_evaluations_infos');
     }
 };

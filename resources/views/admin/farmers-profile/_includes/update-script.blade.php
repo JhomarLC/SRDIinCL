@@ -48,8 +48,8 @@
             formData1.set("gain_in_knowledge", $("#gain_in_knowledge").val() || '');
             formData1.set("certificate_type", $("#certificate_type").val() || '');
             formData1.set("certificate_number", $("#certificate_number").val() || '');
-            formData1.set("overall_training_eval_score", $("#overall_training_eval_score").val() || '');
-            formData1.set("trainer_rating", $("#trainer_rating").val() || '');
+            // formData1.set("overall_training_eval_score", $("#overall_training_eval_score").val() || '');
+            // formData1.set("trainer_rating", $("#trainer_rating").val() || '');
 
             // 4. Custom logic like is_pwd and is_indigenous
             const isPwd = $('input[name="is_pwd"]:checked').val();

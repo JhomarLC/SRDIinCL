@@ -27,42 +27,42 @@ aria-labelledby="pills-training-result-tab">
                 placeholder="Enter training location">
             <div class="invalid-feedback">Please enter training location</div>
         </div>
-        <div class="col-sm-4">
-            <label for="pre_test_score" class="form-label">Pre-Test (Written)</label>
-            <input type="number" class="form-control" id="pre_test_score" name="pre_test_score" value="40"
-                placeholder="Enter Pre-Test">
-            <div class="invalid-feedback">Please enter pre-test</div>
-        </div>
-        <div class="col-sm-4">
-            <label for="post_test_score" class="form-label">Post-Test (Written)</label>
-            <input type="number" class="form-control" id="post_test_score" name="post_test_score" value="60"
-                placeholder="Enter Post-Test">
-            <div class="invalid-feedback">Please enter post test</div>
-        </div>
-        <div class="col-sm-4">
+        <div class="col-sm-3">
             <label for="total_test_items" class="form-label">Total no. of Test items</label>
             <input type="number" class="form-control" id="total_test_items" name="total_test_items"
                 placeholder="Enter number of test items">
             <div class="invalid-feedback">Please enter number of test items</div>
         </div>
-    </div>
-</div>
-<div class="mt-3">
-    <div class="row g-3">
-        <div class="col-sm-4">
+        <div class="col-sm-3">
+            <label for="pre_test_score" class="form-label">Pre-Test (Written)</label>
+            <input type="number" class="form-control" id="pre_test_score" name="pre_test_score" value="40"
+                placeholder="Enter Pre-Test">
+            <div class="invalid-feedback">Please enter pre-test</div>
+        </div>
+        <div class="col-sm-3">
+            <label for="post_test_score" class="form-label">Post-Test (Written)</label>
+            <input type="number" class="form-control" id="post_test_score" name="post_test_score" value="60"
+                placeholder="Enter Post-Test">
+            <div class="invalid-feedback">Please enter post test</div>
+        </div>
+        <div class="col-sm-3">
             <label for="gain_in_knowledge_display" class="form-label">Gain in Knowledge</label>
             <input type="text" id="gain_in_knowledge" name="gain_in_knowledge" value="33.33" hidden>
             <input type="text" class="form-control" id="gain_in_knowledge_display" name="gain_in_knowledge_display" value="33.33 %" disabled
                 placeholder="0.00%">
             {{-- <div class="invalid-feedback">Calculated Gain in Knowledge</div> --}}
         </div>
-        <div class="col-sm-4">
+    </div>
+</div>
+<div class="mt-3">
+    <div class="row g-3">
+        <div class="col-sm-3">
             <label for="certificate_type" class="form-label">Type of Certificate</label>
             <input type="text" class="form-control" id="certificate_type" name="certificate_type" value="Digital"
                 placeholder="Enter type of certificate">
             <div class="invalid-feedback">Please enter type of certificate</div>
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-3">
             <label for="certificate_number" class="form-label">Certificate number</label>
             <input type="text" class="form-control" id="certificate_number" name="certificate_number" value="1029384"
                 placeholder="Enter Certificate Number">
@@ -70,7 +70,7 @@ aria-labelledby="pills-training-result-tab">
         </div>
     </div>
 </div>
-<div class="mt-3">
+{{-- <div class="mt-3">
     <div class="row g-3">
         <div class="col-sm-6">
             <label for="overall_training_eval_score" class="form-label">Overall Training Evaluation</label>
@@ -85,7 +85,7 @@ aria-labelledby="pills-training-result-tab">
             <div class="invalid-feedback">Please enter TMT Rating in Training Evaluation</div>
         </div>
     </div>
-</div>
+</div> --}}
 
 <div class="d-flex align-items-start gap-3 mt-4">
     <button type="button" class="btn btn-light btn-label previestab"

@@ -71,6 +71,19 @@ class AEWSController extends Controller
                                     Update
                                 </button>';
 
+                $pendingButton = ($user->status === 'pending')
+                ? '<button class="btn btn-sm btn-success status-approve"
+                        data-id="' . $user->id . '">
+                        <i class="ri-checkbox-circle-fill"></i>
+                        Approve
+                    </button>
+                    <button class="btn btn-sm btn-danger status-decline"
+                        data-id="' . $user->id . '">
+                        <i class="ri-delete-bin-fill"></i>
+                        Decline
+                    </button>'
+                : '';
+
                 $activateButton = ($user->status === 'deactivated')
                     ? '<button class="btn btn-sm btn-secondary status-activate"
                             data-id="' . $user->id . '">
@@ -87,12 +100,15 @@ class AEWSController extends Controller
                     </button>'
                 : '';
 
-                return ($user->status === 'active' && $editButton ? $editButton : "") . ' ' . $activateButton . ' ' . $deactivateButton;
+                return ($user->status === 'active' && $editButton ? $editButton : "") . ' ' . $activateButton . ' ' . $deactivateButton . ' ' . $pendingButton;
             })
             ->editColumn('status', function ($user) {
-                return $user->status === 'active'
-                    ? '<span class="badge bg-success">Active</span>'
-                    : '<span class="badge bg-danger">Deactivated</span>';
+                return match ($user->status) {
+                    'active' => '<span class="badge bg-success">Active</span>',
+                    'pending' => '<span class="badge bg-warning">Pending Approval</span>',
+                    'declined' => '<span class="badge bg-danger">Declined</span>',
+                    default => '<span class="badge bg-secondary">Unknown</span>',
+                };
             })
             ->editColumn('job_status', function ($user) {
                 $status = optional($user->profile)->job_status; // Safely access job_status
@@ -427,4 +443,74 @@ class AEWSController extends Controller
             'message' => 'AEW account activated successfully!'
         ]);
     }
+
+    /**
+     * Approve the specified user.
+     */
+    public function approve(string $id)
+    {
+        $user = User::findOrFail($id);
+
+        if ($user->status === 'active') {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'This AEW account is already active.'
+            ]);
+        }
+        $user->update(['status' => 'active']);
+
+        // Log the activity
+        activity()
+            ->causedBy(auth()->user())
+            ->performedOn($user)
+            ->event('activated')
+            ->withProperties([
+                'status' => [
+                    'old' => 'pending',
+                    'new' => 'active'
+                ],
+        ])
+        ->log("{$user->first_name} {$user->last_name}'s account has been approved.");
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'AEW account approved successfully!'
+        ]);
+    }
+
+    /**
+     * Decline the specified user.
+     */
+    public function decline(string $id)
+    {
+        $user = User::findOrFail($id);
+
+        if ($user->status === 'declined') {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'This AEW account is already declined.'
+            ], 422);
+        }
+
+        $user->update(['status' => 'declined']);
+
+        // Log the activity
+        activity()
+            ->causedBy(auth()?->user())
+            ->performedOn($user)
+            ->event('declined')
+            ->withProperties([
+                'status' => [
+                    'old' => 'pending',
+                    'new' => 'declined'
+                ],
+            ])
+            ->log("{$user->first_name} {$user->last_name}'s account has been declined.");
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'AEW account declined successfully!'
+        ]);
+    }
+
 }

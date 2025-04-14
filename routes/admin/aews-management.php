@@ -12,4 +12,10 @@ Route::put('/aews-management/{id}/deactivate', [AEWSController::class, 'deactiva
 Route::put('/aews-management/{id}/activate', [AEWSController::class, 'activate'])
         ->name('aews-management.activate');
 
+Route::put('/aews-management/{id}/approve', [AEWSController::class, 'approve'])
+        ->name('aews-management.approve');
+
+Route::put('/aews-management/{id}/decline', [AEWSController::class, 'decline'])
+        ->name('aews-management.decline');
+
 Route::resource('aews-management', AEWSController::class);

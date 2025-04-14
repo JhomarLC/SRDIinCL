@@ -22,13 +22,13 @@
         ['label' => 'Speakers', 'route' => 'speaker-management.index'],
     ])
     @slot('title')
-        Speaker Topics
+        Speaker Evaluations
     @endslot
 @endcomponent
 @include('components.alert')
-@include('admin.speaker-management.speaker-topics.components.modal-create')
+{{-- @include('admin.speaker-management.speaker-topics.components.modal-create')
 @include('admin.speaker-management.speaker-topics.components.modal-update')
-@include('admin.speaker-management.speaker-topics.components.status-update')
+@include('admin.speaker-management.speaker-topics.components.status-update') --}}
 
 
 <div class="profile-foreground position-relative mx-n4 mt-n4">
@@ -59,7 +59,7 @@
         <div class="col-12 col-lg-auto order-last order-lg-0">
             <div class="row text text-white-50 text-center">
                 <div class="col p-2">
-                    <h4 class="text-white mb-1">4 (Very Good)</h4>
+                    <h4 class="text-white mb-1">{{ $average_overall_score }} ({{ scoreLabel($average_overall_score) }})</h4>
                     <p class="fs-14 mb-0">Total Rating</p>
                 </div>
             </div>
@@ -74,21 +74,44 @@
     <div class="col-lg-12">
         <div class="card">
             <div class="card-header d-flex align-items-center">
-                <h5 class="card-title mb-0 flex-grow-1">Lists of Speaker's Topics</h5>
+                <div class="card-title mb-0 flex-grow-1">
+                    <h5 class="text-lg">Topic: <strong>{{ $label }}</strong></h5>
+                    {{-- <p class="badge bg-success">Lists of Speaker's Evaluation</p> --}}
+                </div>
                 <a style="margin-right: 10px" href="{{ route('admin-management.export') }}">
                     <button class="btn btn-success"><i class="ri-file-excel-2-fill"></i> Export</button>
                 </a>
-                <button  class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#addnewtopicmodal">
-                    <i class="ri-chat-new-fill"></i> New Topic
-                </button>
+                <a href="{{ route('speaker-eval.create', [$speaker->id, $speaker_topic->id]) }}"  class="btn btn-secondary">
+                    <i class="ri-file-add-fill"></i> New Evaluation
+                </a>
+            </div>
+            <div class="d-flex mt-2" style="margin-left: 20px">
+                <p class="flex-grow-1 mb-0"><strong>K </strong>- Knowledge</p>
+                <p class="flex-grow-1 mb-0"><strong>TM</strong> - Teaching Method</p>
+                <p class="flex-grow-1 mb-0"><strong>AV</strong> - Audio Visual</p>
+                <p class="flex-grow-1 mb-0"><strong>C </strong>- Clarity</p>
+            </div>
+            <div class="card-header d-flex">
+                <p class="flex-grow-1 mb-0"><strong>QH</strong> - Question Handling</p>
+                <p class="flex-grow-1 mb-0"><strong>AC</strong> - Audience Connection</p>
+                <p class="flex-grow-1 mb-0"><strong>CR</strong> - Content Relevance</p>
+                <p class="flex-grow-1 mb-0"><strong>GA</strong> - Goal Achievement</p>
             </div>
             <div class="card-body">
-                <table id="topics" class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">
+                <table id="eval" class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">
                     <thead>
                         <tr>
-                            <th>Topic Discussed</th>
-                            <th>Date</th>
-                            <th>Status</th>
+                            <th data-ordering="false">K</th>
+                            <th data-ordering="false">TM</th>
+                            <th data-ordering="false">AV</th>
+                            <th data-ordering="false">C</th>
+                            <th data-ordering="false">QH</th>
+                            <th data-ordering="false">AC</th>
+                            <th data-ordering="false">CR</th>
+                            <th data-ordering="false">GA</th>
+                            {{-- <th data-ordering="false">Total Rating</th> --}}
+                            <th data-ordering="false">Additional Feedback</th>
+                            <th data-ordering="false">Overall Score</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -123,6 +146,6 @@
 <script src="{{ URL::asset('build/js/pages/datatables.init.js') }}"></script>
 
 <script src="{{ URL::asset('admin-js/admin.js') }}"></script>
-@include('admin.speaker-management.speaker-topics._includes.script')
+@include('admin.speaker-management.speaker-topics.speaker-evaluations._includes.script')
 <script src="{{ URL::asset('build/js/app.js') }}"></script>
 @endsection

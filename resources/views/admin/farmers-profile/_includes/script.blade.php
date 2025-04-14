@@ -460,9 +460,8 @@
                     formData1.append("gain_in_knowledge", $("#gain_in_knowledge").val() || '');
                     formData1.append("certificate_type", $("#certificate_type").val() || '');
                     formData1.append("certificate_number", $("#certificate_number").val() || '');
-                    formData1.append("overall_training_eval_score", $("#overall_training_eval_score").val() || '');
-                    formData1.append("trainer_rating", $("#trainer_rating").val() || '');
-
+                    // formData1.append("overall_training_eval_score", $("#overall_training_eval_score").val() || '');
+                    // formData1.append("trainer_rating", $("#trainer_rating").val() || '');
                 },
             };
 
@@ -713,8 +712,8 @@
                 formData.append("gain_in_knowledge", $("#gain_in_knowledge").val() || '');
                 formData.append("certificate_type", $("#certificate_type").val() || '');
                 formData.append("certificate_number", $("#certificate_number").val() || '');
-                formData.append("overall_training_eval_score", $("#overall_training_eval_score").val() || '');
-                formData.append("trainer_rating", $("#trainer_rating").val() || '');
+                // formData.append("overall_training_eval_score", $("#overall_training_eval_score").val() || '');
+                // formData.append("trainer_rating", $("#trainer_rating").val() || '');
 
                 formData.append("step", step);
 

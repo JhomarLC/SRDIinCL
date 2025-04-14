@@ -521,6 +521,91 @@
     });
 
     $(document).ready(function () {
+         // Handle the Approve button click
+         $(document).on("click", ".status-approve", function () {
+            // Get data from the button attributes
+            let userId = $(this).data("id");
+
+            // Populate the modal fields
+            $("#approve-edit-id").val(userId);
+
+            // Show the modal
+            $("#approveAccountModal").modal("show");
+        });
+
+
+        $("#approveAEWForm").submit(function (e) {
+            e.preventDefault(); // Prevent default form submission
+
+            let userId = $("#approve-edit-id").val(); // Get the aews ID
+
+            let formData = {
+                _token: $('meta[name="csrf-token"]').attr('content')
+            };
+
+            $.ajax({
+                url: "/admin/aews-management/" + userId + "/approve", // Laravel route for updating aews
+                type: "PUT",
+                data: formData,
+                dataType: "json",
+                success: function (response) {
+                    if (response.status === "success") {
+                        $("#aews").DataTable().ajax.reload(); // Reload DataTable
+                    }
+                    $("#approveAccountModal").modal("hide");
+                    showAlertModal(response.status, response.message);
+
+                },
+                error: function (xhr) {
+                    let errors = xhr.responseJSON.errors;
+                    console.log(xhr);
+                }
+            });
+        });
+
+
+        $(document).on("click", ".status-decline", function () {
+            // Get data from the button attributes
+            let userId = $(this).data("id");
+
+            // Populate the modal fields
+            $("#decline-edit-id").val(userId);
+
+            // Show the modal
+            $("#declineAccountModal").modal("show");
+        });
+
+
+        $("#declineAEWForm").submit(function (e) {
+            e.preventDefault(); // Prevent default form submission
+
+            let userId = $("#decline-edit-id").val(); // Get the aews ID
+
+            let formData = {
+                _token: $('meta[name="csrf-token"]').attr('content')
+            };
+
+            $.ajax({
+                url: "/admin/aews-management/" + userId + "/decline", // Laravel route for updating aews
+                type: "PUT",
+                data: formData,
+                dataType: "json",
+                success: function (response) {
+                    if (response.status === "success") {
+                        $("#aews").DataTable().ajax.reload(); // Reload DataTable
+                    }
+                    $("#declineAccountModal").modal("hide");
+                    showAlertModal(response.status, response.message);
+
+                },
+                error: function (xhr) {
+                    let errors = xhr.responseJSON.errors;
+                    console.log(xhr);
+                }
+            });
+        });
+
+
         // Handle the Edit button click
         $(document).on("click", ".status-activate", function () {
             // Get data from the button attributes
