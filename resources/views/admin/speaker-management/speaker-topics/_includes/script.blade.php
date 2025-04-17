@@ -9,11 +9,89 @@
             columns: [
                 { data: 'topic_discussed', name: 'topic_discussed' },
                 { data: 'topic_date', name: 'topic_date' },
+                { data: 'topic_location', name: 'topic_location' },
+                { data: 'average_evaluation_score', name: 'average_evaluation_score' },
                 { data: 'status', name: 'status' },
                 { data: 'actions', name: 'actions', orderable: false, searchable: false }
             ]
         });
         $('.select2').select2();
+
+        $('#addnewtopicmodal').on('shown.bs.modal', function () {
+            $(this).find('.select2').select2({
+                dropdownParent: $(this)
+            });
+        });
+         // ADDRESS
+         $.ajax({
+            url: `https://psgc.gitlab.io/api/provinces/`,
+            method: "GET",
+            dataType: "json",
+            success: function (data) {
+                let provinceDropdown = $("#province");
+                let provincesArray = Object.values(data);
+
+                provincesArray.forEach(province => {
+                    provinceDropdown.append(
+                        `<option value="${province.code}">${province.name}</option>`
+                    );
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error("Failed to load provinces:", error);
+            }
+        });
+
+        // Load municipalities based on selected province
+        $("#province").change(function () {
+            let provinceCode = $(this).val();
+            $("#municipality").prop("disabled", false).html('<option selected disabled hidden>-- SELECT MUNICIPALITY --</option>');
+            $("#barangay").prop("disabled", true).html('<option selected disabled hidden>-- SELECT BARANGAY --</option>');
+
+            $.ajax({
+                url: `https://psgc.gitlab.io/api/provinces/${provinceCode}/cities-municipalities/`,
+                method: "GET",
+                dataType: "json",
+                success: function (data) {
+                    let municipalityDropdown = $("#municipality");
+                    let municipalitiesArray = Object.values(data);
+
+                    municipalitiesArray.forEach(municipality => {
+                        municipalityDropdown.append(
+                            `<option value="${municipality.code}">${municipality.name}</option>`
+                        );
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error("Failed to load municipalities:", error);
+                }
+            });
+        });
+
+        $("#municipality").change(function () {
+            let municipalityCode = $(this).val();
+            $("#barangay").prop("disabled", false).html('<option selected disabled hidden>-- SELECT BARANGAY --</option>');
+
+            $.ajax({
+                url: `https://psgc.gitlab.io/api/cities-municipalities/${municipalityCode}/barangays/`, // FIXED URL
+                method: "GET",
+                dataType: "json",
+                success: function (data) {
+                    let barangayDropdown = $("#barangay");
+                    let barangaysArray = Object.values(data); // Convert object to array if needed
+
+                    barangaysArray.forEach(barangay => {
+                        barangayDropdown.append(
+                            `<option value="${barangay.code}">${barangay.name}</option>`
+                        );
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error("Failed to load barangays:", error);
+                }
+            });
+        });
+
     });
 
     // CREATE
@@ -28,6 +106,9 @@
             let formData = {
                 topic_discussed: $('#topic_discussed').val(),
                 topic_date: $('#topic_date').val(),
+                province_code: $('#province').val(),
+                municipality_code: $('#municipality').val(),
+                barangay_code: $('#barangay').val(),
                 _token: $('meta[name="csrf-token"]').attr('content')
             };
 

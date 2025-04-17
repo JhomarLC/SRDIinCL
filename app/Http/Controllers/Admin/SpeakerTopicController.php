@@ -60,11 +60,20 @@ class SpeakerTopicController extends Controller
 
                 return $viewButton . ' ' . ($topic->status === 'active' && $editButton ? $editButton : "") . ' ' . $activateButton . ' ' . $deactivateButton;
             })
+            ->addColumn('topic_location', function ($topic) {
+                return $topic->full_address;
+            })
             ->editColumn('topic_date', function ($topic) {
                 return $topic->formatted_topic_date;
             })
             ->editColumn('topic_discussed', function ($topic) {
                 return SpeakerTopic::getTopicLabel($topic->topic_discussed);
+            })
+            ->addColumn('average_evaluation_score', function ($topic) {
+                if (is_null($topic->average_evaluation_score)) {
+                    return 'No Evaluations';
+                }
+                return $topic->average_evaluation_score . ' (' .scoreLabel($topic->average_evaluation_score) . ')';
             })
             ->editColumn('status', function ($topic) {
                 return $topic->status === 'active'
@@ -89,12 +98,18 @@ class SpeakerTopicController extends Controller
     {
         $validatedData = $request->validate([
             'topic_discussed' => 'required|string|max:255',
+            'province_code' => 'required|string',
+            'municipality_code' => 'required|string',
+            'barangay_code' => 'required|string',
             'topic_date' => 'nullable|string|max:255',
         ]);
 
         $topic = SpeakerTopic::create([
             'speaker_id' => $id,
             'topic_discussed' => $validatedData['topic_discussed'],
+            'province_code' => $validatedData['province_code'],
+            'municipality_code' => $validatedData['municipality_code'],
+            'barangay_code' => $validatedData['barangay_code'],
             'topic_date' => $validatedData['topic_date'] ?? null,
         ]);
 
@@ -106,7 +121,10 @@ class SpeakerTopicController extends Controller
             ->withProperties([
                 'admin' => $topic->only([
                     'topic_discussed',
-                    'topic_date'
+                    'topic_date',
+                    'province_code',
+                    'municipality_code',
+                    'barangay_code'
                 ]),
             ])
         ->log("New topic {$topic->topic_discussed} - {$topic->topic_date} for speaker created");

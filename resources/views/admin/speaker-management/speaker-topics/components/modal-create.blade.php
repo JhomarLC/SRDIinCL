@@ -40,7 +40,29 @@
                             </select>
                             <span class="invalid-feedback" id="topic_discussed_error" role="alert"></span>
                         </div>
+                        <div class="col-xxl-12">
+                            <label for="province" class="form-label">Province <span class="text-danger">*</span></label>
+                            <select class="form-control select2" id="province" name="province">
+                                <option selected disabled hidden>-- SELECT PROVINCE --</option>
+                            </select>
+                            <span class="invalid-feedback" id="province_error" role="alert"></span>
+                        </div>
 
+                        <div class="col-xxl-12">
+                            <label for="municipality" class="form-label">Municipality <span class="text-danger">*</span></label>
+                            <select class="form-control select2" id="municipality" name="municipality" disabled>
+                                <option selected disabled hidden>-- SELECT MUNICIPALITY --</option>
+                            </select>
+                            <span class="invalid-feedback" id="municipality_error" role="alert"></span>
+                        </div>
+
+                        <div class="col-xxl-12">
+                            <label for="barangay" class="form-label">Barangay <span class="text-danger">*</span></label>
+                            <select class="form-control select2" id="barangay" name="barangay" disabled>
+                                <option selected disabled hidden>-- SELECT BARANGAY --</option>
+                            </select>
+                            <span class="invalid-feedback" id="barangay_error" role="alert"></span>
+                        </div>
                         <div class="col-xxl-12">
                             <label for="topic_date" class="form-label">Date <span class="text-danger">*</span></label>
                             <input type="date" class="form-control" id="topic_date" name="topic_date">

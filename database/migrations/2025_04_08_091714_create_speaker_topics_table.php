@@ -15,6 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId( 'speaker_id')->constrained()->onDelete('cascade');
             $table->string('topic_discussed');
+            $table->string('province_code');
+            $table->string('municipality_code');
+            $table->string('barangay_code');
             $table->date('topic_date');
             $table->enum('status', ['active', 'archived'])->default('active');
             $table->timestamps();

@@ -10,27 +10,27 @@ aria-labelledby="pills-evaluation-personal-info-tab">
     <div class="row g-3">
         <div class="col-sm-3">
             <label for="first_name" class="form-label">First name</label>
-            <input type="text" class="form-control" id="first_name"
+            <input type="text" class="form-control" id="first_name" name="first_name"
                 placeholder="Enter first name" value="" required>
             <div class="invalid-feedback">Please enter a first name</div>
         </div>
 
         <div class="col-sm-3">
             <label for="middle_name" class="form-label">Middle name</label>
-            <input type="text" class="form-control" id="middle_name"
+            <input type="text" class="form-control" id="middle_name" name="middle_name"
                 placeholder="Enter middle name" value="" required>
             <div class="invalid-feedback">Please enter a middle name</div>
         </div>
 
         <div class="col-sm-3">
             <label for="last_name" class="form-label">Last name</label>
-            <input type="text" class="form-control" id="last_name"
+            <input type="text" class="form-control" id="last_name" name="last_name"
                 placeholder="Enter last name" value="" required>
             <div class="invalid-feedback">Please enter a last name</div>
         </div>
         <div class="col-sm-3">
             <label for="suffix" class="form-label">Suffix</label>
-            <input type="text" class="form-control" id="suffix"
+            <input type="text" class="form-control" id="suffix" name="suffix"
                 placeholder="Enter Suffix" value="" required>
             <div class="invalid-feedback">Please enter Suffix</div>
         </div>

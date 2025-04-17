@@ -44,7 +44,7 @@
                         <tr>
                             <th data-ordering="false">Full Name</th>
                             <th data-ordering="false">Training Title</th>
-                            <th data-ordering="false">Total Rating</th>
+                            <th data-ordering="false">Overall Evaluations</th>
                             <th data-ordering="false">Status</th>
                             <th>Action</th>
                         </tr>

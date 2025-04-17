@@ -36,6 +36,7 @@ Route::prefix('speaker-management')->group(function () {
             Route::get('/get-index', [SpeakerEvaluationController::class, 'getIndex'])->name('speaker-eval.get-index');
 
             Route::get('/create', [SpeakerEvaluationController::class, 'create'])->name('speaker-eval.create');
+            Route::post('/store', [SpeakerEvaluationController::class, 'store'])->name('speaker-eval.store');
 
         });
     });

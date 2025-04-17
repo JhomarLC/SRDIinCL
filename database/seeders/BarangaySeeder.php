@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Barangay;
+use App\Models\Municipality;
 use File;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -19,18 +20,10 @@ class BarangaySeeder extends Seeder
         $barangays = json_decode($json, true);
 
         foreach ($barangays as $barangay) {
-             // Skip if parent municipality doesn't exist
-             $parentCode = $barangay['municipalityCode'] ?? $barangay['cityCode'] ?? null;
-
-             if (!$parentCode || !\App\Models\Municipality::where('code', $parentCode)->exists()) {
-                 Log::warning("Skipped Barangay: {$barangay['name']} - Missing Parent Code: {$parentCode}");
-                 continue;
-             }
-
             Barangay::create([
                 'code' => $barangay['code'],
                 'name' => $barangay['name'],
-                'municipality_code' => $barangay['municipalityCode'], // ✅ Required
+                'municipality_code' => $barangay['municipalityCode'], // nullable safe
             ]);
         }
     }

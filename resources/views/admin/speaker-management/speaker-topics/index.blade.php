@@ -59,7 +59,9 @@
         <div class="col-12 col-lg-auto order-last order-lg-0">
             <div class="row text text-white-50 text-center">
                 <div class="col p-2">
-                    <h4 class="text-white mb-1">4 (Very Good)</h4>
+                    <h4 class="text-white mb-1">
+                        {{ is_null($speaker->overall_evaluation_score) ? 'No Evaluations' : $speaker->overall_evaluation_score . ' ' . scoreLabel($speaker->overall_evaluation_score) }}
+                    </h4>
                     <p class="fs-14 mb-0">Total Rating</p>
                 </div>
             </div>
@@ -88,6 +90,8 @@
                         <tr>
                             <th>Topic Discussed</th>
                             <th>Date</th>
+                            <th>Location</th>
+                            <th>Average Evaluation</th>
                             <th>Status</th>
                             <th>Action</th>
                         </tr>

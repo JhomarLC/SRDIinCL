@@ -101,8 +101,8 @@
         </div>
 
         <div class="mt-3">
-            <label for="addiotional_feedback" class="form-label">Other additional comments or suggestions for the improvement of the speaker:</label>
-            <textarea class="form-control" id="addiotional_feedback" name="addiotional_feedback" rows="3"></textarea>
+            <label for="additional_feedback" class="form-label">Other additional comments or suggestions for the improvement of the speaker:</label>
+            <textarea class="form-control" id="additional_feedback" name="additional_feedback" rows="3"></textarea>
         </div>
 
         <div class="d-flex align-items-start gap-3 mt-4">

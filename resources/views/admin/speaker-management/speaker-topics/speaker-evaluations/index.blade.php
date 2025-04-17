@@ -59,7 +59,9 @@
         <div class="col-12 col-lg-auto order-last order-lg-0">
             <div class="row text text-white-50 text-center">
                 <div class="col p-2">
-                    <h4 class="text-white mb-1">{{ $average_overall_score }} ({{ scoreLabel($average_overall_score) }})</h4>
+                    <h4 class="text-white mb-1">
+                        {{ $average_overall_score == 0 ? 'No Evaluations' : $average_overall_score . ' ' . scoreLabel($average_overall_score) }}
+                    </h4>
                     <p class="fs-14 mb-0">Total Rating</p>
                 </div>
             </div>
@@ -73,18 +75,30 @@
 <div class="row">
     <div class="col-lg-12">
         <div class="card">
-            <div class="card-header d-flex align-items-center">
-                <div class="card-title mb-0 flex-grow-1">
-                    <h5 class="text-lg">Topic: <strong>{{ $label }}</strong></h5>
-                    {{-- <p class="badge bg-success">Lists of Speaker's Evaluation</p> --}}
+            <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
+                <div class="mb-2">
+                    <h5 class="text-lg mb-1">
+                        <strong>Topic:</strong> {{ $label }}
+                    </h5>
+
+                    <div>
+                        <i class="ri-map-pin-fill"></i>
+                        <span class="text-muted">
+                            {{ $speaker_topic->formatted_topic_date }} at {{ $speaker_topic->full_address }}
+                        </span>
+                    </div>
                 </div>
-                <a style="margin-right: 10px" href="{{ route('admin-management.export') }}">
-                    <button class="btn btn-success"><i class="ri-file-excel-2-fill"></i> Export</button>
-                </a>
-                <a href="{{ route('speaker-eval.create', [$speaker->id, $speaker_topic->id]) }}"  class="btn btn-secondary">
-                    <i class="ri-file-add-fill"></i> New Evaluation
-                </a>
+
+                <div class="d-flex gap-2 align-items-start">
+                    <a href="{{ route('admin-management.export') }}" class="btn btn-success">
+                        <i class="ri-file-excel-2-fill"></i> Export
+                    </a>
+                    <a href="{{ route('speaker-eval.create', [$speaker->id, $speaker_topic->id]) }}" class="btn btn-secondary">
+                        <i class="ri-file-add-fill"></i> New Evaluation
+                    </a>
+                </div>
             </div>
+
             <div class="d-flex mt-2" style="margin-left: 20px">
                 <p class="flex-grow-1 mb-0"><strong>K </strong>- Knowledge</p>
                 <p class="flex-grow-1 mb-0"><strong>TM</strong> - Teaching Method</p>
@@ -101,6 +115,7 @@
                 <table id="eval" class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">
                     <thead>
                         <tr>
+                            <th data-ordering="false">Name</th>
                             <th data-ordering="false">K</th>
                             <th data-ordering="false">TM</th>
                             <th data-ordering="false">AV</th>
@@ -112,6 +127,7 @@
                             {{-- <th data-ordering="false">Total Rating</th> --}}
                             <th data-ordering="false">Additional Feedback</th>
                             <th data-ordering="false">Overall Score</th>
+                            <th data-ordering="false">Status</th>
                             <th>Action</th>
                         </tr>
                     </thead>

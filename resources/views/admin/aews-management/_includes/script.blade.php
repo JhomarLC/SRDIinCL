@@ -17,6 +17,7 @@
                 { data: 'actions', name: 'actions', orderable: false, searchable: false }
             ]
         });
+
         $('#addnewaewmodal').on('shown.bs.modal', function () {
             $(this).find('.select2').select2({
                 dropdownParent: $(this)

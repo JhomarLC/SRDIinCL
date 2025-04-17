@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('municipalities', function (Blueprint $table) {
             $table->string('code')->primary();
             $table->string('name');
-            $table->string('province_code');
+            $table->string('province_code')->nullable();
             $table->timestamps();
 
-            $table->foreign('province_code')->references('code')->on('provinces')->onDelete('cascade');
+            // $table->foreign('province_code')->references('code')->on('provinces')->onDelete('cascade');
         });
     }
 

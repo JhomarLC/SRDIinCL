@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('barangays', function (Blueprint $table) {
             $table->string('code')->primary();
             $table->string('name');
-            $table->string('municipality_code');
+            $table->string('municipality_code')->nullable();
             $table->timestamps();
 
-            $table->foreign('municipality_code')->references('code')->on('municipalities')->onDelete('cascade');
+            // $table->foreign('municipality_code')->references('code')->on('municipalities')->onDelete('cascade');
         });
     }
 

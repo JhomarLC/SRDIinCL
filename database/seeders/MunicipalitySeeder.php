@@ -19,15 +19,10 @@ class MunicipalitySeeder extends Seeder
         $municipalities = json_decode($json, true);
 
         foreach ($municipalities as $municipality) {
-             // Skip if province_code is invalid (e.g., 0 or null)
-            if ($municipality['provinceCode'] == "0") {
-                continue;
-            }
-
             Municipality::create([
                 'code' => $municipality['code'],
                 'name' => $municipality['name'],
-                'province_code' => $municipality['provinceCode'], // ✅ Required for FK
+                'province_code' => $municipality['provinceCode'],
             ]);
         }
     }

@@ -13,9 +13,14 @@ class SpeakerTopic extends Model
     protected $fillable = [
         'speaker_id',
         'topic_discussed',
+        'province_code',
+        'municipality_code',
+        'barangay_code',
         'topic_date',
         'status',
     ];
+    protected $appends = ['average_evaluation_score'];
+
 
     public static function topicOptions(): array
     {
@@ -42,6 +47,33 @@ class SpeakerTopic extends Model
         ];
     }
 
+    public function getFullAddressAttribute()
+    {
+        $addressParts = [];
+
+        if (!empty($this->house_number_sitio_purok)) {
+            $addressParts[] = $this->house_number_sitio_purok;
+        }
+
+        $addressParts[] = optional($this->barangay)->name;
+        $addressParts[] = optional($this->municipality)->name;
+        $addressParts[] = optional($this->province)->name;
+        $addressParts[] = $this->zip_code;
+
+        return implode(', ', array_filter($addressParts));
+    }
+
+    public function getAverageEvaluationScoreAttribute()
+    {
+        $evaluations = $this->speaker_evaluation;
+
+        if ($evaluations->isEmpty()) {
+            return null; // or return 0 or "N/A"
+        }
+
+        return round($evaluations->avg('overall_score'), 2);
+    }
+
     public static function getTopicLabel(string $value): string
     {
         return self::topicOptions()[$value] ?? $value;
@@ -61,4 +93,17 @@ class SpeakerTopic extends Model
     {
         return $this->belongsTo(Speaker::class, 'speaker_id');
     }
+
+    public function province() {
+        return $this->belongsTo(Province::class, 'province_code', 'code');
+    }
+
+    public function municipality() {
+        return $this->belongsTo(Municipality::class, 'municipality_code', 'code');
+    }
+
+    public function barangay() {
+        return $this->belongsTo(Barangay::class, 'barangay_code', 'code');
+    }
+
 }

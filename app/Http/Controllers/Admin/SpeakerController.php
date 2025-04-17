@@ -27,8 +27,12 @@ class SpeakerController extends Controller
                 $suffix = $speaker->suffix ? $speaker->suffix : '';
                 return "{$speaker->first_name} {$middleName} {$speaker->last_name} {$suffix}";
             })
-            ->addColumn('total_rating', function ($speaker) {
-                    return '<span class="badge bg-info text-black">Add Speaker Evaluation</span>';
+            ->addColumn('overall_evaluation_score', function ($speaker) {
+                if (is_null($speaker->overall_evaluation_score)) {
+                    return 'No Evaluations';
+                }
+
+                return $speaker->overall_evaluation_score . ' (' .scoreLabel($speaker->overall_evaluation_score) . ')';
             })
             ->addColumn('actions', function ($speaker)  {
                 $viewButton  = ($speaker->status !== 'archived')

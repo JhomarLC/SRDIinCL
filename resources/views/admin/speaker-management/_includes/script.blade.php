@@ -9,7 +9,7 @@
             columns: [
                 { data: 'full_name', name: 'full_name' },
                 { data: 'training_title', name: 'training_title' },
-                { data: 'total_rating', name: 'total_rating' },
+                { data: 'overall_evaluation_score', name: 'overall_evaluation_score' },
                 { data: 'status', name: 'status', orderable: false, searchable: false },
                 { data: 'actions', name: 'actions', orderable: false, searchable: false }
             ]

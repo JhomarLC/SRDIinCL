@@ -7,6 +7,7 @@
             responsive: true,
             ajax: "{{ route('speaker-eval.get-index', [$speaker->id, $speaker_topic->id]) }}",
             columns: [
+                { data: 'full_name', name: 'full_name' },
                 { data: 'knowledge_score', name: 'knowledge_score' },
                 { data: 'teaching_method_score', name: 'teaching_method_score' },
                 { data: 'audiovisual_score', name: 'audiovisual_score' },
@@ -17,10 +18,18 @@
                 { data: 'goal_achievement_score', name: 'goal_achievement_score' },
                 { data: 'additional_feedback', name: 'additional_feedback' },
                 { data: 'overall_score', name: 'overall_score' },
+                { data: 'status', name: 'status' },
                 { data: 'actions', name: 'actions', orderable: false, searchable: false }
             ]
         });
         $('.select2').select2();
+
+        $('td').on('click', function () {
+            const radio = $(this).find('input[type="radio"]');
+            if (radio.length) {
+                radio.prop('checked', true).trigger('change');
+            }
+        });
     });
 
     $(document).ready(function () {
@@ -171,6 +180,8 @@
                     formData1.append("audience_connection_comment", $("#audience_connection_comment").val() || '');
                     formData1.append("content_relevance_comment", $("#content_relevance_comment").val() || '');
                     formData1.append("goal_achievement_comment", $("#goal_achievement_comment").val() || '');
+
+                    formData1.append("additional_feedback", $("#additional_feedback").val() || '');
                 },
                 "evaluation-personal-info": () => {
                      // Manually append each field (or dynamically if needed)
@@ -178,7 +189,7 @@
                     formData1.append("middle_name", $("#middle_name").val() || '');
                     formData1.append("last_name", $("#last_name").val() || '');
                     formData1.append("suffix", $("#suffix").val() || '');
-                    formData1.append("age_group", $("#age_group").val() || '');
+                    formData1.append("age_group", $('input[name="age_group"]:checked').val() || '');
                     formData1.append("gender", $("#gender").val() || '');
 
                     const isPwd = $('input[name="is_pwd"]:checked').val();
@@ -192,7 +203,7 @@
                     formData1.append("is_indigenous", isIndigenous);
                     formData1.append("tribe_name", $("#tribe_name").val() || '');
 
-                    let provinceCode = $("#province").val() || $("#update_province").val() || '';
+                    let provinceCode = $("#province").val() || '';
 
                     // Appending the values to formData
                     formData1.append("province_code", provinceCode);
@@ -200,6 +211,10 @@
                 },
             };
 
+            console.log("🧾 FormData being sent:");
+            for (const pair of formData1.entries()) {
+                console.log(`${pair[0]}: ${pair[1]}`);
+            }
             // ✅ Validate each step in sequence
             const validateSteps = async () => {
                 for (let i = 0; i < steps.length; i++) {
@@ -256,7 +271,7 @@
                 fullFormData.set("tribe_name", $("#tribe_name").val() || '');
                   // Final AJAX POST
                 $.ajax({
-                    url: "{{ route('farmers-profile.store') }}",
+                    url: "{{ route('speaker-eval.store',[$speaker->id, $speaker_topic->id]) }}",
                     type: "POST",
                     headers: {
                         "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
@@ -266,7 +281,9 @@
                     contentType: false,
                     success: function (response) {
                         showAlertModal("success", response.message);
-                        setTimeout(() => window.location.href = "/admin/farmers-profile", 1500);
+                        setTimeout(() => {
+                            window.location.href = "{{ url('/admin/speaker-management/' . $speaker->id . '/topics/' . $speaker_topic->id) . '/evaluations'}}";
+                        }, 1500);
                     },
                     error: function (xhr) {
                         console.error("❌ Final Submission Error", xhr);
@@ -289,9 +306,6 @@
             const formData = new FormData();
 
             if (step === "speaker-evaluation") {
-                // Manually append each field (or dynamically if needed)
-                // formData.append("first_name", $("#firs   t_name").val() || '');
-
                 const knowledge_score = $('input[name="knowledge_score"]:checked').val() || "";
                 const teaching_method_score = $('input[name="teaching_method_score"]:checked').val() || "";
                 const audiovisual_score = $('input[name="audiovisual_score"]:checked').val() || "";
@@ -322,7 +336,7 @@
                 formData.append("middle_name", $("#middle_name").val() || '');
                 formData.append("last_name", $("#last_name").val() || '');
                 formData.append("suffix", $("#suffix").val() || '');
-                formData.append("age_group", $("#age_group").val() || '');
+                formData.append("age_group", $('input[name="age_group"]:checked').val() || '');
                 formData.append("gender", $("#gender").val() || '');
 
                 const isPwd = $('input[name="is_pwd"]:checked').val();

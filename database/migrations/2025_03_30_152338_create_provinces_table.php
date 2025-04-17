@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('provinces', function (Blueprint $table) {
             $table->string('code')->primary();
             $table->string('name');
-            $table->string('region_code');
+            $table->string('region_code')->nullable();
             $table->timestamps();
 
-            $table->foreign('region_code')->references('code')->on('regions')->onDelete('cascade');
+            // $table->foreign('region_code')->references('code')->on('regions')->onDelete('cascade');
         });
     }
 
