@@ -1,5 +1,5 @@
  <!-- Modal -->
- <div class="modal fade zoomIn" id="unarchiveTopicModal" tabindex="-1" aria-hidden="true">
+ <div class="modal fade zoomIn" id="unarchiveEvalModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -16,12 +16,12 @@
                     </lord-icon>
                     <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
                         <h4>Are you Sure ?</h4>
-                        <p class="text-muted mx-4 mb-0">Are you sure you want to unarchive speaker topic?</p>
+                        <p class="text-muted mx-4 mb-0">Are you sure you want to unarchive speaker evaluation?</p>
                     </div>
                 </div>
                 <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
                     <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal">Close</button>
-                    <form id="activateTopicForm" method="POST" style="display:inline;">
+                    <form id="unarchiveEvalForm" method="POST" style="display:inline;">
                         @csrf
                         @method('PUT')
                         <input type="text" hidden id="unarchive-edit-id">
@@ -35,9 +35,10 @@
     </div>
 </div>
 <!--end modal -->
-
+<input type="hidden" id="speaker_id" value="{{ $speaker->id }}">
+<input type="hidden" id="speaker_topic_id" value="{{ $speaker_topic->id }}">
 <!-- Modal -->
-<div class="modal fade zoomIn" id="archiveTopicModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade zoomIn" id="archiveEvalModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -54,15 +55,17 @@
                     </lord-icon>
                     <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
                         <h4>Are you Sure ?</h4>
-                        <p class="text-muted mx-4 mb-0">Are you sure you want to archive speaker topic?</p>
+                        <p class="text-muted mx-4 mb-0">Are you sure you want to archive speaker evaluation?</p>
                     </div>
                 </div>
                 <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
                     <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal">Close</button>
-                    <form id="archiveTopicForm" method="POST" style="display:inline;">
+                    <form id="archiveEvalForm" method="POST" style="display:inline;">
                         @csrf
                         @method('PUT')
-                        <input type="text" hidden id="archive-edit-id">
+                        <input type="hidden" id="speaker_id" value="{{ $speaker->id }}">
+                        <input type="hidden" id="speaker_topic_id" value="{{ $speaker_topic->id }}">
+                        <input type="hidden" id="archive-edit-id">
                         <button type="submit" class="btn w-sm btn-danger">Yes, Archive It!</button>
                     </form>
 

@@ -30,7 +30,8 @@ class SpeakerEvaluation extends Model
         'content_relevance_comment',
         'goal_achievement_comment',
 
-        'additional_feedback'
+        'additional_feedback',
+        'status'
     ];
 
     protected $appends = ['overall_score'];

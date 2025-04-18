@@ -453,36 +453,38 @@
 
     $(document).ready(function () {
         // Handle the Edit button click
-        $(document).on("click", ".status-activate", function () {
+        $(document).on("click", ".status-unarchive", function () {
             // Get data from the button attributes
-            let userId = $(this).data("id");
+            let evalId = $(this).data("id");
 
             // Populate the modal fields
-            $("#unarchive-edit-id").val(userId);
+            $("#unarchive-edit-id").val(evalId);
 
             // Show the modal
-            $("#unarchiveTopicModal").modal("show");
+            $("#unarchiveEvalModal").modal("show");
         });
 
-        $("#activateTopicForm").submit(function (e) {
+        $("#unarchiveEvalForm").submit(function (e) {
             e.preventDefault(); // Prevent default form submission
 
-            let topicId = $("#unarchive-edit-id").val(); // Get the admin ID
+            let speakerId = $("#speaker_id").val();
+            let topicId = $("#speaker_topic_id").val();
+            let evalId = $("#unarchive-edit-id").val();
 
             let formData = {
                 _token: $('meta[name="csrf-token"]').attr('content')
             };
-            let speakerId = $("#speaker_id").val();
+
             $.ajax({
-                url: "/admin/speaker-management/" + speakerId + "/topics/" + topicId + "/unarchive",
+                url: "/admin/speaker-management/" + speakerId + "/topics/" + topicId + "/evaluations/" + evalId + '/unarchive',
                 type: "PUT",
                 data: formData,
                 dataType: "json",
                 success: function (response) {
                     if (response.status === "success") {
-                        $("#topics").DataTable().ajax.reload(); // Reload DataTable
+                        $("#eval").DataTable().ajax.reload(); // Reload DataTable
                     }
-                    $("#unarchiveTopicModal").modal("hide");
+                    $("#unarchiveEvalModal").modal("hide");
                     showAlertModal(response.status, response.message);
 
                 },
@@ -496,34 +498,36 @@
         // Handle the Edit button click
         $(document).on("click", ".status-archive", function () {
             // Get data from the button attributes
-            let topicId = $(this).data("id");
+            let evalId = $(this).data("id");
 
             // Populate the modal fields
-            $("#archive-edit-id").val(topicId);
+            $("#archive-edit-id").val(evalId);
 
             // Show the modal
-            $("#archiveTopicModal").modal("show");
+            $("#archiveEvalModal").modal("show");
         });
 
-        $("#archiveTopicForm").submit(function (e) {
+        $("#archiveEvalForm").submit(function (e) {
             e.preventDefault(); // Prevent default form submission
 
-            let topicId = $("#archive-edit-id").val(); // Get the admin ID
+            let speakerId = $("#speaker_id").val();
+            let topicId = $("#speaker_topic_id").val();
+            let evalId = $("#archive-edit-id").val();
 
             let formData = {
                 _token: $('meta[name="csrf-token"]').attr('content')
             };
-            let speakerId = $("#speaker_id").val();
+
             $.ajax({
-                url: "/admin/speaker-management/" + speakerId + "/topics/" + topicId + "/archive",
+                url: "/admin/speaker-management/" + speakerId + "/topics/" + topicId + "/evaluations/" + evalId + '/archive',
                 type: "PUT",
                 data: formData,
                 dataType: "json",
                 success: function (response) {
                     if (response.status === "success") {
-                        $("#topics").DataTable().ajax.reload(); // Reload DataTable
+                        $("#eval").DataTable().ajax.reload(); // Reload DataTable
                     }
-                    $("#archiveTopicModal").modal("hide"); // Hide modal
+                    $("#archiveEvalModal").modal("hide"); // Hide modal
                     showAlertModal(response.status, response.message);
                 },
                 error: function (xhr) {

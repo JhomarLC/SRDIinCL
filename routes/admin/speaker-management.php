@@ -38,6 +38,8 @@ Route::prefix('speaker-management')->group(function () {
             Route::get('/create', [SpeakerEvaluationController::class, 'create'])->name('speaker-eval.create');
             Route::post('/store', [SpeakerEvaluationController::class, 'store'])->name('speaker-eval.store');
 
+            Route::put('/{id}/archive', [SpeakerEvaluationController::class, 'archive'])->name('speaker-eval.archive');
+            Route::put('/{id}/unarchive', [SpeakerEvaluationController::class, 'unarchive'])->name('speaker-eval.unarchive');
         });
     });
 });

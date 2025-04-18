@@ -96,46 +96,46 @@ class SpeakerEvaluationController extends Controller
         $speaker_eval = SpeakerEvaluation::with('speaker_topic')
                         ->where('speaker_topic_id', $topicId)->get();
         return DataTables::of($speaker_eval)
-            ->addColumn('full_name', function ($topic) {
-                return $topic->speaker_evaluation_info->full_name;
+            ->addColumn('full_name', function ($eval) {
+                return $eval->speaker_evaluation_info->full_name;
             })
-            ->addColumn('actions', function ($topic)  {
-                $viewButton  = ($topic->status !== 'archived')
+            ->addColumn('actions', function ($eval)  {
+                $viewButton  = ($eval->status !== 'archived')
                             ? '<a href=""
                                     class="btn btn-sm btn-secondary">
                                     <i class="ri-eye-fill"></i> View Evaluation
                                 </a>'
                             : '';
                 $editButton = '<button class="btn btn-sm btn-success editTopic"
-                                    data-id="' . $topic->id . '"
-                                    data-topic_discussed="' . $topic->topic_discussed . '"
-                                    data-topic_date="' . $topic->topic_date . '">
+                                    data-id="' . $eval->id . '"
+                                    data-topic_discussed="' . $eval->topic_discussed . '"
+                                    data-topic_date="' . $eval->topic_date . '">
                                     <i class="ri-edit-fill"></i> Update
                                 </button>';
 
-                $activateButton = ($topic->status === 'archived')
-                    ? '<button class="btn btn-sm btn-secondary status-activate"
-                            data-id="' . $topic->id . '">
+                $activateButton = ($eval->status === 'archived')
+                    ? '<button class="btn btn-sm btn-secondary status-unarchive"
+                            data-id="' . $eval->id . '">
                             <i class="ri-service-fill"></i>
                             Unarchive
                         </button>'
                     : '';
 
-                $deactivateButton = ($topic->status === 'active')
+                $deactivateButton = ($eval->status === 'active')
                 ? '<button class="btn btn-sm btn-danger status-archive"
-                        data-id="' . $topic->id . '">
+                        data-id="' . $eval->id . '">
                         <i class="ri-archive-fill"></i>
                         Archive
                     </button>'
                 : '';
 
-                return  $viewButton . ' ' . ($topic->status === 'active' && $editButton ? $editButton : "") . ' ' . $activateButton . ' ' . $deactivateButton;
+                return  $viewButton . ' ' . ($eval->status === 'active' && $editButton ? $editButton : "") . ' ' . $activateButton . ' ' . $deactivateButton;
             })
-            ->addColumn('overall_score', function ($topic)  {
-                return $topic->overall_score . " (" . scoreLabel($topic->overall_score) . ")";
+            ->addColumn('overall_score', function ($eval)  {
+                return $eval->overall_score . " (" . scoreLabel($eval->overall_score) . ")";
             })
-            ->editColumn('status', function ($topic) {
-                return $topic->status === 'active'
+            ->editColumn('status', function ($eval) {
+                return $eval->status === 'active'
                     ? '<span class="badge bg-success">Active</span>'
                     : '<span class="badge bg-danger">Archived</span>';
             })
@@ -308,5 +308,78 @@ class SpeakerEvaluationController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function archive(string $speakerId, string $topicId, string $evalId)
+    {
+        $eval = SpeakerEvaluation::where('id', $evalId)
+                             ->where('speaker_topic_id', $topicId)
+                             ->with('speaker_topic')
+                             ->firstOrFail();
+
+        if ($eval->status === 'archived') {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'This evaluation is already archived.'
+            ]);
+        }
+
+        $eval->update(['status' => 'archived']);
+
+        // Log the activity
+        activity()
+            ->causedBy(auth()->user())
+            ->performedOn($eval)
+            ->event('topic_archived')
+            ->withProperties([
+                'status' => [
+                    'old' => 'active',
+                    'new' => 'archived'
+                ],
+            ])
+            ->log("Evaluation with overall score with {$eval->overall_score} has been archived.");
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Evaluation archived successfully!',
+            'eval' => $eval
+        ]);
+    }
+
+
+    public function unarchive(string $speakerId, string $topicId, string $evalId)
+    {
+        $eval = SpeakerEvaluation::where('id', $evalId)
+                             ->where('speaker_topic_id', $topicId)
+                             ->with('speaker_topic')
+                             ->firstOrFail();
+
+        if ($eval->status === 'active') {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'This evaluation is already unarchived.'
+            ]);
+        }
+
+        $eval->update(['status' => 'active']);
+
+        // Log the activity
+        activity()
+            ->causedBy(auth()->user())
+            ->performedOn($eval)
+            ->event('topic_unarchived')
+            ->withProperties([
+                'status' => [
+                    'old' => 'archived',
+                    'new' => 'active'
+                ],
+            ])
+            ->log("Evaluation with overall score with {$eval->overall_score} has been unarchive.");
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Evaluation unarchived successfully!',
+            'eval' => $eval
+        ]);
     }
 }

@@ -26,9 +26,7 @@
     @endslot
 @endcomponent
 @include('components.alert')
-{{-- @include('admin.speaker-management.speaker-topics.components.modal-create')
-@include('admin.speaker-management.speaker-topics.components.modal-update')
-@include('admin.speaker-management.speaker-topics.components.status-update') --}}
+@include('admin.speaker-management.speaker-topics.speaker-evaluations.components.status-update')
 
 
 <div class="profile-foreground position-relative mx-n4 mt-n4">
