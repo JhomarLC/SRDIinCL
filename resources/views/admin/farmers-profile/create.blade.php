@@ -96,8 +96,15 @@
         </div>
         <!-- end card -->
     </div>
-
 </div>
+<!-- Loader Overlay -->
+<div id="loaderOverlay" class="d-none position-fixed top-0 start-0 w-100 h-100 bg-white bg-opacity-75 d-flex align-items-center justify-content-center" style="z-index: 9999;">
+    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
+
 @endsection
 @section('script')
 <!-- password -->

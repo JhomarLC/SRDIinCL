@@ -335,8 +335,95 @@
             });
         }
 
+        async function finalValidationBeforeSubmit(formData) {
+            try {
+                await $.ajax({
+                    url: "{{ route('participant.validateAll') }}", // You can also use route('participant.validateStep') in sequence
+                    method: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+                    },
+                });
+
+                // ✅ Passed → submit
+                submitFinalForm();
+            } catch (error) {
+                console.log(error);
+
+                if (error.status === 422) {
+                    const errors = error.responseJSON.errors;
+
+                    showAlertModal("error", "Please review highlighted tabs and fix errors.");
+                    for (const tabKey in errors) {
+                        $(`button[data-bs-target="#pills-${tabKey}"]`).addClass("text-danger");
+                    }
+                } else {
+                    showAlertModal("error", "Unexpected validation issue.");
+                }
+                hideLoader();
+            }
+        }
+
+        const submitFinalForm = () => {
+
+            const fullFormData = new FormData();
+
+            // 1. Handle all input fields except radios and checkboxes first
+            $('form :input').each(function () {
+                const type = $(this).attr('type');
+                const name = $(this).attr('name');
+                if ((type === 'radio' || type === 'checkbox') && !$(this).is(':checked')) return;
+                if ($(this).closest('.training-entry').length > 0) return;
+                fullFormData.append(name, $(this).val() || '');
+            });
+
+            // Handle training entries again
+            $('#trainingContainer .training-entry').each(function (index) {
+                const $entry = $(this);
+                fullFormData.set(`training_title[${index}]`, $entry.find(`input[name="training_title[${index}]"]`).val() || '');
+                fullFormData.set(`training_date[${index}]`, $entry.find(`input[name="training_date[${index}]"]`).val() || '');
+                fullFormData.set(`conducted_by[${index}]`, $entry.find(`input[name="conducted_by[${index}]"]`).val() || '');
+                fullFormData.set(`personally_paid[${index}]`, $entry.find(`input[name="personally_paid[${index}]"]:checked`).val() || '');
+            });
+
+            // You can include this part if needed:
+            fullFormData.set("is_pwd", $('input[name="is_pwd"]:checked').val() || '');
+            fullFormData.set("disability_type", $("#disability_type").val() || '');
+
+            fullFormData.set("is_indigenous", $('input[name="is_indigenous"]:checked').val() || '');
+            fullFormData.set("tribe_name", $("#tribe_name").val() || '');
+                // Final AJAX POST
+            $.ajax({
+                url: "{{ route('farmers-profile.store') }}",
+                type: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+                },
+                data: fullFormData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    showAlertModal("success", response.message);
+                    setTimeout(() => window.location.href = "/admin/farmers-profile", 1500);
+                },
+                error: function (xhr) {
+                    hideLoader();
+                    console.error("❌ Final Submission Error", xhr);
+                    showAlertModal("error", "Something went wrong during final submission.");
+                },
+                complete: function () {
+                    hideLoader(); // Always hide when done
+                }
+            });
+        }
+
         $("#submitFarmersProfile").on("click", function (e) {
             e.preventDefault();
+
+            showLoader("Validating...");
 
             const steps = [
                 "personal-info",
@@ -493,61 +580,16 @@
                         } else {
                             showAlertModal("error", "Something went wrong during validation.");
                         }
+                        hideLoader();
                         return false; // Stop loop and submission
                     }
                 }
 
                 // All steps validated successfully → Proceed to final submission
-                submitFinalForm();
+                // submitFinalForm();
+                Object.values(stepForms).forEach(fn => fn()); // fill formData1
+                finalValidationBeforeSubmit(formData1); // re-use it
             };
-
-            const submitFinalForm = () => {
-                const fullFormData = new FormData();
-
-                // 1. Handle all input fields except radios and checkboxes first
-                $('form :input').each(function () {
-                    const type = $(this).attr('type');
-                    const name = $(this).attr('name');
-                    if ((type === 'radio' || type === 'checkbox') && !$(this).is(':checked')) return;
-                    if ($(this).closest('.training-entry').length > 0) return;
-                    fullFormData.append(name, $(this).val() || '');
-                });
-
-                // Handle training entries again
-                $('#trainingContainer .training-entry').each(function (index) {
-                    const $entry = $(this);
-                    fullFormData.set(`training_title[${index}]`, $entry.find(`input[name="training_title[${index}]"]`).val() || '');
-                    fullFormData.set(`training_date[${index}]`, $entry.find(`input[name="training_date[${index}]"]`).val() || '');
-                    fullFormData.set(`conducted_by[${index}]`, $entry.find(`input[name="conducted_by[${index}]"]`).val() || '');
-                    fullFormData.set(`personally_paid[${index}]`, $entry.find(`input[name="personally_paid[${index}]"]:checked`).val() || '');
-                });
-
-                // You can include this part if needed:
-                fullFormData.set("is_pwd", $('input[name="is_pwd"]:checked').val() || '');
-                fullFormData.set("disability_type", $("#disability_type").val() || '');
-
-                fullFormData.set("is_indigenous", $('input[name="is_indigenous"]:checked').val() || '');
-                fullFormData.set("tribe_name", $("#tribe_name").val() || '');
-                  // Final AJAX POST
-                $.ajax({
-                    url: "{{ route('farmers-profile.store') }}",
-                    type: "POST",
-                    headers: {
-                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
-                    },
-                    data: fullFormData,
-                    processData: false,
-                    contentType: false,
-                    success: function (response) {
-                        showAlertModal("success", response.message);
-                        setTimeout(() => window.location.href = "/admin/farmers-profile", 1500);
-                    },
-                    error: function (xhr) {
-                        console.error("❌ Final Submission Error", xhr);
-                        showAlertModal("error", "Something went wrong during final submission.");
-                    }
-                });
-            }
 
             // Start the validation process
             validateSteps();

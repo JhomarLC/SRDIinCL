@@ -2,6 +2,7 @@
     $(document).ready(function () {
         $("#updateFarmersProfile").on("click", function (e) {
             e.preventDefault();
+            showLoader("Validating...");
 
             const formData1 = new FormData();
 
@@ -99,6 +100,9 @@
                         showAlertModal("error", "Unexpected error!");
                         console.error("🚨 Unexpected error:", xhr);
                     }
+                },
+                complete: function () {
+                    hideLoader(); // Always hide when done
                 }
             });
         });

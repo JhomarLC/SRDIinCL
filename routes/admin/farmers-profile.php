@@ -12,5 +12,7 @@ Route::get('/farmers-profile/get-trainings', [FarmersProfileController::class, '
 ->name('farmers-profile.get-trainings');
 
 Route::post('/validate-step', [FarmersProfileController::class, 'validateStep'])->name('participant.validateStep');
+Route::post('/validate-all', [FarmersProfileController::class, 'validateAllSteps'])->name('participant.validateAll');
+
 Route::resource('farmers-profile', FarmersProfileController::class);
 

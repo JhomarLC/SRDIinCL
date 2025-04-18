@@ -33,7 +33,15 @@ function showAlertModal(status, message) {
         $(this).remove();
     });
 }
+function showLoader(message = "Loading...") {
+    $('#loaderOverlay').removeClass('d-none').fadeIn(200);
+}
 
+function hideLoader() {
+    $('#loaderOverlay').fadeOut(200, function () {
+        $(this).addClass('d-none');
+    });
+}
 addEventListener("DOMContentLoaded", (event) => {
     /**
      * Choices Select plugin
