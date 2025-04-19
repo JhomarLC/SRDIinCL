@@ -78,6 +78,50 @@
                 }
             });
         });
+
+        // Update
+        $.ajax({
+            url: `https://psgc.gitlab.io/api/provinces/`,
+            method: "GET",
+            dataType: "json",
+            success: function (data) {
+                let provinceDropdown = $("#update_province");
+                let provincesArray = Object.values(data);
+
+                provincesArray.forEach(province => {
+                    provinceDropdown.append(
+                        `<option value="${province.code}">${province.name}</option>`
+                    );
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error("Failed to load provinces:", error);
+            }
+        });
+
+        let provinceCode = "{{ $evaluation->speaker_evaluation_info->province_code ?? '' }}";
+        $("#update_province").html('<option>Loading...</option>').prop("disabled", true);
+
+         // ✅ Load Province after Region is Selected
+         $.ajax({
+            url: `https://psgc.gitlab.io/api/provinces/`,
+            method: "GET",
+            dataType: "json",
+            success: function (data) {
+                $("#update_province").empty().append('<option selected disabled hidden>-- SELECT PROVINCE --</option>').prop("disabled", false);
+                data.forEach(province => {
+                    $("#update_province").append(`<option value="${province.code}">${province.name}</option>`);
+                });
+
+                if (provinceCode) {
+                    $("#update_province").val(provinceCode).trigger("change");
+                }
+            },
+            error: function () {
+                console.error("Failed to load provinces.");
+            }
+        });
+
     });
 
     $(document).ready(function () {

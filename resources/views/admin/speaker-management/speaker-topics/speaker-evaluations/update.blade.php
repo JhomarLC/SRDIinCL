@@ -20,7 +20,7 @@
         ['label' => 'Speakers', 'route' => 'speaker-management.index'],
     ])
     @slot('title')
-        Create Evaluation
+        Update Evaluation
     @endslot
 @endcomponent
 
@@ -33,7 +33,7 @@
             <div class="card-body">
                 <form action="#" class="form-steps" autocomplete="off">
                     <div class="text-center pt-3 pb-4 mb-1">
-                        <h5>Fillout Speaker Evaluation</h5>
+                        <h5>Update Speaker Evaluation</h5>
                     </div>
                     <div id="custom-progress-bar" class="progress-nav mb-4">
                         <div class="progress" style="height: 1px;">
@@ -56,10 +56,9 @@
                             </li>
                         </ul>
                     </div>
-
                     <div class="tab-content">
-                        @include('admin.speaker-management.speaker-topics.speaker-evaluations.components.create-tabs.1-tabpanel')
-                        @include('admin.speaker-management.speaker-topics.speaker-evaluations.components.create-tabs.2-tabpanel')
+                        @include('admin.speaker-management.speaker-topics.speaker-evaluations.components.update-tabs.1-tabpanel')
+                        @include('admin.speaker-management.speaker-topics.speaker-evaluations.components.update-tabs.2-tabpanel')
                     </div>
                     <!-- end tab content -->
                 </form>
@@ -95,8 +94,8 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <script src="{{ URL::asset('admin-js/admin.js') }}"></script>
-@include('admin.speaker-management.speaker-topics.speaker-evaluations._includes.script')
 <script src='{{ URL::asset('build/libs/choices.js/public/assets/scripts/choices.min.js') }}'></script>
 <script src="{{ URL::asset('build/js/app.js') }}"></script>
-
+@include('admin.speaker-management.speaker-topics.speaker-evaluations._includes.script')
+@include('admin.speaker-management.speaker-topics.speaker-evaluations._includes.update-script')
 @endsection
