@@ -18,6 +18,7 @@ Route::prefix('speaker-management')->group(function () {
     Route::put('/{id}/unarchive', [SpeakerController::class, 'unarchive'])->name('speaker-management.unarchive');
 
     Route::post('/validate-step', [SpeakerEvaluationController::class, 'validateStep'])->name('speaker-eval.validateStep');
+    Route::post('/validate-all', [SpeakerEvaluationController::class, 'validateAllSteps'])->name('speaker-eval.validateAll');
 
     // Nested topics under a specific speaker
     Route::prefix('{speaker}/topics')->group(function () {

@@ -56,7 +56,6 @@ class FarmersProfileController extends Controller
         return response()->json(['success' => true]);
     }
 
-
     /**
      * Display a listing of the resource.
      */
