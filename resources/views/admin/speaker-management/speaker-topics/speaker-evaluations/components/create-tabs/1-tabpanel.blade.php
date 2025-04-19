@@ -28,10 +28,8 @@
                         <td class="text-center"><input class="form-check-input" type="radio" name="knowledge_score" value="4"></td>
                         <td class="text-center"><input class="form-check-input" type="radio" name="knowledge_score" value="3"></td>
                         <td class="text-center"><input class="form-check-input" type="radio" name="knowledge_score" value="2"></td>
-                        <td class="text-center">
-                            <input class="form-check-input" type="radio" name="knowledge_score" value="1">
-                        </td>
-                        <td><textarea type="text" class="form-control" name="knowledge_score_reason"></textarea></td>
+                        <td class="text-center"><input class="form-check-input" type="radio" name="knowledge_score" value="1"></td>
+                        <td><textarea type="text" class="form-control" name="knowledge_score_comment" id="knowledge_score_comment"></textarea></td>
                     </tr>
                     <tr>
                         <td>Appropriateness and effectiveness of the teaching methods used</td>
@@ -40,7 +38,7 @@
                         <td class="text-center"><input class="form-check-input" type="radio" name="teaching_method_score" value="3"></td>
                         <td class="text-center"><input class="form-check-input" type="radio" name="teaching_method_score" value="2"></td>
                         <td class="text-center"><input class="form-check-input" type="radio" name="teaching_method_score" value="1"></td>
-                        <td><textarea type="text" class="form-control" name="teaching_method_score_reason"></textarea></td>
+                        <td><textarea type="text" class="form-control" name="teaching_method_comment" id="teaching_method_comment"></textarea></td>
                     </tr>
                     <tr>
                         <td>Use and quality of audio visual aids</td>
@@ -49,7 +47,7 @@
                         <td class="text-center"><input class="form-check-input" type="radio" name="audiovisual_score" value="3"></td>
                         <td class="text-center"><input class="form-check-input" type="radio" name="audiovisual_score" value="2"></td>
                         <td class="text-center"><input class="form-check-input" type="radio" name="audiovisual_score" value="1"></td>
-                        <td><textarea type="text" class="form-control" name="audiovisual_score_reason"></textarea></td>
+                        <td><textarea type="text" class="form-control" name="audiovisual_comment" id="audiovisual_comment"></textarea></td>
                     </tr>
                     <tr>
                         <td>Clarity of presentation and explanation</td>
@@ -58,7 +56,7 @@
                         <td class="text-center"><input class="form-check-input" type="radio" name="clarity_score" value="3"></td>
                         <td class="text-center"><input class="form-check-input" type="radio" name="clarity_score" value="2"></td>
                         <td class="text-center"><input class="form-check-input" type="radio" name="clarity_score" value="1"></td>
-                        <td><textarea type="text" class="form-control" name="clarity_score_reason"></textarea></td>
+                        <td><textarea type="text" class="form-control" name="clarity_comment" id="clarity_comment"></textarea></td>
                     </tr>
                     <tr>
                         <td>Ability to answer questions</td>
@@ -67,7 +65,7 @@
                         <td class="text-center"><input class="form-check-input" type="radio" name="question_handling_score" value="3"></td>
                         <td class="text-center"><input class="form-check-input" type="radio" name="question_handling_score" value="2"></td>
                         <td class="text-center"><input class="form-check-input" type="radio" name="question_handling_score" value="1"></td>
-                        <td><textarea type="text" class="form-control" name="question_handling_score_reason"></textarea></td>
+                        <td><textarea type="text" class="form-control" name="question_handling_comment" id="question_handling_comment"></textarea></td>
                     </tr>
                     <tr>
                         <td>Ability to make the topic appropriate to the level of participants</td>
@@ -76,7 +74,7 @@
                         <td class="text-center"><input class="form-check-input" type="radio" name="audience_connection_score" value="3"></td>
                         <td class="text-center"><input class="form-check-input" type="radio" name="audience_connection_score" value="2"></td>
                         <td class="text-center"><input class="form-check-input" type="radio" name="audience_connection_score" value="1"></td>
-                        <td><textarea type="text" class="form-control" name="audience_connection_score_reason"></textarea></td>
+                        <td><textarea type="text" class="form-control" name="audience_connection_comment" id="audience_connection_comment"></textarea></td>
                     </tr>
                     <tr>
                         <td>Connection with participants and audience</td>
@@ -85,7 +83,7 @@
                         <td class="text-center"><input class="form-check-input" type="radio" name="content_relevance_score" value="3"></td>
                         <td class="text-center"><input class="form-check-input" type="radio" name="content_relevance_score" value="2"></td>
                         <td class="text-center"><input class="form-check-input" type="radio" name="content_relevance_score" value="1"></td>
-                        <td><textarea type="text" class="form-control" name="content_relevance_score_reason"></textarea></td>
+                        <td><textarea type="text" class="form-control" name="content_relevance_comment" id="content_relevance_comment"></textarea></td>
                     </tr>
                     <tr>
                         <td>Achievement of the training objectives</td>
@@ -94,7 +92,7 @@
                         <td class="text-center"><input class="form-check-input" type="radio" name="goal_achievement_score" value="3"></td>
                         <td class="text-center"><input class="form-check-input" type="radio" name="goal_achievement_score" value="2"></td>
                         <td class="text-center"><input class="form-check-input" type="radio" name="goal_achievement_score" value="1"></td>
-                        <td><textarea type="text" class="form-control" name="goal_achievement_score_reason"></textarea></td>
+                        <td><textarea type="text" class="form-control" name="goal_achievement_comment" id="goal_achievement_comment"></textarea></td>
                     </tr>
                 </tbody>
             </table>
