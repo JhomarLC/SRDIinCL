@@ -100,6 +100,12 @@
                                 class="d-none d-md-inline-block">Trainings</span>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link fs-14" data-bs-toggle="tab" href="#training_results_tab" role="tab">
+                            <i class="ri-folder-4-line d-inline-block d-md-none"></i> <span
+                                class="d-none d-md-inline-block">Training Results</span>
+                        </a>
+                    </li>
                 </ul>
                 <div class="flex-shrink-0">
                     <a href="{{ route('farmers-profile.edit', $participant->id) }}" class="btn btn-success"><i
@@ -111,6 +117,7 @@
                 @include('admin.farmers-profile.components.view-tabs.1-profile')
                 @include('admin.farmers-profile.components.view-tabs.2-ricefarming-data')
                 @include('admin.farmers-profile.components.view-tabs.3-trainings')
+                @include('admin.farmers-profile.components.view-tabs.4-training-results')
             </div>
             <!--end tab-content-->
         </div>
