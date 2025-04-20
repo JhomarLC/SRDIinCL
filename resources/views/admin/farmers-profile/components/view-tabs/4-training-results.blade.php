@@ -16,9 +16,8 @@
                         <th>Post Test Score</th>
                         <th>Total Test Items</th>
                         <th>Gain in Knowledge (GIK)</th>
+                        <th>Meetings Attended</th>
                         <th>Certificate</th>
-                        <th>Overall Training Score</th>
-                        <th>Training Rating</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -30,9 +29,8 @@
                             <td>{{ $results->post_test_score }}</td>
                             <td>{{ $results->total_test_items }}</td>
                             <td>{{ $results->gain_in_knowledge }}</td>
+                            <td>{{ $results->meetings_attended }} / {{ $results->total_no_meetings }} ({{ $results->percentage_meetings_attended }} %)</td>
                             <td>{{ $results->certificate_type . " - " . $results->certificate_number}} </td>
-                            <td>{{ $results->overall_training_eval_score }}</td>
-                            <td>{{ $results->trainer_rating }}</td>
                         </tr>
                 </tbody>
             </table>
