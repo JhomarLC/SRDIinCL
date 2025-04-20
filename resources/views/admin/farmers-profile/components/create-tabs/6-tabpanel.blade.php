@@ -21,11 +21,36 @@ aria-labelledby="pills-training-result-tab">
             <input type="date" class="form-control" id="training_date_main" name="training_date_main">
             <div class="invalid-feedback">Please select year conducted</div>
         </div>
-        <div class="col-sm-12">
+        {{-- <div class="col-sm-12">
             <label for="training_location_main" class="form-label">Training Location</label>
             <input type="text" class="form-control" id="training_location_main" name="training_location_main"
                 placeholder="Enter training location">
             <div class="invalid-feedback">Please enter training location</div>
+        </div> --}}
+        <div class="mt-3">
+            <div class="row g-3">
+                <div class="col-sm-4" >
+                    <label for="civilStatus" class="form-label">Province</label>
+                    <select class="form-control select2" id="ts_province" name="ts_province_code" aria-label="Default select example">
+                        <option selected disabled hidden>-- SELECT PROVINCE --</option>
+                    </select>
+                    <div class="invalid-feedback">Please select province</div>
+                </div>
+                <div class="col-sm-4" >
+                    <label for="civilStatus" class="form-label">Municipality</label>
+                    <select class="form-control select2" id="ts_municipality" name="ts_municipality_code" aria-label="Default select example" disabled>
+                        <option selected disabled hidden>-- SELECT MUNICIPALITY --</option>
+                    </select>
+                    <div class="invalid-feedback">Please select civil municipality</div>
+                </div>
+                <div class="col-sm-4" >
+                    <label for="barangay" class="form-label">Barangay</label>
+                    <select class="form-control select2" id="ts_barangay" name="ts_barangay_code" aria-label="Default select example" disabled>
+                        <option selected disabled hidden>-- SELECT BARANGAY --</option>
+                    </select>
+                    <div class="invalid-feedback">Please select civil barangay</div>
+                </div>
+            </div>
         </div>
         <div class="col-sm-3">
             <label for="total_test_items" class="form-label">Total no. of Test items</label>

@@ -13,7 +13,9 @@ class TrainingResults extends Model
     protected $fillable = [
         'training_title_main',
         'training_date_main',
-        'training_location_main',
+        'ts_province_code',
+        'ts_municipality_code',
+        'ts_barangay_code',
         'participant_id',
         'pre_test_score',
         'post_test_score',
@@ -30,6 +32,16 @@ class TrainingResults extends Model
         return $this->belongsTo(Participant::class, 'participant_id');
     }
 
+    public function getFullAddressAttribute()
+    {
+        $addressParts = [];
+
+        $addressParts[] = optional($this->barangay)->name;
+        $addressParts[] = optional($this->municipality)->name;
+        $addressParts[] = optional($this->province)->name;
+
+        return implode(', ', array_filter($addressParts));
+    }
     public function getTrainingDateMainFormattedAttribute()
     {
         return $this->training_date_main
@@ -37,5 +49,19 @@ class TrainingResults extends Model
             : null;
     }
 
+    public function region() {
+        return $this->belongsTo(Region::class, 'ts_region_code', 'code');
+    }
 
+    public function province() {
+        return $this->belongsTo(Province::class, 'ts_province_code', 'code');
+    }
+
+    public function municipality() {
+        return $this->belongsTo(Municipality::class, 'ts_municipality_code', 'code');
+    }
+
+    public function barangay() {
+        return $this->belongsTo(Barangay::class, 'ts_barangay_code', 'code');
+    }
 }

@@ -42,7 +42,12 @@
             // 3. Explicitly handle training result fields
             formData1.set("training_title_main", $("#training_title_main").val() || '');
             formData1.set("training_date_main", $("#training_date_main").val() || '');
-            formData1.set("training_location_main", $("#training_location_main").val() || '');
+
+            formData1.set("ts_province_code", $("#update_ts_province").val() || '');
+            formData1.set("ts_municipality_code", $("#update_ts_municipality").val() || '');
+            formData1.set("ts_barangay_code", $("#update_ts_barangay").val() || '');
+
+            // formData1.set("training_location_main", $("#training_location_main").val() || '');
             formData1.set("pre_test_score", $("#pre_test_score").val() || '');
             formData1.set("post_test_score", $("#post_test_score").val() || '');
             formData1.set("total_test_items", $("#total_test_items").val() || '');

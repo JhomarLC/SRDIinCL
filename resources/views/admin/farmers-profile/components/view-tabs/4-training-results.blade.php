@@ -6,7 +6,7 @@
         @endphp
         <div class="card-header d-flex-reverse align-items-center">
             <h5 class="card-title mb-1 flex-grow-1"><strong>{{ $results->training_title_main }}</strong></h5>
-            <p class="mb-0 flex-grow-1">{{ $results->training_date_main_formatted }} | {{ $results->training_location_main }}</p>
+            <p class="mb-0 flex-grow-1">{{ $results->training_date_main_formatted }} | {{ $results->full_address }}</p>
         </div>
         <div class="card-body">
             <table id="training_results" class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">

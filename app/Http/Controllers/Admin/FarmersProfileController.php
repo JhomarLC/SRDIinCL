@@ -226,7 +226,11 @@ class FarmersProfileController extends Controller
                 'participant_id' => $participant->id,
                 'training_title_main' => $validated['training_title_main'],
                 'training_date_main' => $validated['training_date_main'],
-                'training_location_main' => $validated['training_location_main'],
+                // 'training_location_main' => $validated['training_location_main'],
+                'ts_province_code' => $validated['ts_province_code'],
+                'ts_municipality_code' => $validated['ts_municipality_code'],
+                'ts_barangay_code' => $validated['ts_barangay_code'],
+
                 'pre_test_score' => $validated['pre_test_score'],
                 'post_test_score' => $validated['post_test_score'],
                 'total_test_items' => $validated['total_test_items'],
@@ -405,7 +409,11 @@ class FarmersProfileController extends Controller
             $participant->training_results()->update([
                 'training_title_main' => $validated['training_title_main'],
                 'training_date_main' => $validated['training_date_main'],
-                'training_location_main' => $validated['training_location_main'],
+                // 'training_location_main' => $validated['training_location_main'],
+                'ts_province_code' => $validated['ts_province_code'],
+                'ts_municipality_code' => $validated['ts_municipality_code'],
+                'ts_barangay_code' => $validated['ts_barangay_code'],
+
                 'pre_test_score' => $validated['pre_test_score'],
                 'post_test_score' => $validated['post_test_score'],
                 'total_test_items' => $validated['total_test_items'],

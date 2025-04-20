@@ -65,7 +65,9 @@ class FarmerValidationRules
             'training-result' => [
                 'training_title_main' => 'required|string|max:255',
                 'training_date_main' => 'required|date',
-                'training_location_main' => 'required|string|max:255',
+                'ts_province_code' => 'required|string',
+                'ts_municipality_code' => 'required|string',
+                'ts_barangay_code' => 'required|string',
                 'pre_test_score' => 'required|numeric|min:0',
                 'post_test_score' => 'required|numeric|min:0',
                 'total_test_items' => 'required|numeric|min:1',

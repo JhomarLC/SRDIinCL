@@ -16,7 +16,10 @@ return new class extends Migration
             $table->foreignId('participant_id')->constrained()->onDelete('cascade');
             $table->string('training_title_main')->default('Training on Pests and Nutrient Management (PNM)');
             $table->date('training_date_main');
-            $table->string('training_location_main');
+            // $table->string('training_location_main');
+            $table->string('ts_province_code');
+            $table->string('ts_municipality_code');
+            $table->string('ts_barangay_code');
             $table->integer('pre_test_score');
             $table->integer('post_test_score');
             $table->integer('total_test_items');
