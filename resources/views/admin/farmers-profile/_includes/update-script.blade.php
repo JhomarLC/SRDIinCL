@@ -47,6 +47,10 @@
             formData1.set("ts_municipality_code", $("#update_ts_municipality").val() || '');
             formData1.set("ts_barangay_code", $("#update_ts_barangay").val() || '');
 
+            formData1.set("total_no_meetings", $("#total_no_meetings").val() || '');
+            formData1.set("meetings_attended", $("#meetings_attended").val() || '');
+            formData1.set("percentage_meetings_attended", $("#percentage_meetings_attended").val() || '');
+
             // formData1.set("training_location_main", $("#training_location_main").val() || '');
             formData1.set("pre_test_score", $("#pre_test_score").val() || '');
             formData1.set("post_test_score", $("#post_test_score").val() || '');

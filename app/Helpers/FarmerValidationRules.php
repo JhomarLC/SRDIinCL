@@ -72,6 +72,11 @@ class FarmerValidationRules
                 'post_test_score' => 'required|numeric|min:0',
                 'total_test_items' => 'required|numeric|min:1',
                 'gain_in_knowledge' => 'required|numeric|min:0',
+
+                'total_no_meetings' => 'nullable|numeric|min:0',
+                'meetings_attended' => 'nullable|numeric|min:0',
+                'percentage_meetings_attended' => 'nullable|numeric|min:0',
+
                 'certificate_type' => 'required|string|max:100',
                 'certificate_number' => 'required|string|max:100',
             ],

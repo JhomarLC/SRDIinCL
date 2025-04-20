@@ -57,71 +57,71 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                         <label for="pre_test_score" class="form-label">Pre-Test (Written)</label>
                         <input type="number" class="form-control" id="pre_test_score" name="pre_test_score"
                                value="{{ old('pre_test_score', $trainingResult->pre_test_score ?? '') }}"
                                placeholder="Enter Pre-Test">
                         <div class="invalid-feedback">Please enter pre-test</div>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                         <label for="post_test_score" class="form-label">Post-Test (Written)</label>
                         <input type="number" class="form-control" id="post_test_score" name="post_test_score"
                                value="{{ old('post_test_score', $trainingResult->post_test_score ?? '') }}"
                                placeholder="Enter Post-Test">
                         <div class="invalid-feedback">Please enter post test</div>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                         <label for="total_test_items" class="form-label">Total no. of Test items</label>
                         <input type="number" class="form-control" id="total_test_items" name="total_test_items"
                                value="{{ old('total_test_items', $trainingResult->total_test_items ?? '') }}"
                                placeholder="Enter number of test items">
                         <div class="invalid-feedback">Please enter number of test items</div>
                     </div>
-                </div>
-            </div>
-
-            <div class="mt-3">
-                <div class="row g-3">
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                         <label for="gain_in_knowledge_display" class="form-label">Gain in Knowledge</label>
                         <input type="text" id="gain_in_knowledge" name="gain_in_knowledge" value="{{ old('gain_in_knowledge', $trainingResult->gain_in_knowledge ?? '0') }}" hidden>
                         <input type="text" class="form-control" id="gain_in_knowledge_display" name="gain_in_knowledge_display"
                                value="{{ old('gain_in_knowledge_display', number_format($trainingResult->gain_in_knowledge ?? 0, 2) . ' %') }}" disabled
                                placeholder="0.00%">
                     </div>
-                    <div class="col-sm-4">
-                        <label for="certificate_type" class="form-label">Type of Certificate</label>
-                        <input type="text" class="form-control" id="certificate_type" name="certificate_type"
-                               value="{{ old('certificate_type', $trainingResult->certificate_type ?? '') }}"
-                               placeholder="Enter type of certificate">
-                        <div class="invalid-feedback">Please enter type of certificate</div>
-                    </div>
-                    <div class="col-sm-4">
-                        <label for="certificate_number" class="form-label">Certificate number</label>
-                        <input type="text" class="form-control" id="certificate_number" name="certificate_number"
-                               value="{{ old('certificate_number', $trainingResult->certificate_number ?? '') }}"
-                               placeholder="Enter Certificate Number">
-                        <div class="invalid-feedback">Please enter certificate number</div>
-                    </div>
                 </div>
             </div>
 
             <div class="mt-3">
                 <div class="row g-3">
-                    <div class="col-sm-6">
-                        <label for="overall_training_eval_score" class="form-label">Overall Training Evaluation</label>
-                        <input type="number" class="form-control" id="overall_training_eval_score" name="overall_training_eval_score"
-                               value="{{ old('overall_training_eval_score', $trainingResult->overall_training_eval_score ?? '') }}"
-                               placeholder="Enter Overall Training Evaluation">
-                        <div class="invalid-feedback">Please enter overall training evaluation</div>
+                    <div class="col-sm-2">
+                        <label for="total_no_meetings" class="form-label">Total No. of Meetings</label>
+                        <input type="number" class="form-control" id="total_no_meetings" name="total_no_meetings"
+                            value="{{ old('total_no_meetings', $trainingResult->total_no_meetings ?? '') }}"
+                            placeholder="Enter Total No. of Meetings">
+                        <div class="invalid-feedback">Please enter total no. of meetings</div>
                     </div>
-                    <div class="col-sm-6">
-                        <label for="trainer_rating" class="form-label">TMT Rating in Training Evaluation</label>
-                        <input type="number" class="form-control" id="trainer_rating" name="trainer_rating"
-                               value="{{ old('trainer_rating', $trainingResult->trainer_rating ?? '') }}"
-                               placeholder="Enter TMT Rating in Training Evaluation">
-                        <div class="invalid-feedback">Please enter TMT Rating in Training Evaluation</div>
+                    <div class="col-sm-2">
+                        <label for="meetings_attended" class="form-label">No. of Meetings Attended</label>
+                        <input type="number" class="form-control" id="meetings_attended" name="meetings_attended"
+                            value="{{ old('meetings_attended', $trainingResult->meetings_attended ?? '') }}"
+                            placeholder="Enter No. of Meetings Attended">
+                        <div class="invalid-feedback">Please enter no. of meetings attended</div>
+                    </div>
+                    <div class="col-sm-2">
+                        <label for="percentage_meetings_attended" class="form-label">% of Meetings Attended</label>
+                        <input type="number" class="form-control" id="percentage_meetings_attended" name="percentage_meetings_attended" disabled
+                            placeholder="Percentage of Meetings Attended">
+                        <div class="invalid-feedback">Please enter no. of meetings attended</div>
+                    </div>
+                    <div class="col-sm-3">
+                        <label for="certificate_type" class="form-label">Type of Certificate</label>
+                        <input type="text" class="form-control" id="certificate_type" name="certificate_type" disabled
+                            placeholder="Type of Certificate">
+                        <div class="invalid-feedback">Please enter Type of Certificate</div>
+                    </div>
+                    <div class="col-sm-3">
+                        <label for="certificate_number" class="form-label">Certificate number</label>
+                        <input type="text" class="form-control" id="certificate_number" name="certificate_number"
+                               value="{{ old('certificate_number', $trainingResult->certificate_number ?? '') }}"
+                               placeholder="Enter Certificate Number">
+                        <div class="invalid-feedback">Please enter certificate number</div>
                     </div>
                 </div>
             </div>

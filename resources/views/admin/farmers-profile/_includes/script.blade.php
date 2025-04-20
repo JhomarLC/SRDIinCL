@@ -19,6 +19,31 @@
 
     $(document).ready(function () {
         $('.select2').select2();
+
+        function updateCertificateInfo() {
+            var total = parseFloat($('#total_no_meetings').val());
+            var attended = parseFloat($('#meetings_attended').val());
+
+            if (!isNaN(total) && total > 0 && !isNaN(attended)) {
+                var percentage = (attended / total) * 100;
+                $('#percentage_meetings_attended').val(percentage.toFixed(2));
+
+                if (percentage >= 75) {
+                    $('#certificate_type').val('Recognition');
+                } else {
+                    $('#certificate_type').val('Participation');
+                }
+            } else {
+                $('#percentage_meetings_attended').val('');
+                $('#certificate_type').val('Participation');
+            }
+        }
+
+        // Attach event handlers
+        $('#total_no_meetings, #meetings_attended').on('input', updateCertificateInfo);
+
+        // Trigger on page load if values are already filled
+        updateCertificateInfo();
     });
 
     document.addEventListener('DOMContentLoaded', function () {
@@ -982,6 +1007,11 @@
                 formData.append("post_test_score", $("#post_test_score").val() || '');
                 formData.append("total_test_items", $("#total_test_items").val() || '');
                 formData.append("gain_in_knowledge", $("#gain_in_knowledge").val() || '');
+
+                formData.append("total_no_meetings", $("#total_no_meetings").val() || '');
+                formData.append("meetings_attended", $("#meetings_attended").val() || '');
+                formData.append("percentage_meetings_attended", $("#percentage_meetings_attended").val() || '');
+
                 formData.append("certificate_type", $("#certificate_type").val() || '');
                 formData.append("certificate_number", $("#certificate_number").val() || '');
                 // formData.append("overall_training_eval_score", $("#overall_training_eval_score").val() || '');

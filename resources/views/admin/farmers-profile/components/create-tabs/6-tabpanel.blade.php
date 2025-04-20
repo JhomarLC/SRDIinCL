@@ -54,7 +54,7 @@ aria-labelledby="pills-training-result-tab">
         </div>
         <div class="col-sm-3">
             <label for="total_test_items" class="form-label">Total no. of Test items</label>
-            <input type="number" class="form-control" id="total_test_items" name="total_test_items"
+            <input type="number" class="form-control" id="total_test_items" name="total_test_items" value="100"
                 placeholder="Enter number of test items">
             <div class="invalid-feedback">Please enter number of test items</div>
         </div>
@@ -81,12 +81,36 @@ aria-labelledby="pills-training-result-tab">
 </div>
 <div class="mt-3">
     <div class="row g-3">
+        <div class="col-sm-2">
+            <label for="total_no_meetings" class="form-label">Total No. of Meetings</label>
+            <input type="number" class="form-control" id="total_no_meetings" name="total_no_meetings" value="5"
+                placeholder="Enter Total No. of Meetings">
+            <div class="invalid-feedback">Please enter total no. of meetings</div>
+        </div>
+        <div class="col-sm-2">
+            <label for="meetings_attended" class="form-label">No. of Meetings Attended</label>
+            <input type="number" class="form-control" id="meetings_attended" name="meetings_attended" value="4"
+                placeholder="Enter No. of Meetings Attended">
+            <div class="invalid-feedback">Please enter no. of meetings attended</div>
+        </div>
+        <div class="col-sm-2">
+            <label for="percentage_meetings_attended" class="form-label">% of Meetings Attended</label>
+            <input type="number" class="form-control" id="percentage_meetings_attended" name="percentage_meetings_attended" disabled
+                placeholder="Percentage of Meetings Attended">
+            <div class="invalid-feedback">Please enter no. of meetings attended</div>
+        </div>
         <div class="col-sm-3">
+            <label for="certificate_type" class="form-label">Type of Certificate</label>
+            <input type="text" class="form-control" id="certificate_type" name="certificate_type" disabled
+                placeholder="Type of Certificate">
+            <div class="invalid-feedback">Please enter Type of Certificate</div>
+        </div>
+        {{-- <div class="col-sm-3">
             <label for="certificate_type" class="form-label">Type of Certificate</label>
             <input type="text" class="form-control" id="certificate_type" name="certificate_type" value="Digital"
                 placeholder="Enter type of certificate">
             <div class="invalid-feedback">Please enter type of certificate</div>
-        </div>
+        </div> --}}
         <div class="col-sm-3">
             <label for="certificate_number" class="form-label">Certificate number</label>
             <input type="text" class="form-control" id="certificate_number" name="certificate_number" value="1029384"

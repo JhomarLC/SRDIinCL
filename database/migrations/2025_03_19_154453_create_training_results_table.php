@@ -20,6 +20,11 @@ return new class extends Migration
             $table->string('ts_province_code');
             $table->string('ts_municipality_code');
             $table->string('ts_barangay_code');
+
+            $table->integer('total_no_meetings')->nullable();
+            $table->integer('meetings_attended')->nullable();
+            $table->integer('percentage_meetings_attended')->nullable();
+
             $table->integer('pre_test_score');
             $table->integer('post_test_score');
             $table->integer('total_test_items');

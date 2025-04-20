@@ -22,6 +22,11 @@ class TrainingResults extends Model
         'total_test_items',
         'gain_in_knowledge',
         'certificate_type',
+
+        'total_no_meetings',
+        'meetings_attended',
+        'percentage_meetings_attended',
+
         'certificate_number',
         'overall_training_eval_score',
         'trainer_rating',

@@ -235,6 +235,11 @@ class FarmersProfileController extends Controller
                 'post_test_score' => $validated['post_test_score'],
                 'total_test_items' => $validated['total_test_items'],
                 'gain_in_knowledge' => $validated['gain_in_knowledge'],
+
+                'total_no_meetings' => $validated['total_no_meetings'],
+                'meetings_attended' => $validated['meetings_attended'],
+                'percentage_meetings_attended' => $validated['percentage_meetings_attended'],
+
                 'certificate_type' => $validated['certificate_type'],
                 'certificate_number' => $validated['certificate_number'],
                 // 'overall_training_eval_score' => $validated['overall_training_eval_score'],
@@ -418,6 +423,11 @@ class FarmersProfileController extends Controller
                 'post_test_score' => $validated['post_test_score'],
                 'total_test_items' => $validated['total_test_items'],
                 'gain_in_knowledge' => $validated['gain_in_knowledge'],
+
+                'total_no_meetings' => $validated['total_no_meetings'],
+                'meetings_attended' => $validated['meetings_attended'],
+                'percentage_meetings_attended' => $validated['percentage_meetings_attended'],
+
                 'certificate_type' => $validated['certificate_type'],
                 'certificate_number' => $validated['certificate_number'],
                 // 'overall_training_eval_score' => $validated['overall_training_eval_score'],
