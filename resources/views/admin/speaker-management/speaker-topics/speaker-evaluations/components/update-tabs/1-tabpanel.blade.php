@@ -22,7 +22,7 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Knowledge and expertise in the subject or technology being taught
+                        <td>Knowledge and expertise in the subject or technology being taught <span class="text-danger">*</span>
                         </td>
                         <td class="text-center">
                             <input class="form-check-input" type="radio" name="knowledge_score" value="5"
@@ -49,7 +49,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>Appropriateness and effectiveness of the teaching methods used</td>
+                        <td>Appropriateness and effectiveness of the teaching methods used <span class="text-danger">*</span></td>
                         <td class="text-center">
                             <input class="form-check-input" type="radio" name="teaching_method_score" value="5"
                             {{ $evaluation->teaching_method_score == 5 ? 'checked' : '' }}>
@@ -75,7 +75,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>Use and quality of audio visual aids</td>
+                        <td>Use and quality of audio visual aids <span class="text-danger">*</span></td>
                         <td class="text-center">
                             <input class="form-check-input" type="radio" name="audiovisual_score" value="5"
                             {{ $evaluation->audiovisual_score == 5 ? 'checked' : '' }}>
@@ -101,7 +101,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>Clarity of presentation and explanation</td>
+                        <td>Clarity of presentation and explanation <span class="text-danger">*</span></td>
                         <td class="text-center">
                             <input class="form-check-input" type="radio" name="clarity_score" value="5"
                             {{ $evaluation->clarity_score == 5 ? 'checked' : '' }}>
@@ -127,7 +127,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>Ability to answer questions</td>
+                        <td>Ability to answer questions <span class="text-danger">*</span></td>
                         <td class="text-center">
                             <input class="form-check-input" type="radio" name="question_handling_score" value="5"
                             {{ $evaluation->question_handling_score == 5 ? 'checked' : '' }}>
@@ -153,7 +153,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>Ability to make the topic appropriate to the level of participants</td>
+                        <td>Ability to make the topic appropriate to the level of participants <span class="text-danger">*</span></td>
                         <td class="text-center">
                             <input class="form-check-input" type="radio" name="audience_connection_score" value="5"
                             {{ $evaluation->audience_connection_score == 5 ? 'checked' : '' }}>
@@ -179,7 +179,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>Connection with participants and audience</td>
+                        <td>Connection with participants and audience <span class="text-danger">*</span></td>
                         <td class="text-center">
                             <input class="form-check-input" type="radio" name="content_relevance_score" value="5"
                             {{ $evaluation->content_relevance_score == 5 ? 'checked' : '' }}>
@@ -205,7 +205,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>Achievement of the training objectives</td>
+                        <td>Achievement of the training objectives <span class="text-danger">*</span></td>
                         <td class="text-center">
                             <input class="form-check-input" type="radio" name="goal_achievement_score" value="5"
                             {{ $evaluation->goal_achievement_score == 5 ? 'checked' : '' }}>

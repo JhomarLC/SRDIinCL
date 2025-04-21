@@ -8,7 +8,7 @@ aria-labelledby="pills-personal-info-tab">
     <div>
         <div class="row g-3">
             <div class="col-sm-3">
-                <label for="first_name" class="form-label">First name</label>
+                <label for="first_name" class="form-label">First name <span class="text-danger">*</span></label>
                 <input type="text" class="form-control" id="first_name" name="first_name"
                     value="{{ old('first_name', $participant->first_name ?? '') }}"
                     placeholder="Enter first name">
@@ -24,7 +24,7 @@ aria-labelledby="pills-personal-info-tab">
             </div>
 
             <div class="col-sm-3">
-                <label for="last_name" class="form-label">Last name</label>
+                <label for="last_name" class="form-label">Last name <span class="text-danger">*</span></label>
                 <input type="text" class="form-control" id="last_name" name="last_name"
                     value="{{ old('last_name', $participant->last_name ?? '') }}"
                     placeholder="Enter last name">
@@ -49,13 +49,13 @@ aria-labelledby="pills-personal-info-tab">
                 <div class="invalid-feedback">Please enter Nickname</div>
             </div>
             <div class="col-sm-3">
-                <label for="birth_date" class="form-label">Birthdate</label>
+                <label for="birth_date" class="form-label">Birthdate <span class="text-danger">*</span></label>
                 <input type="date" class="form-control" id="birth_date" name="birth_date"
                     value="{{ old('birth_date', $participant->birth_date ?? '') }}">
                 <div class="invalid-feedback">Please enter Birthdate</div>
             </div>
             <div class="col-sm-3">
-                <label for="age_label" class="form-label">Age</label>
+                <label for="age_label" class="form-label">Age <span class="text-danger">*</span></label>
                 <input type="text" class="form-control" id="age_label"
                     placeholder="Enter Birtdate to see Age"
                     value="{{ old('age_label', $participant->age . ' yrs old' ?? '') }}" disabled>
@@ -69,7 +69,7 @@ aria-labelledby="pills-personal-info-tab">
                 value="{{ old('age_group', $participant->age_group ?? '') }}">
 
             <div class="col-sm-3">
-                <label for="gender" class="form-label">Gender</label>
+                <label for="gender" class="form-label">Gender <span class="text-danger">*</span></label>
                 <select class="form-control mb-3 select2" id="gender" name="gender">
                     <option disabled hidden>-- SELECT GENDER --</option>
                     <option value="Male" {{ old('gender', $participant->gender ?? '') == 'Male' ? 'selected' : '' }}>Male</option>
@@ -83,7 +83,7 @@ aria-labelledby="pills-personal-info-tab">
     <div class="mt-3">
         <div class="row g-3">
             <div class="col-sm-3" >
-                <label for="civil_status" class="form-label">Civil Status</label>
+                <label for="civil_status" class="form-label">Civil Status <span class="text-danger">*</span></label>
                 <select class="form-control select2" id="civil_status" name="civil_status">
                     <option disabled hidden>-- SELECT CIVIL STATUS --</option>
                     <option value="Single" {{ old('civil_status', $participant->civil_status ?? '') == 'Single' ? 'selected' : '' }}>Single</option>
@@ -95,19 +95,19 @@ aria-labelledby="pills-personal-info-tab">
                 <div class="invalid-feedback">Please select civil status</div>
             </div>
             <div class="col-sm-3">
-                <label for="religion" class="form-label">Religion</label>
+                <label for="religion" class="form-label">Religion <span class="text-danger">*</span></label>
                 <input type="text" class="form-control" id="religion" name="religion" placeholder="Enter Religion"
                     value="{{ old('religion', $participant->religion ?? '') }}">
                 <div class="invalid-feedback">Please enter religion</div>
             </div>
             <div class="col-sm-3">
-                <label for="phone_number" class="form-label">Phone Number</label>
+                <label for="phone_number" class="form-label">Phone Number <span class="text-danger">*</span></label>
                 <input type="text" class="form-control" id="phone_number" name="phone_number" placeholder="Enter Phone Number"
                     value="{{ old('phone_number', $participant->phone_number ?? '') }}">
                 <div class="invalid-feedback">Please enter Phone Number</div>
             </div>
             <div class="col-sm-3" >
-                <label for="education_level" class="form-label">Highest Level of Education</label>
+                <label for="education_level" class="form-label">Highest Level of Education <span class="text-danger">*</span></label>
                 <select class="form-control select2" id="education_level" name="education_level" aria-label="Default select example">
                     <option selected disabled hidden>-- SELECT EDUCATION --</option>
                     <option value="Elementary"  {{ old('education_level', $participant->education_level ?? '') == 'Elementary' ? 'selected' : '' }}>Elementary</option>
@@ -211,21 +211,21 @@ aria-labelledby="pills-personal-info-tab">
     <div class="mt-3">
         <div class="row g-3">
             <div class="col-sm-4" >
-                <label for="civilStatus" class="form-label">Province</label>
+                <label for="civilStatus" class="form-label">Province <span class="text-danger">*</span></label>
                 <select class="form-control select2" id="update_province" name="province_code" aria-label="Default select example">
                     <option selected disabled hidden>-- SELECT PROVINCE --</option>
                 </select>
                 <div class="invalid-feedback">Please select province</div>
             </div>
             <div class="col-sm-4" >
-                <label for="civilStatus" class="form-label">Municipality</label>
+                <label for="civilStatus" class="form-label">Municipality <span class="text-danger">*</span></label>
                 <select class="form-control select2" id="update_municipality" name="municipality_code" aria-label="Default select example" disabled>
                     <option selected disabled hidden>-- SELECT MUNICIPALITY --</option>
                 </select>
                 <div class="invalid-feedback">Please select civil municipality</div>
             </div>
             <div class="col-sm-4" >
-                <label for="barangay" class="form-label">Barangay</label>
+                <label for="barangay" class="form-label">Barangay <span class="text-danger">*</span></label>
                 <select class="form-control select2" id="update_barangay" name="barangay_code" aria-label="Default select example" disabled>
                     <option selected disabled hidden>-- SELECT BARANGAY --</option>
                 </select>
@@ -241,7 +241,7 @@ aria-labelledby="pills-personal-info-tab">
                 <div class="invalid-feedback">Please enter House Number/Sitio/Purok</div>
             </div>
             <div class="col-sm-3">
-                <label for="zip_code" class="form-label">Zip Code</label>
+                <label for="zip_code" class="form-label">Zip Code <span class="text-danger">*</span></label>
                 <input type="number" class="form-control" id="zip_code" name="zip_code" placeholder="Enter Zip Code" value="{{ old('zip_code', $participant->zip_code ?? '') }}">
                 <div class="invalid-feedback">Please enter Zip Code</div>
             </div>
@@ -254,7 +254,7 @@ aria-labelledby="pills-personal-info-tab">
     <div class="mt-3">
         <div class="row g-3">
             <div class="col-sm-4" >
-                <label for="primary_sector" class="form-label">Primary sector involved in</label>
+                <label for="primary_sector" class="form-label">Primary sector involved in <span class="text-danger">*</span></label>
                 <select class="form-control select2" id="primary_sector" name="primary_sector" aria-label="Default select example">
                     <option disabled hidden>-- SELECT PRIMARY SECTOR --</option>
                     <option value="Farmer/Seed Grower" {{ old('primary_sector', $participant->primary_sector ?? '') == 'Farmer/Seed Grower' ? 'selected' : '' }}>Farmer or Seed grower</option>
@@ -270,12 +270,12 @@ aria-labelledby="pills-personal-info-tab">
                 <div class="invalid-feedback">Please select civil primary sector</div>
             </div>
             <div class="col-sm-4">
-                <label for="years_in_farming" class="form-label">Number of years in Rice Farming</label>
+                <label for="years_in_farming" class="form-label">Number of years in Rice Farming <span class="text-danger">*</span></label>
                 <input type="number" class="form-control" id="years_in_farming" name="years_in_farming" placeholder="Enter Number of Years in Rice Farming" value="{{ old('years_in_farming', $participant->years_in_farming ?? '') }}">
                 <div class="invalid-feedback">Please enter Years in Rice Farming</div>
             </div>
             <div class="col-sm-4">
-                <label for="farmer_association" class="form-label">Farmers' Association</label>
+                <label for="farmer_association" class="form-label">Farmers' Association <span class="text-danger">*</span></label>
                 <input type="text" class="form-control" id="farmer_association" name="farmer_association" placeholder="Enter Farmers' Association" value="{{ old('farmer_association', $participant->farmer_association ?? '') }}">
                 <div class="invalid-feedback">Please enter Farmers' Association</div>
             </div>
@@ -284,7 +284,7 @@ aria-labelledby="pills-personal-info-tab">
     <div class="mt-3">
         <div class="row g-3">
             <div class="col-sm-6">
-                <label for="farm_role" class="form-label">Farm Ownership Status</label>
+                <label for="farm_role" class="form-label">Farm Ownership Status <span class="text-danger">*</span></label>
                 <select class="form-control select2" id="farm_role" name="farm_role" aria-label="Default select example">
                     <option selected disabled hidden>-- SELECT FARM OWNERSHIP STATUS --</option>
                     <option value="Farm Owner" {{ old('farm_role', $participant->farm_role ?? '') == 'Farm Owner' ? 'selected' : '' }}>Owner/Farm Owner</option>

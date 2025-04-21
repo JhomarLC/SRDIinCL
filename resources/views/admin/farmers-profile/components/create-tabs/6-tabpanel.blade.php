@@ -11,13 +11,13 @@ aria-labelledby="pills-training-result-tab">
 <div class="mt-3">
     <div class="row g-3">
         <div class="col-sm-7">
-            <label for="training_title_main" class="form-label">Title of the training/workshop</label>
+            <label for="training_title_main" class="form-label">Title of the training/workshop <span class="text-danger">*</span></label>
             <input type="text" class="form-control" id="training_title_main" name="training_title_main" value="Training on Pests and Nutrient Management (PNM)"
                 placeholder="Training on Pests and Nutrient Management (PNM)" disabled >
             <div class="invalid-feedback">Please enter training title</div>
         </div>
         <div class="col-sm-5">
-            <label for="training_date_main" class="form-label">Training Date</label>
+            <label for="training_date_main" class="form-label">Training Date <span class="text-danger">*</span></label>
             <input type="date" class="form-control" id="training_date_main" name="training_date_main">
             <div class="invalid-feedback">Please select year conducted</div>
         </div>
@@ -30,21 +30,21 @@ aria-labelledby="pills-training-result-tab">
         <div class="mt-3">
             <div class="row g-3">
                 <div class="col-sm-4" >
-                    <label for="civilStatus" class="form-label">Province</label>
+                    <label for="civilStatus" class="form-label">Province <span class="text-danger">*</span></label>
                     <select class="form-control select2" id="ts_province" name="ts_province_code" aria-label="Default select example">
                         <option selected disabled hidden>-- SELECT PROVINCE --</option>
                     </select>
                     <div class="invalid-feedback">Please select province</div>
                 </div>
                 <div class="col-sm-4" >
-                    <label for="civilStatus" class="form-label">Municipality</label>
+                    <label for="civilStatus" class="form-label">Municipality <span class="text-danger">*</span></label>
                     <select class="form-control select2" id="ts_municipality" name="ts_municipality_code" aria-label="Default select example" disabled>
                         <option selected disabled hidden>-- SELECT MUNICIPALITY --</option>
                     </select>
                     <div class="invalid-feedback">Please select civil municipality</div>
                 </div>
                 <div class="col-sm-4" >
-                    <label for="barangay" class="form-label">Barangay</label>
+                    <label for="barangay" class="form-label">Barangay <span class="text-danger">*</span></label>
                     <select class="form-control select2" id="ts_barangay" name="ts_barangay_code" aria-label="Default select example" disabled>
                         <option selected disabled hidden>-- SELECT BARANGAY --</option>
                     </select>
@@ -53,7 +53,7 @@ aria-labelledby="pills-training-result-tab">
             </div>
         </div>
         <div class="col-sm-3">
-            <label for="total_test_items" class="form-label">Total no. of Test items</label>
+            <label for="total_test_items" class="form-label">Total no. of Test items <span class="text-danger">*</span></label>
             <input type="number" class="form-control" id="total_test_items" name="total_test_items" value="100"
                 placeholder="Enter number of test items">
             <div class="invalid-feedback">Please enter number of test items</div>

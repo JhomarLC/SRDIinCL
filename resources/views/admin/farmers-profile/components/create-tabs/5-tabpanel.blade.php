@@ -8,7 +8,7 @@ aria-labelledby="pills-emergency-contact-tab">
 <div class="mt-3">
     <div class="row g-3">
         <div class="col-sm-3">
-            <label for="ec_first_name" class="form-label">First name</label>
+            <label for="ec_first_name" class="form-label">First name <span class="text-danger">*</span></label>
             <input type="text" class="form-control" id="ec_first_name" name="ec_first_name" value="Marilyn"
                 placeholder="Enter first name" >
             <div class="invalid-feedback">Please enter a first name</div>
@@ -22,7 +22,7 @@ aria-labelledby="pills-emergency-contact-tab">
         </div>
 
         <div class="col-sm-3">
-            <label for="ec_last_name" class="form-label">Last name</label>
+            <label for="ec_last_name" class="form-label">Last name <span class="text-danger">*</span></label>
             <input type="text" class="form-control" id="ec_last_name" name="ec_last_name" value="Candelario"
                 placeholder="Enter last name" >
             <div class="invalid-feedback">Please enter a last name</div>
@@ -40,7 +40,7 @@ aria-labelledby="pills-emergency-contact-tab">
 <div class="mt-3">
     <div class="row g-3">
         <div class="col-sm-6">
-            <label for="ec_relationship" class="form-label">Relationship</label>
+            <label for="ec_relationship" class="form-label">Relationship <span class="text-danger">*</span></label>
             <select class="form-control mb-3 select2" id="ec_relationship" name="ec_relationship" aria-label="Select emergency contact relationship">
                 <option selected disabled hidden>-- SELECT RELATIONSHIP --</option>
 
@@ -74,7 +74,7 @@ aria-labelledby="pills-emergency-contact-tab">
             <div class="invalid-feedback">Please enter relationship</div>
         </div>
         <div class="col-sm-6">
-            <label for="ec_contact_number" class="form-label">Telephone / Phone Number</label>
+            <label for="ec_contact_number" class="form-label">Telephone / Phone Number <span class="text-danger">*</span></label>
             <input type="text" class="form-control" id="ec_contact_number" name="ec_contact_number" value="09366181790"
                 placeholder="Enter phone number" >
             <div class="invalid-feedback">Please enter phone number</div>

@@ -9,7 +9,7 @@ aria-labelledby="pills-evaluation-personal-info-tab">
 <div class="mt-3">
     <div class="row g-3">
         <div class="col-sm-3">
-            <label for="first_name" class="form-label">First name</label>
+            <label for="first_name" class="form-label">First name <span class="text-danger">*</span></label>
             <input type="text" class="form-control" id="first_name" name="first_name"
                 value="{{ old('first_name', $evaluation->speaker_evaluation_info->first_name) }}"
                 placeholder="Enter first name" required>
@@ -25,7 +25,7 @@ aria-labelledby="pills-evaluation-personal-info-tab">
         </div>
 
         <div class="col-sm-3">
-            <label for="last_name" class="form-label">Last name</label>
+            <label for="last_name" class="form-label">Last name <span class="text-danger">*</span></label>
             <input type="text" class="form-control" id="last_name" name="last_name"
                 value="{{ old('first_name', $evaluation->speaker_evaluation_info->first_name) }}"
                 placeholder="Enter last name" required>
@@ -43,7 +43,7 @@ aria-labelledby="pills-evaluation-personal-info-tab">
 <div class="mt-3">
     <div class="row g-3">
         <div class="col-sm-6">
-            <label for="gender" class="form-label">Sex</label>
+            <label for="gender" class="form-label">Sex <span class="text-danger">*</span></label>
             <select class="form-control mb-3 select2" id="gender" name="gender">
                 <option selected disabled hidden>-- SELECT GENDER --</option>
                 <option value="Male" {{ $evaluation->speaker_evaluation_info->gender === 'Male' ? 'selected' : '' }}>Male</option>
@@ -52,7 +52,7 @@ aria-labelledby="pills-evaluation-personal-info-tab">
             <div class="invalid-feedback">Please select gender</div>
         </div>
         <div class="col-sm-6">
-            <label class="form-label d-block">Age Group</label>
+            <label class="form-label d-block">Age Group <span class="text-danger">*</span></label>
             <div class="d-flex flex-wrap gap-4">
                 <div class="form-check">
                     <input class="form-check-input" type="radio" name="age_group" id="below18" value="below 18"
@@ -88,14 +88,14 @@ aria-labelledby="pills-evaluation-personal-info-tab">
 <div class="mt-3">
     <div class="row g-3">
         <div class="col-sm-6" >
-            <label for="province" class="form-label">Province</label>
+            <label for="province" class="form-label">Province <span class="text-danger">*</span></label>
             <select class="form-control select2" id="update_province" name="province_code" aria-label="Default select example">
                 <option selected disabled hidden>-- SELECT PROVINCE --</option>
             </select>
             <div class="invalid-feedback">Please select province</div>
         </div>
         <div class="col-sm-6" >
-            <label for="primary_sector" class="form-label">Primary sector involved in</label>
+            <label for="primary_sector" class="form-label">Primary sector involved in <span class="text-danger">*</span></label>
             <select class="form-control select2" id="primary_sector" name="primary_sector" aria-label="Default select example">
                 <option disabled hidden>-- SELECT PRIMARY SECTOR --</option>
                 <option value="Farmer/Seed Grower" {{ old('primary_sector', $evaluation->speaker_evaluation_info->primary_sector ?? '') == 'Farmer/Seed Grower' ? 'selected' : '' }}>Farmer or Seed grower</option>
