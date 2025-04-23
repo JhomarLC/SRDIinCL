@@ -12,6 +12,13 @@ class OverallTrainingAssessment extends Model
         'notable_employees' => 'array',
     ];
 
+    protected $fillable = [
+        'training_evaluation_id',
+        'goal_achievement',
+        'overall_quality',
+        'recommend_training',
+        'recommendation_reason',
+    ];
     // [
     //     {
     //         "name": "John Doe",
@@ -24,5 +31,8 @@ class OverallTrainingAssessment extends Model
     //         "reason": "Frequent absenteeism and lack of communication."
     //     }
     // ]
+    public function training_evaluation() {
+        return $this->belongsTo(TrainingEvaluation::class);
+    }
 
 }

@@ -35,8 +35,8 @@
     </div>
 </div>
 <!--end modal -->
-<input type="hidden" id="speaker_id" value="{{ $speaker->id }}">
-<input type="hidden" id="speaker_topic_id" value="{{ $speaker_topic->id }}">
+{{-- <input type="hidden" id="speaker_id" value="{{ $speaker->id }}">
+<input type="hidden" id="speaker_topic_id" value="{{ $speaker_topic->id }}"> --}}
 <!-- Modal -->
 <div class="modal fade zoomIn" id="archiveEvalModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -63,8 +63,8 @@
                     <form id="archiveEvalForm" method="POST" style="display:inline;">
                         @csrf
                         @method('PUT')
-                        <input type="hidden" id="speaker_id" value="{{ $speaker->id }}">
-                        <input type="hidden" id="speaker_topic_id" value="{{ $speaker_topic->id }}">
+                        {{-- <input type="hidden" id="speaker_id" value="{{ $speaker->id }}">
+                        <input type="hidden" id="speaker_topic_id" value="{{ $speaker_topic->id }}"> --}}
                         <input type="hidden" id="archive-edit-id">
                         <button type="submit" class="btn w-sm btn-danger">Yes, Archive It!</button>
                     </form>

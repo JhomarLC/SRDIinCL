@@ -3,108 +3,27 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\TrainingEvaluation;
 use App\Models\TrainingEvent;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
-class TrainingEvaluationController extends Controller
+class TrainingEventController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(string $id)
+    public function index()
     {
-        $training_event = TrainingEvent::with([
-            'evaluations.training_content_evaluation',
-            'evaluations.course_management_evaluation',
-            'evaluations.overall_training_assessment',
-            'evaluations.training_participant_info',
-            'evaluations.useful_topics'
-        ])->findOrFail($id);
-
-        return view('admin.training-evaluation-management.training-evaluations.index', compact(['training_event']));
+        return view('admin.training-evaluation-management.index');
     }
 
-    public function getIndex(string $id)
+
+    public function getIndex()
     {
         // Get only topics for the specific speaker, eager load speaker relationship
-        $training_eval = TrainingEvaluation::where('training_event_id', $id);
+        $training_events = TrainingEvent::all();
 
-        return DataTables::of($training_eval)
-            ->addColumn('training_content_evaluation', function ($events) {
-                $contentEval = $events->training_content_evaluation;
-
-                if (!$contentEval) {
-                    return 'N/A';
-                }
-
-                $overall_score = $contentEval->overall_score;
-
-                return $overall_score . ' (' . scoreLabel($overall_score) . ')';
-            })
-            ->addColumn('course_management_evaluation', function ($events) {
-                $cmEval = $events->course_management_evaluation;
-
-                if (!$cmEval) {
-                    return 'N/A';
-                }
-
-                $overall_score = $cmEval->overall_score;
-
-                return $overall_score . ' (' . scoreLabel($overall_score) . ')';
-            })
-            ->addColumn('goal_achievement', function ($events) {
-                $goal_achievement = optional($events->overall_training_assessment)->goal_achievement;
-
-                if (!$goal_achievement) {
-                    return '<span class="badge bg-secondary">N/A</span>';
-                }
-
-                switch ($goal_achievement) {
-                    case 'Achieve':
-                        $badgeClass = 'bg-success';
-                        break;
-                    case 'Partially Achieved':
-                        $badgeClass = 'bg-warning text-dark';
-                        break;
-                    case 'Not Achieved':
-                        $badgeClass = 'bg-danger';
-                        break;
-                    default:
-                        $badgeClass = 'bg-secondary';
-                        break;
-                }
-
-                return '<span class="badge ' . $badgeClass . '">' . $goal_achievement . '</span>';
-            })
-            ->addColumn('overall_quality', function ($events) {
-                $overall_quality = optional($events->overall_training_assessment)->overall_quality;
-
-                if (!$overall_quality) {
-                    return '<span class="badge bg-secondary">N/A</span>';
-                }
-
-                switch ($overall_quality) {
-                    case 'Very Good':
-                        $badgeClass = 'bg-success';
-                        break;
-                    case 'Good':
-                        $badgeClass = 'bg-primary';
-                        break;
-                    case 'Fair':
-                        $badgeClass = 'bg-warning text-dark';
-                        break;
-                    case 'Poor':
-                        $badgeClass = 'bg-danger';
-                        break;
-                    default:
-                        $badgeClass = 'bg-secondary';
-                        break;
-                }
-
-                return '<span class="badge ' . $badgeClass . '">' . $overall_quality . '</span>';
-            })
+        return DataTables::of($training_events)
             ->addColumn('actions', function ($events)   {
                 $viewButton  = ($events->status !== 'archived')
                         ? '<a href="' . route('training-evaluation-management.index', $events->id)  . '"
@@ -141,28 +60,64 @@ class TrainingEvaluationController extends Controller
 
                 return $viewButton . ' ' . ($events->status === 'active' && $editButton ? $editButton : "") . ' ' . $activateButton . ' ' . $deactivateButton;
             })
-            ->editColumn('status', function ($eval) {
-                return $eval->status === 'active'
+            ->editColumn('training_formatted_date', function ($events) {
+                return $events->formatted_training_date;
+            })
+            ->addColumn('training_location', function ($events) {
+                return $events->full_address;
+            })
+            ->addColumn('most_common_goal_achievement', function ($events) {
+                $output = '';
+                $goals = explode(',', $events->most_common_goal_achievement);
+
+                foreach ($goals as $goal) {
+                    $goal = trim($goal);
+                    $class = match($goal) {
+                        'Achieve' => 'bg-success',
+                        'Partially Achieved' => 'bg-warning text-dark',
+                        'Not Achieved' => 'bg-danger',
+                        default => 'bg-secondary'
+                    };
+
+                    $output .= '<span class="badge ' . $class . '">' . $goal . '</span> ';
+                }
+
+                return trim($output);
+            })
+            ->addColumn('most_common_overall_quality', function ($events) {
+                $output = '';
+                $qualities = explode(',', $events->most_common_overall_quality);
+
+                foreach ($qualities as $quality) {
+                    $quality = trim($quality);
+                    $class = match($quality) {
+                        'Very Good' => 'bg-success',
+                        'Good' => 'bg-primary',
+                        'Fair' => 'bg-warning text-dark',
+                        'Poor' => 'bg-danger',
+                        default => 'bg-secondary'
+                    };
+
+                    $output .= '<span class="badge ' . $class . '">' . $quality . '</span> ';
+                }
+
+                return trim($output);
+            })
+            ->editColumn('status', function ($events) {
+                return $events->status === 'active'
                     ? '<span class="badge bg-success">Active</span>'
                     : '<span class="badge bg-danger">Archived</span>';
             })
-            ->rawColumns(['status', 'goal_achievement', 'overall_quality', 'actions'])
+            ->rawColumns(['status', 'most_common_goal_achievement', 'most_common_overall_quality', 'actions'])
             ->make(true);
     }
+
     /**
      * Show the form for creating a new resource.
      */
-    public function create(string $id)
+    public function create()
     {
-        $training_event = TrainingEvent::with([
-            'evaluations.training_content_evaluation',
-            'evaluations.course_management_evaluation',
-            'evaluations.overall_training_assessment',
-            'evaluations.training_participant_info',
-            'evaluations.useful_topics'
-        ])->findOrFail($id);
-
-        return view('admin.training-evaluation-management.training-evaluations.create', compact('training_event'));
+        //
     }
 
     /**

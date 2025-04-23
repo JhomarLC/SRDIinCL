@@ -57,7 +57,7 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link menu-link {{ request()->is('admin/training-evaluation-management*') ? 'active' : '' }}"
-                        href="{{ route('training-evaluation-management.index') }}">
+                        href="{{ route('training-event-management.index') }}">
                         <i class="ri-booklet-fill"></i>
                         <span>Training Evaluation</span>
                     </a>

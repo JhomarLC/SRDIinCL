@@ -4,13 +4,15 @@
             processing: true,
             serverSide: true,
             responsive: true,
-            ajax: "{{ route('training-evaluation-management.get-index') }}",
+            ajax: "{{ route('training-event-management.get-index') }}",
             order: [[1, 'desc']], // Updated to reflect the id column index (0 after including it)
             columns: [
                 { data: 'id', name: 'id', visible: false }, // Hidden ID column
                 { data: 'training_date', name: 'training_date', visible: false },
                 { data: 'training_formatted_date', name: 'training_formatted_date' },
                 { data: 'training_location', name: 'training_location' },
+                { data: 'most_common_goal_achievement', name: 'most_common_goal_achievement' },
+                { data: 'most_common_overall_quality', name: 'most_common_overall_quality' },
                 { data: 'status', name: 'status', orderable: false, searchable: false },
                 { data: 'actions', name: 'actions', orderable: false, searchable: false }
             ]
@@ -92,9 +94,7 @@
                 }
             });
         });
-
     });
-
 
     // CREATE
     $(document).ready(function () {
@@ -115,7 +115,7 @@
             };
 
             $.ajax({
-                url: "{{ route('training-evaluation-management.store') }}", // Laravel route for storing speaker
+                url: "{{ route('training-event-management.store') }}", // Laravel route for storing speaker
                 type: "POST",
                 data: formData,
                 dataType: "json",
@@ -324,7 +324,7 @@
             };
 
             $.ajax({
-                url: "/admin/training-evaluation-management/" + training_eventId,
+                url: "/admin/training-event-management/" + training_eventId,
                 type: "PUT",
                 data: formData,
                 dataType: "json",

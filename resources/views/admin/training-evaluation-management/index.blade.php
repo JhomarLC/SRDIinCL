@@ -50,6 +50,8 @@
                             <th>Training Date</th>
                             <th>Training Date</th>
                             <th data-ordering="false">Training Address</th>
+                            <th data-ordering="false">Common Goal</th>
+                            <th data-ordering="false">Common Overall Quality</th>
                             <th data-ordering="false">Status</th>
                             <th>Action</th>
                         </tr>

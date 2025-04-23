@@ -19,10 +19,10 @@
 @component('components.breadcrumb')
     @slot('breadcrumbs', [
         ['label' => 'Admin', 'route' => 'admin.dashboard'],
-        ['label' => 'Speakers', 'route' => 'speaker-management.index'],
+        ['label' => 'Training Events', 'route' => 'training-event-management.index'],
     ])
     @slot('title')
-        Speaker Evaluations
+        Training Evaluations
     @endslot
 @endcomponent
 @include('components.alert')
@@ -36,21 +36,15 @@
 </div>
 <div class="pt-4 mb-4 mb-lg-3 pb-lg-4 profile-wrapper">
     <div class="row g-4">
-        <div class="col-auto">
-            <div class="avatar-lg">
-                <img src="@if (Auth::user()->avatar != '') {{ URL::asset('images/' . Auth::user()->avatar) }}@else{{ URL::asset('build/images/users/user-dummy-img.jpg') }} @endif"
-                    alt="user-img" class="img-thumbnail rounded-circle" />
-            </div>
-        </div>
         <!--end col-->
         <div class="col">
             <div class="p-2">
-                <h3 class="text-white mb-1">{{ $speaker->full_name }}</h3>
-                <p class="text-white text-opacity-75">Speaker</p>
-                {{-- <div class="hstack text-white-50 gap-1">
+                <h3 class="text-white mb-1">{{ $training_event->formatted_training_date }}</h3>
+                <p class="text-white text-opacity-75">{{ $training_event->training_title }}</p>
+                <div class="hstack text-white-50 gap-1">
                     <div class="me-2"><i
-                            class="ri-map-pin-user-line me-1 text-white text-opacity-75 fs-16 align-middle"></i>Dipaculao, Aurora</div>
-                </div> --}}
+                            class="ri-map-pin-user-line me-1 text-white text-opacity-75 fs-16 align-middle"></i>{{ $training_event->full_address }}</div>
+                </div>
             </div>
         </div>
         <!--end col-->
@@ -58,14 +52,14 @@
             <div class="row text text-white-50 text-center">
                 <div class="col p-2">
                     <h4 class="text-white mb-1">
-                        {{ $average_overall_score == 0 ? 'No Evaluations' : $average_overall_score . ' ' . scoreLabel($average_overall_score) }}
+                        {{-- {{ $average_overall_score == 0 ? 'No Evaluations' : $average_overall_score . ' ' . scoreLabel($average_overall_score) }} --}}
+                        No Training Evaluations
                     </h4>
                     <p class="fs-14 mb-0">Total Rating</p>
                 </div>
             </div>
         </div>
         <!--end col-->
-
     </div>
     <!--end row-->
 </div>
@@ -75,8 +69,13 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
                 <div class="mb-2">
-                    <h5 class="text-lg mb-1">
-                        <strong>Topic:</strong> {{ $label }}
+                    {{-- <p><strong>Avg. Content Score:</strong> {{ $training_event->avg_content_score ?? 'N/A' }}</p>
+                    <p><strong>Avg. Course Score:</strong> {{ $training_event->avg_course_score ?? 'N/A' }}</p>
+                    <p><strong>Most Common Goal:</strong> {{ $training_event->most_common_goal_achievement }}</p>
+                    <p><strong>Most Common Quality:</strong> {{ $training_event->most_common_overall_quality }}</p> --}}
+
+                    {{-- <h5 class="text-lg mb-1">
+                        <strong>Topic:</strong>
                     </h5>
 
                     <div>
@@ -84,47 +83,28 @@
                         <span class="text-muted">
                             {{ $speaker_topic->formatted_topic_date }} at {{ $speaker_topic->full_address }}
                         </span>
-                    </div>
+                    </div> --}}
                 </div>
 
                 <div class="d-flex gap-2 align-items-start">
                     <a href="{{ route('admin-management.export') }}" class="btn btn-success">
                         <i class="ri-file-excel-2-fill"></i> Export
                     </a>
-                    <a href="{{ route('speaker-eval.create', [$speaker->id, $speaker_topic->id]) }}" class="btn btn-secondary">
+                    <a href="{{ route('training-evaluation-management.create', $training_event->id) }}" class="btn btn-secondary">
                         <i class="ri-file-add-fill"></i> New Evaluation
                     </a>
                 </div>
-            </div>
-
-            <div class="d-flex mt-2" style="margin-left: 20px">
-                <p class="flex-grow-1 mb-0"><strong>K </strong>- Knowledge</p>
-                <p class="flex-grow-1 mb-0"><strong>TM</strong> - Teaching Method</p>
-                <p class="flex-grow-1 mb-0"><strong>AV</strong> - Audio Visual</p>
-                <p class="flex-grow-1 mb-0"><strong>C </strong>- Clarity</p>
-            </div>
-            <div class="card-header d-flex">
-                <p class="flex-grow-1 mb-0"><strong>QH</strong> - Question Handling</p>
-                <p class="flex-grow-1 mb-0"><strong>AC</strong> - Audience Connection</p>
-                <p class="flex-grow-1 mb-0"><strong>CR</strong> - Content Relevance</p>
-                <p class="flex-grow-1 mb-0"><strong>GA</strong> - Goal Achievement</p>
             </div>
             <div class="card-body">
                 <table id="eval" class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">
                     <thead>
                         <tr>
-                            <th data-ordering="false">Name</th>
-                            <th data-ordering="false">K</th>
-                            <th data-ordering="false">TM</th>
-                            <th data-ordering="false">AV</th>
-                            <th data-ordering="false">C</th>
-                            <th data-ordering="false">QH</th>
-                            <th data-ordering="false">AC</th>
-                            <th data-ordering="false">CR</th>
-                            <th data-ordering="false">GA</th>
-                            {{-- <th data-ordering="false">Total Rating</th> --}}
-                            <th data-ordering="false">Additional Feedback</th>
-                            <th data-ordering="false">Overall Score</th>
+
+                            <th>Training ID</th>
+                            <th data-ordering="false">Training Content</th>
+                            <th data-ordering="false">Course Management</th>
+                            <th data-ordering="false">Course Objectives</th>
+                            <th data-ordering="false">Overall Training</th>
                             <th data-ordering="false">Status</th>
                             <th>Action</th>
                         </tr>
@@ -160,6 +140,6 @@
 <script src="{{ URL::asset('build/js/pages/datatables.init.js') }}"></script>
 
 <script src="{{ URL::asset('admin-js/admin.js') }}"></script>
-@include('admin.speaker-management.speaker-topics.speaker-evaluations._includes.script')
+@include('admin.training-evaluation-management.training-evaluations._includes.script')
 <script src="{{ URL::asset('build/js/app.js') }}"></script>
 @endsection

@@ -40,8 +40,57 @@ class TrainingEvent extends Model
         return Carbon::parse($this->training_date)->format('F j, Y');
     }
 
-    public function training_evaluation() {
-        return $this->hasMany(TrainingEvaluation::class, 'training_evaluation_id', 'code');
+
+     // 🧮 Get average training content score
+    public function getAvgContentScoreAttribute()
+    {
+        $scores = $this->evaluations
+            ->pluck('training_content_evaluation.overall_score')
+            ->filter();
+
+        return $scores->count() ? round($scores->avg(), 2) : null;
+    }
+
+    // 🧮 Get average course management score
+    public function getAvgCourseScoreAttribute()
+    {
+        $scores = $this->evaluations
+            ->pluck('course_management_evaluation.overall_score')
+            ->filter();
+
+        return $scores->count() ? round($scores->avg(), 2) : null;
+    }
+
+    // 🥇 Get most common goal achievement
+    public function getMostCommonGoalAchievementAttribute()
+    {
+        $goals = $this->evaluations
+            ->pluck('overall_training_assessment.goal_achievement')
+            ->filter();
+
+        $modes = $goals->count() ? collect($goals->mode()) : collect();
+
+        return $modes->isNotEmpty()
+            ? $modes->implode(', ') // Returns all ties, comma-separated
+            : 'N/A';
+    }
+
+    // 🌟 Get most common overall quality
+    public function getMostCommonOverallQualityAttribute()
+    {
+        $qualities = $this->evaluations
+            ->pluck('overall_training_assessment.overall_quality')
+            ->filter();
+
+        $modes = $qualities->count() ? collect($qualities->mode()) : collect();
+
+        return $modes->isNotEmpty()
+            ? $modes->implode(', ')  // Show all ties as comma-separated
+            : 'N/A';
+    }
+
+    public function evaluations() {
+        return $this->hasMany(TrainingEvaluation::class);
     }
 
     public function province() {
