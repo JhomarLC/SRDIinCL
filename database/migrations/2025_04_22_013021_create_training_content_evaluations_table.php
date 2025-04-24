@@ -22,6 +22,14 @@ return new class extends Migration
             $table->integer('duration_score');
             $table->integer('assessment_method_score');
 
+            $table->longText('objective_comment')->nullable();
+            $table->longText('relevance_comment')->nullable();
+            $table->longText('content_completeness_comment')->nullable();
+            $table->longText('lecture_hands_on_comment')->nullable();
+            $table->longText('sequence_comment')->nullable();
+            $table->longText('duration_comment')->nullable();
+            $table->longText('assessment_method_comment')->nullable();
+
             $table->longText('low_score_comment')->nullable();
 
             $table->timestamps();

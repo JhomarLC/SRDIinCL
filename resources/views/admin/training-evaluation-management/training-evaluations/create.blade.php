@@ -66,26 +66,26 @@
                         <ul class="nav nav-pills progress-bar-tab custom-nav" role="tablist">
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link rounded-pill active" data-progressbar="custom-progress-bar"
-                                    id="pills-personal-info-tab" data-bs-toggle="pill" data-bs-target="#pills-personal-info"
-                                    type="button" role="tab" aria-controls="pills-personal-info"
+                                    id="pills-training-content-tab" data-bs-toggle="pill" data-bs-target="#pills-training-content"
+                                    type="button" role="tab" aria-controls="pills-training-content"
                                     aria-selected="true">1</button>
                             </li>
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link rounded-pill" data-progressbar="custom-progress-bar"
-                                    id="pills-trainings-tab" data-bs-toggle="pill" data-bs-target="#pills-trainings"
-                                    type="button" role="tab" aria-controls="pills-trainings"
+                                    id="pills-course-management-tab" data-bs-toggle="pill" data-bs-target="#pills-course-management"
+                                    type="button" role="tab" aria-controls="pills-course-management"
                                     aria-selected="false">2</button>
                             </li>
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link rounded-pill" data-progressbar="custom-progress-bar"
-                                    id="pills-other-info-tab" data-bs-toggle="pill" data-bs-target="#pills-other-info"
-                                    type="button" role="tab" aria-controls="pills-other-info"
+                                    id="pills-overall-evaluation-tab" data-bs-toggle="pill" data-bs-target="#pills-overall-evaluation"
+                                    type="button" role="tab" aria-controls="pills-overall-evaluation"
                                     aria-selected="false">3</button>
                             </li>
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link rounded-pill" data-progressbar="custom-progress-bar"
-                                    id="pills-training-result-tab" data-bs-toggle="pill" data-bs-target="#pills-training-result"
-                                    type="button" role="tab" aria-controls="pills-training-result"
+                                    id="pills-personal-info-tab" data-bs-toggle="pill" data-bs-target="#pills-personal-info"
+                                    type="button" role="tab" aria-controls="pills-personal-info"
                                     aria-selected="false">4</button>
                             </li>
                         </ul>

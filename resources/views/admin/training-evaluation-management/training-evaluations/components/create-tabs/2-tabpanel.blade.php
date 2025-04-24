@@ -1,5 +1,5 @@
-<div class="tab-pane fade" id="pills-trainings" role="tabpanel"
-aria-labelledby="pills-trainings-tab">
+<div class="tab-pane fade" id="pills-course-management" role="tabpanel"
+aria-labelledby="pills-course-management-tab">
 <div class="d-flex align-items-center">
         <h5 class="flex-grow-1">Course Management</h5>
 </div>

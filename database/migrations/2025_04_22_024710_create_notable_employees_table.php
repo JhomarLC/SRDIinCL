@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('notable_employees', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('training_evaluation_id')->constrained()->onDelete('cascade');
+            $table->foreignId('overall_training_assessment_id')->constrained()->onDelete('cascade');
             $table->string('full_name')->nullable();
             $table->longText('reason')->nullable();
             $table->timestamps();

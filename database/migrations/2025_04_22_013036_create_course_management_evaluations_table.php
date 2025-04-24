@@ -26,6 +26,18 @@ return new class extends Migration
             $table->integer('transportation_score');
             $table->integer('overall_management_score');
 
+            $table->longText('coordination_comment')->nullable();
+            $table->longText('time_management_comment')->nullable();
+            $table->longText('speaker_quality_comment')->nullable();
+            $table->longText('facilitators_comment')->nullable();
+            $table->longText('support_staff_comment')->nullable();
+            $table->longText('materials_comment')->nullable();
+            $table->longText('facility_comment')->nullable();
+            $table->longText('accommodation_comment')->nullable();
+            $table->longText('food_quality_comment')->nullable();
+            $table->longText('transportation_comment')->nullable();
+            $table->longText('overall_management_comment')->nullable();
+
             $table->longText('low_score_comment')->nullable();
             $table->timestamps();
         });

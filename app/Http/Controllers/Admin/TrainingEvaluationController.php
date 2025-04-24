@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helpers\TrainingValidationRules;
 use App\Http\Controllers\Controller;
 use App\Models\TrainingEvaluation;
 use App\Models\TrainingEvent;
@@ -10,6 +11,16 @@ use Yajra\DataTables\DataTables;
 
 class TrainingEvaluationController extends Controller
 {
+    public function validateStep(Request $request)
+    {
+        $step = $request->input('step');
+        $rules = TrainingValidationRules::rules($step);
+        $messages = TrainingValidationRules::messages();
+
+        $validated = $request->validate($rules, $messages);
+
+        return response()->json(['success' => true]);
+    }
     /**
      * Display a listing of the resource.
      */

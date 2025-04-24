@@ -16,9 +16,10 @@ return new class extends Migration
             $table->foreignId('training_evaluation_id')->constrained()->onDelete('cascade');
             $table->enum('goal_achievement', ['Not Achieved', 'Partially Achieved', 'Achieve']);
             $table->enum('overall_quality', ['Very Good', 'Good', 'Fair', 'Poor']);
+            $table->longText('additional_feedback_or_suggestions');
             $table->boolean('recommend_training');
-
             $table->longText('recommendation_reason');
+            $table->text('preferred_future_trainings');
             $table->timestamps();
         });
     }

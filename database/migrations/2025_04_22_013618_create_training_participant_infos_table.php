@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('last_name')->nullable();
             $table->string('suffix')->nullable();
             $table->string('age_group');
+            $table->string('sex');
+            $table->string('province_code');
             $table->enum('primary_sector', [
                 'Farmer/Seed Grower',
                 'Extension Worker',
