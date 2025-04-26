@@ -9,6 +9,10 @@ class TrainingEvaluation extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'training_event_id',
+        'status'
+    ];
     public function training_event() {
         return $this->belongsTo(TrainingEvent::class);
     }
@@ -29,7 +33,4 @@ class TrainingEvaluation extends Model
         return $this->hasOne(TrainingParticipantInfo::class);
     }
 
-    public function useful_topics() {
-        return $this->hasMany(UsefulTopics::class);
-    }
 }

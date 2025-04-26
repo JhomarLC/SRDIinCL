@@ -1182,7 +1182,7 @@
     });
 
     $(document).ready(function () {
-        const startYear = 2023;
+        const startYear = 2021;
         const currentYear = new Date().getFullYear();
 
         const yearDropdowns = [
@@ -1257,6 +1257,7 @@
             });
         });
     });
+
     document.addEventListener('input', function () {
         const pre = parseFloat(document.getElementById('pre_test_score').value) || 0;
         const post = parseFloat(document.getElementById('post_test_score').value) || 0;

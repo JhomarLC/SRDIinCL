@@ -16,23 +16,17 @@ class OverallTrainingAssessment extends Model
         'training_evaluation_id',
         'goal_achievement',
         'overall_quality',
+        'additional_feedback_or_suggestions',
         'recommend_training',
         'recommendation_reason',
+        'preferred_future_trainings'
     ];
-    // [
-    //     {
-    //         "name": "John Doe",
-    //         "impression": "positive",
-    //         "reason": "Great team player and problem-solver."
-    //     },
-    //     {
-    //         "name": "Jane Smith",
-    //         "impression": "negative",
-    //         "reason": "Frequent absenteeism and lack of communication."
-    //     }
-    // ]
+
     public function training_evaluation() {
         return $this->belongsTo(TrainingEvaluation::class);
     }
 
+    public function notable_employees() {
+        return $this->hasMany(NotableEmployee::class);
+    }
 }

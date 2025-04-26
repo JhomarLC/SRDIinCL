@@ -14,12 +14,12 @@ return new class extends Migration
         Schema::create('overall_training_assessments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('training_evaluation_id')->constrained()->onDelete('cascade');
-            $table->enum('goal_achievement', ['Not Achieved', 'Partially Achieved', 'Achieve']);
-            $table->enum('overall_quality', ['Very Good', 'Good', 'Fair', 'Poor']);
-            $table->longText('additional_feedback_or_suggestions');
+            $table->enum('goal_achievement', ['Not Achieved', 'Partially Achieved', 'Achieved']);
+            $table->enum('overall_quality', ['Excellent', 'Very Good', 'Good', 'Fair', 'Poor']);
+            $table->longText('additional_feedback_or_suggestions')->nullable();
             $table->boolean('recommend_training');
-            $table->longText('recommendation_reason');
-            $table->text('preferred_future_trainings');
+            $table->longText('recommendation_reason')->nullable();
+            $table->text('preferred_future_trainings')->nullable();
             $table->timestamps();
         });
     }

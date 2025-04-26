@@ -13,13 +13,15 @@ Route::prefix('training-evaluation-management')->group(function () {
     Route::put('/{id}', [TrainingEventController::class, 'update'])->name('training-event-management.update');
 
     Route::post('/validate-step', [TrainingEvaluationController::class, 'validateStep'])->name('training-evaluation-management.validateStep');
+    Route::post('/validate-all', [TrainingEvaluationController::class, 'validateAllSteps'])->name('training-evaluation-management.validateAll');
+
     // Nested topics under a specific speaker
     Route::prefix('{event}/evaluations')->group(function () {
         Route::get('/', [TrainingEvaluationController::class, 'index'])->name('training-evaluation-management.index');
         Route::get('/get-index', [TrainingEvaluationController::class, 'getIndex'])->name('training-evaluation-management.get-index');
 
         Route::get('/create', [TrainingEvaluationController::class, 'create'])->name('training-evaluation-management.create');
-        // Route::post('/store', [SpeakerEvaluationController::class, 'store'])->name('speaker-eval.store');
+        Route::post('/store', [TrainingEvaluationController::class, 'store'])->name('training-evaluation-management.store');
         // Route::get('/{id}', [SpeakerEvaluationController::class, 'edit'])->name('speaker-eval.edit');
         // Route::put('/{id}', [SpeakerEvaluationController::class, 'update'])->name('speaker-eval.update');
 

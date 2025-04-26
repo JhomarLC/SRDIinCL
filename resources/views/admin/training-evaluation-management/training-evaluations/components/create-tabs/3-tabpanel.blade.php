@@ -9,15 +9,15 @@ aria-labelledby="pills-overall-evaluation-tab">
         <div class="col-sm-6">
             <label class="form-label d-block mb-2">1. Achievement of the course objectives <span class="text-danger">*</span></label>
             <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="goal_achievement" id="goal_achieved" value="achieved">
+                <input class="form-check-input" type="radio" name="goal_achievement" id="goal_achieved" value="Achieved">
                 <label class="form-check-label" for="goal_achieved">Achieved</label>
             </div>
             <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="goal_achievement" id="goal_partially_achieved" value="partially_achieved">
+                <input class="form-check-input" type="radio" name="goal_achievement" id="goal_partially_achieved" value="Partially Achieved">
                 <label class="form-check-label" for="goal_partially_achieved">Partially achieved</label>
             </div>
             <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="goal_achievement" id="goal_not_achieved" value="not_achieved">
+                <input class="form-check-input" type="radio" name="goal_achievement" id="goal_not_achieved" value="Not Achieved">
                 <label class="form-check-label" for="goal_not_achieved">Not achieved</label>
             </div>
             <div class="invalid-feedback">Please enter a middle name</div>
@@ -26,23 +26,23 @@ aria-labelledby="pills-overall-evaluation-tab">
         <div class="col-sm-6">
             <label class="form-label d-block mb-2">2. Overall quality and satisfaction with the training <span class="text-danger">*</span></label>
             <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="overall_quality" id="quality_excellent" value="excellent">
+                <input class="form-check-input" type="radio" name="overall_quality" id="quality_excellent" value="Excellent">
                 <label class="form-check-label" for="quality_excellent">Excellent</label>
             </div>
             <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="overall_quality" id="quality_very_good" value="very_good">
+                <input class="form-check-input" type="radio" name="overall_quality" id="quality_very_good" value="Very Good">
                 <label class="form-check-label" for="quality_very_good">Very Good</label>
             </div>
             <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="overall_quality" id="quality_good" value="good">
+                <input class="form-check-input" type="radio" name="overall_quality" id="quality_good" value="Good">
                 <label class="form-check-label" for="quality_good">Good</label>
             </div>
             <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="overall_quality" id="quality_fair" value="fair">
+                <input class="form-check-input" type="radio" name="overall_quality" id="quality_fair" value="Fair">
                 <label class="form-check-label" for="quality_fair">Fair</label>
             </div>
             <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="overall_quality" id="quality_poor" value="poor">
+                <input class="form-check-input" type="radio" name="overall_quality" id="quality_poor" value="Poor">
                 <label class="form-check-label" for="quality_poor">Poor</label>
             </div>
             <div class="invalid-feedback">Please enter a middle name</div>
@@ -98,32 +98,37 @@ aria-labelledby="pills-overall-evaluation-tab">
         </div>
     </div>
 </div>
-<div class="mt-3">
-    <div class="row g-3">
-        <div class="col-sm-12">
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
-                <label class="form-label mb-2 mb-md-0">
-                    Is there any PhilRice employee who left a good or bad impression on you? You may give a reason.
-                </label>
-                <button class="btn btn-secondary d-flex align-items-center">
-                    <i class="ri-add-line me-1"></i> Add Employee
-                </button>
+<div id="employeeContainer" class="mt-3">
+    <div class="d-flex align-items-center">
+        <label class="flex-grow-1 form-label mb-2 mb-md-0">
+            Is there any PhilRice employee who left a good or bad impression on you? You may give a reason.
+        </label>
+        <button type="button" id="addTrainingBtn" class="btn btn-sm btn-secondary add-employee">
+            <i class="ri-add-line"></i> Add Employee
+        </button>
+    </div>
+    <div class="employee-entry mt-3">
+        <div class="row g-3">
+            <div class="col-sm-6">
+                <label class="form-label">Employee Name</label>
+                <input type="text" class="form-control" id="employee_name" name="employee_name[]" placeholder="Enter Employee">
+            </div>
+            <div class="col-sm-6">
+                <label class="form-label">Reason</label>
+                <input type="text" class="form-control" id="employee_reason" name="employee_reason[]" placeholder="Enter Reason">
+            </div>
+            <div class="col-sm-12 d-flex gap-2">
+                <button type="button" class="btn btn-sm btn-warning clear-employee">Clear Fields</button>
+                <button type="button" class="btn btn-sm btn-danger remove-employee d-none">Remove</button>
             </div>
         </div>
-        <div class="col-sm-6">
-            <label for="full_name" class="form-label">Employee</label>
-            <input type="text" class="form-control" id="full_name" placeholder="Enter Employee"></input>
-        </div>
-        <div class="col-sm-6">
-            <label for="reason" class="form-label">Reason</label>
-            <input type="text" class="form-control" id="reason" name="reason" placeholder="Enter Reason"></input>
-        </div>
+        <hr>
     </div>
 </div>
 
 <div class="d-flex align-items-start gap-3 mt-4">
     <button type="button" class="btn btn-light btn-label previestab"
-        data-previous="pills-trainings-tab"><i
+        data-previous="pills-course-management-tab"><i
             class="ri-arrow-left-line label-icon align-middle fs-16 me-2"></i>
         Previous</button>
     <button type="button"

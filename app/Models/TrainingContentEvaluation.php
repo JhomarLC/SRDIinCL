@@ -18,6 +18,15 @@ class TrainingContentEvaluation extends Model
         'sequence_score',
         'duration_score',
         'assessment_method_score',
+
+        'objective_comment',
+        'relevance_comment',
+        'content_completeness_comment',
+        'lecture_hands_on_comment',
+        'sequence_comment',
+        'duration_comment',
+        'assessment_method_comment',
+
         'low_score_comment',
     ];
 
@@ -47,6 +56,10 @@ class TrainingContentEvaluation extends Model
 
     public function training_evaluation() {
         return $this->belongsTo(TrainingEvaluation::class);
+    }
+
+    public function useful_topics() {
+        return $this->hasMany(UsefulTopics::class);
     }
 
 }

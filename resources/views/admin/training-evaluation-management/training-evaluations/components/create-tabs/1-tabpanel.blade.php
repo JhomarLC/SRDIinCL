@@ -110,7 +110,7 @@ aria-labelledby="pills-training-content-tab">
                         <option value="Choice 4">Choice 4</option>
                     </select>
                 </div> --}}
-                <select class="form-control" id="choices-multiple-remove-button" data-choices data-choices-limit="3" data-choices-removeItem name="choices-multiple-remove-button"
+                <select class="form-control" id="choices-multiple-remove-button" name="three_topics" data-choices data-choices-limit="3" data-choices-removeItem name="choices-multiple-remove-button"
                     multiple>
                     <option selected disabled hidden>-- SELECT TOPIC DISCUSSED --</option>
 
@@ -139,7 +139,6 @@ aria-labelledby="pills-training-content-tab">
                 </select>
             </div>
         </div>
-
     </div>
 </div>
 <div class="d-flex align-items-start gap-3 mt-4">

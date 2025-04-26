@@ -10,13 +10,12 @@ class UsefulTopics extends Model
     use HasFactory;
 
     protected $fillable = [
-        'training_evaluation_id',
+        'training_content_evaluation_id',
         'topic_name',
     ];
 
-
-    public function training_evaluation() {
-        return $this->belongsTo(TrainingEvaluation::class);
+    public function training_content_evaluation() {
+        return $this->belongsTo(TrainingContentEvaluation::class);
     }
 
 }

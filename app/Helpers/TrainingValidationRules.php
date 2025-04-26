@@ -25,6 +25,8 @@ class TrainingValidationRules
                 'assessment_method_comment' => 'nullable',
 
                 'low_score_comment' => 'nullable',
+
+                'topic_name' => 'nullable'
             ],
             'course-management' => [
                 'coordination_score' => 'required',
@@ -60,6 +62,8 @@ class TrainingValidationRules
                 'recommend_training' => 'required|boolean',
                 'recommendation_reason' => 'nullable|required_if:recommend_training,1|string',
                 'preferred_future_trainings' => 'nullable|string|max:255',
+                'employee_name.*' => 'nullable|required_with:employee_reason.*|string|max:255',
+                'employee_reason.*' => 'nullable|required_with:employee_name.*|string|max:255',
              ],
              'personal-info' => [
                 'first_name' => 'nullable|string|max:255',
@@ -90,6 +94,9 @@ class TrainingValidationRules
             'sequence_score.required' => 'Please provide a score for the sequence of the training.',
             'duration_score.required' => 'Please provide a score for the duration of the training.',
             'assessment_method_score.required' => 'Please provide a score for the assessment method.',
+
+            'employee_name.*.required_with' => 'Please provide the employee name if a reason is entered.',
+            'employee_reason.*.required_with' => 'Please provide the reason if an employee name is entered.',
 
             'coordination_score.required' => 'Please provide a score for coordination.',
             'time_management_score.required' => 'Please provide a score for time management.',

@@ -4,8 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Helpers\TrainingValidationRules;
 use App\Http\Controllers\Controller;
+use App\Models\NotableEmployee;
+use App\Models\TrainingContentEvaluation;
 use App\Models\TrainingEvaluation;
 use App\Models\TrainingEvent;
+use App\Models\UsefulTopics;
+use DB;
+use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -21,6 +26,38 @@ class TrainingEvaluationController extends Controller
 
         return response()->json(['success' => true]);
     }
+
+    public function validateAllSteps(Request $request)
+    {
+        $steps = [
+            "training-content",
+            "course-management",
+            "overall-evaluation",
+            "personal-info"
+        ];
+        $messages = TrainingValidationRules::messages();
+
+        $allErrors = [];
+
+        foreach ($steps as $step) {
+            $rules = TrainingValidationRules::rules($step);
+            $validator = \Validator::make($request->all(), $rules, $messages);
+
+            if ($validator->fails()) {
+                $allErrors[$step] = $validator->errors()->messages();
+            }
+        }
+
+        if (!empty($allErrors)) {
+            return response()->json([
+                'success' => false,
+                'errors' => $allErrors,
+            ], 422);
+        }
+
+        return response()->json(['success' => true]);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -31,7 +68,7 @@ class TrainingEvaluationController extends Controller
             'evaluations.course_management_evaluation',
             'evaluations.overall_training_assessment',
             'evaluations.training_participant_info',
-            'evaluations.useful_topics'
+            // 'evaluations.useful_topics'
         ])->findOrFail($id);
 
         return view('admin.training-evaluation-management.training-evaluations.index', compact(['training_event']));
@@ -170,7 +207,7 @@ class TrainingEvaluationController extends Controller
             'evaluations.course_management_evaluation',
             'evaluations.overall_training_assessment',
             'evaluations.training_participant_info',
-            'evaluations.useful_topics'
+            // 'evaluations.useful_topics'
         ])->findOrFail($id);
 
         return view('admin.training-evaluation-management.training-evaluations.create', compact('training_event'));
@@ -179,42 +216,135 @@ class TrainingEvaluationController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, string $id)
     {
-        $validatedData = $request->validate([
-            'training_title' => 'required|string|max:255',
-            'training_date' => 'required|string|max:255',
-            'province_code' => 'required|string',
-            'municipality_code' => 'required|string',
-            'barangay_code' => 'required|string',
-        ]);
+        $rules = TrainingValidationRules::rules('all');
+        $messages = TrainingValidationRules::messages();
 
-        $training_event = TrainingEvent::create([
-            'training_date' => $validatedData['training_date'],
-            'training_title' => $validatedData['training_title'],
-            'province_code' => $validatedData['province_code'],
-            'municipality_code' => $validatedData['municipality_code'],
-            'barangay_code' => $validatedData['barangay_code'],
-        ]);
+        $validated = $request->validate($rules, $messages);
 
-        // Log a single activity for admin
-        activity()
-            ->causedBy(auth()->user())
-            ->performedOn($training_event)
-            ->event('training_event_create')
-            ->withProperties([
-                'admin' => $training_event->only([
-                    'training_title',
-                    'training_date',
-                    'province_code',
-                    'municipality_code',
-                    'barangay_code'
-                ]),
-            ])
-        ->log("New training event {$training_event->full_addresss} - {$training_event->fromatted_training_date} created");
+        DB::beginTransaction();
 
-        return response()->json(['status' => 'success', 'message' => 'Training event created successfully!', 'training_event' => $training_event]);
+        try {
+            $training_eval = TrainingEvaluation::create([
+                'training_event_id' => $id,
+            ]);
+
+            // Step 1: Training Content Evaluation
+            $content_evaluation = $training_eval->training_content_evaluation()->create([
+                'objective_score' => $validated['objective_score'],
+                'relevance_score' => $validated['relevance_score'],
+                'content_completeness_score' => $validated['content_completeness_score'],
+                'lecture_hands_on_score' => $validated['lecture_hands_on_score'],
+                'sequence_score' => $validated['sequence_score'],
+                'duration_score' => $validated['duration_score'],
+                'assessment_method_score' => $validated['assessment_method_score'],
+
+                'objective_comment' => $validated['objective_comment'] ?? null,
+                'relevance_comment' => $validated['relevance_comment'] ?? null,
+                'content_completeness_comment' => $validated['content_completeness_comment'] ?? null,
+                'lecture_hands_on_comment' => $validated['lecture_hands_on_comment'] ?? null,
+                'sequence_comment' => $validated['sequence_comment'] ?? null,
+                'duration_comment' => $validated['duration_comment'] ?? null,
+                'assessment_method_comment' => $validated['assessment_method_comment'] ?? null,
+
+                'low_score_comment' => $validated['low_score_comment'] ?? null,
+            ]);
+
+            if ($request->filled('three_topics')) {
+                $foodRestrictions = explode(',', $request->input('three_topics'));
+                foreach ($foodRestrictions as $item) {
+                    UsefulTopics::create([
+                        'training_content_evaluation_id' => $content_evaluation->id,
+                        'topic_name' => trim($item),
+                    ]);
+                }
+            }
+
+            // Step 2: Course Management Evaluation
+            $training_eval->course_management_evaluation()->create([
+                'coordination_score' => $validated['coordination_score'],
+                'time_management_score' => $validated['time_management_score'],
+                'speaker_quality_score' => $validated['speaker_quality_score'],
+                'facilitators_score' => $validated['facilitators_score'],
+                'support_staff_score' => $validated['support_staff_score'],
+                'materials_score' => $validated['materials_score'],
+                'facility_score' => $validated['facility_score'],
+                'accommodation_score' => $validated['accommodation_score'],
+                'food_quality_score' => $validated['food_quality_score'],
+                'transportation_score' => $validated['transportation_score'],
+                'overall_management_score' => $validated['overall_management_score'],
+
+                'coordination_comment' => $validated['coordination_comment'] ?? null,
+                'time_management_comment' => $validated['time_management_comment'] ?? null,
+                'speaker_quality_comment' => $validated['speaker_quality_comment'] ?? null,
+                'facilitators_comment' => $validated['facilitators_comment'] ?? null,
+                'support_staff_comment' => $validated['support_staff_comment'] ?? null,
+                'materials_comment' => $validated['materials_comment'] ?? null,
+                'facility_comment' => $validated['facility_comment'] ?? null,
+                'accommodation_comment' => $validated['accommodation_comment'] ?? null,
+                'food_quality_comment' => $validated['food_quality_comment'] ?? null,
+                'transportation_comment' => $validated['transportation_comment'] ?? null,
+                'overall_management_comment' => $validated['overall_management_comment'] ?? null,
+
+                'low_score_comment' => $validated['low_score_comment'] ?? null,
+            ]);
+
+            // Step 3: Overall Training Assessment
+            $assessment = $training_eval->overall_training_assessment()->create([
+                'goal_achievement' => $validated['goal_achievement'],
+                'overall_quality' => $validated['overall_quality'],
+                'additional_feedback_or_suggestions' => $validated['additional_feedback_or_suggestions'] ?? null,
+                'recommend_training' => $validated['recommend_training'],
+                'recommendation_reason' => $validated['recommendation_reason'] ?? null,
+                'preferred_future_trainings' => $validated['preferred_future_trainings'] ?? null,
+            ]);
+
+             // 2. Save trainings
+             foreach ($validated['employee_name'] as $index => $employee_name) {
+                $employee_reason = $validated['employee_reason'][$index] ?? null;
+
+                // ✅ Skip if all fields are empty/null
+                if (empty($employee_name) && empty($employee_reason)) {
+                    continue;
+                }
+                // 🧠 Optional: only require `title` at minimum
+                NotableEmployee::create([
+                    'overall_training_assessment_id' => $assessment->id,
+                    'employee_name' => $employee_name,
+                    'employee_reason' => $employee_reason,
+                ]);
+            }
+
+            // Step 4: Training Participant Info
+            $training_eval->training_participant_info()->create([
+                'first_name' => $validated['first_name'] ?? null,
+                'middle_name' => $validated['middle_name'] ?? null,
+                'last_name' => $validated['last_name'] ?? null,
+                'suffix' => $validated['suffix'] ?? null,
+                'age_group' => $validated['age_group'],
+                'sex' => $validated['sex'],
+                'province_code' => $validated['province_code'],
+                'primary_sector' => $validated['primary_sector'],
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Training evaluations created successfully!',
+            ]);
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to create new evaluation.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
+
 
     /**
      * Display the specified resource.
