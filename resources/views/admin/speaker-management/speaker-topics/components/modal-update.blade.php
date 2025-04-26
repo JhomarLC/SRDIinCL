@@ -2,7 +2,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalgridLabel">Update Speaker</h5>
+                <h5 class="modal-title" id="exampleModalgridLabel">Update Speaker Topic</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" >
@@ -48,10 +48,33 @@
                             <label for="topic_date" class="form-label">Date <span class="text-danger">*</span></label>
                             <input type="date" class="form-control" id="update_topic_date" name="topic_date">
                         </div>
+                        <div class="col-xxl-12">
+                            <label for="province" class="form-label">Province <span class="text-danger">*</span></label>
+                            <select class="form-control select2" id="update_province" name="province">
+                                <option selected disabled hidden>-- SELECT PROVINCE --</option>
+                            </select>
+                            <span class="invalid-feedback" id="update_province_error" role="alert"></span>
+                        </div>
+
+                        <div class="col-xxl-12">
+                            <label for="municipality" class="form-label">Municipality <span class="text-danger">*</span></label>
+                            <select class="form-control select2" id="update_municipality" name="municipality" disabled>
+                                <option selected disabled hidden>-- SELECT MUNICIPALITY --</option>
+                            </select>
+                            <span class="invalid-feedback" id="update_municipality_error" role="alert"></span>
+                        </div>
+
+                        <div class="col-xxl-12">
+                            <label for="barangay" class="form-label">Barangay <span class="text-danger">*</span></label>
+                            <select class="form-control select2" id="update_barangay" name="barangay" disabled>
+                                <option selected disabled hidden>-- SELECT BARANGAY --</option>
+                            </select>
+                            <span class="invalid-feedback" id="update_barangay_error" role="alert"></span>
+                        </div>
                         <div class="col-lg-12">
                             <div class="hstack gap-2 justify-content-end">
                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-success"> <i class="ri-checkbox-circle-fill"></i>Update speaker account</button>
+                                <button type="submit" class="btn btn-success"> <i class="ri-checkbox-circle-fill"></i> Update speaker topic</button>
                             </div>
                         </div>
                     </div>

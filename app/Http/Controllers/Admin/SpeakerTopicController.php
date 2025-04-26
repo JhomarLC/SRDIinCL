@@ -38,7 +38,10 @@ class SpeakerTopicController extends Controller
                 $editButton = '<button class="btn btn-sm btn-success editTopic"
                                     data-id="' . $topic->id . '"
                                     data-topic_discussed="' . $topic->topic_discussed . '"
-                                    data-topic_date="' . $topic->topic_date . '">
+                                    data-topic_date="' . $topic->topic_date . '"
+                                    data-province="' . $topic->province_code . '"
+                                    data-municipality="' .$topic->municipality_code . '"
+                                    data-barangay="' . $topic->barangay_code . '">
                                     <i class="ri-edit-fill"></i> Update
                                 </button>';
 

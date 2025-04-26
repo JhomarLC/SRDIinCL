@@ -94,6 +94,79 @@
 
     });
 
+
+    // UPDATE
+    $(document).ready(function () {
+         // ADDRESS
+         $.ajax({
+            url: `https://psgc.gitlab.io/api/provinces/`,
+            method: "GET",
+            dataType: "json",
+            success: function (data) {
+                let provinceDropdown = $("#update_province");
+                let provincesArray = Object.values(data);
+
+                provincesArray.forEach(province => {
+                    provinceDropdown.append(
+                        `<option value="${province.code}">${province.name}</option>`
+                    );
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error("Failed to load provinces:", error);
+            }
+        });
+
+        // Load municipalities based on selected province
+        $("#update_province").change(function () {
+            let provinceCode = $(this).val();
+            $("#update_municipality").prop("disabled", false).html('<option selected disabled hidden>-- SELECT MUNICIPALITY --</option>');
+            $("#update_barangay").prop("disabled", true).html('<option selected disabled hidden>-- SELECT BARANGAY --</option>');
+
+            $.ajax({
+                url: `https://psgc.gitlab.io/api/provinces/${provinceCode}/cities-municipalities/`,
+                method: "GET",
+                dataType: "json",
+                success: function (data) {
+                    let municipalityDropdown = $("#update_municipality");
+                    let municipalitiesArray = Object.values(data);
+
+                    municipalitiesArray.forEach(municipality => {
+                        municipalityDropdown.append(
+                            `<option value="${municipality.code}">${municipality.name}</option>`
+                        );
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error("Failed to load municipalities:", error);
+                }
+            });
+        });
+
+        $("#update_municipality").change(function () {
+            let municipalityCode = $(this).val();
+            $("#update_barangay").prop("disabled", false).html('<option selected disabled hidden>-- SELECT BARANGAY --</option>');
+
+            $.ajax({
+                url: `https://psgc.gitlab.io/api/cities-municipalities/${municipalityCode}/barangays/`, // FIXED URL
+                method: "GET",
+                dataType: "json",
+                success: function (data) {
+                    let barangayDropdown = $("#update_barangay");
+                    let barangaysArray = Object.values(data); // Convert object to array if needed
+
+                    barangaysArray.forEach(barangay => {
+                        barangayDropdown.append(
+                            `<option value="${barangay.code}">${barangay.name}</option>`
+                        );
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error("Failed to load barangays:", error);
+                }
+            });
+        });
+    });
     // CREATE
     $(document).ready(function () {
         $('#createTopicForm').submit(function (e) {
@@ -158,12 +231,80 @@
             let topic_discussed = $(this).data("topic_discussed");
             let topic_date = $(this).data("topic_date");
 
+            let provinceCode = $(this).data("province");
+            let municipalityCode = $(this).data("municipality");
+            let barangayCode = $(this).data("barangay");
+
             // Populate the modal fields
             $("#edit_id").val(topicId);
             // $("#update_topic_discussed").val(topic_discussed);
             $("#update_topic_discussed").val(topic_discussed).trigger('change');
 
             $("#update_topic_date").val(topic_date);
+
+            $("#update_province").html('<option>Loading...</option>').prop("disabled", true);
+            $("#update_municipality").html('<option>Loading...</option>').prop("disabled", true);
+            $("#update_barangay").html('<option>Loading...</option>').prop("disabled", true);
+
+             // ✅ Load Province First
+             $.ajax({
+                url: "https://psgc.gitlab.io/api/provinces/",
+                method: "GET",
+                dataType: "json",
+                success: function (data) {
+                    $("#update_province").empty().append('<option selected disabled hidden>-- SELECT PROVINCE --</option>').prop("disabled", false);
+                    data.forEach(province => {
+                        $("#update_province").append(`<option value="${province.code}">${province.name}</option>`);
+                    });
+
+                    if (provinceCode) {
+                        $("#update_province").val(provinceCode).trigger("change");
+
+                        // ✅ Load Municipality after Province is Selected
+                        $.ajax({
+                            url: `https://psgc.gitlab.io/api/provinces/${provinceCode}/cities-municipalities/`,
+                            method: "GET",
+                            dataType: "json",
+                            success: function (data) {
+                                $("#update_municipality").empty().append('<option selected disabled hidden>-- SELECT MUNICIPALITY --</option>').prop("disabled", false);
+                                data.forEach(municipality => {
+                                    $("#update_municipality").append(`<option value="${municipality.code}">${municipality.name}</option>`);
+                                });
+
+                                if (municipalityCode) {
+                                    $("#update_municipality").val(municipalityCode).trigger("change");
+
+                                    // ✅ Load Barangay after Municipality is Selected
+                                    $.ajax({
+                                        url: `https://psgc.gitlab.io/api/cities-municipalities/${municipalityCode}/barangays/`,
+                                        method: "GET",
+                                        dataType: "json",
+                                        success: function (data) {
+                                            $("#update_barangay").empty().append('<option selected disabled hidden>-- SELECT BARANGAY --</option>').prop("disabled", false);
+                                            data.forEach(barangay => {
+                                                $("#update_barangay").append(`<option value="${barangay.code}">${barangay.name}</option>`);
+                                            });
+
+                                            if (barangayCode) {
+                                                $("#update_barangay").val(barangayCode).trigger("change");
+                                            }
+                                        },
+                                        error: function () {
+                                            console.error("Failed to load barangays.");
+                                        }
+                                    });
+                                }
+                            },
+                            error: function () {
+                                console.error("Failed to load municipalities.");
+                            }
+                        });
+                    }
+                },
+                error: function () {
+                    console.error("Failed to load provinces.");
+                }
+            });
 
             // Show the modal
             $("#editTopicModal").modal("show");
