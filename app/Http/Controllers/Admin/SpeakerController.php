@@ -252,7 +252,7 @@ class SpeakerController extends Controller
         if ($speaker->status === 'active') {
             return response()->json([
                 'status' => 'error',
-                'message' => 'This admin account is already active.'
+                'message' => 'This speaker is already active.'
             ]);
         }
         $speaker->update(['status' => 'active']);
@@ -268,7 +268,7 @@ class SpeakerController extends Controller
                     'new' => 'active'
                 ],
         ])
-        ->log("{$speaker->first_name} {$speaker->last_name}'s account has been unarchived.");
+        ->log("{$speaker->first_name} {$speaker->last_name}'s record has been unarchived.");
 
         return response()->json([
             'status' => 'success',

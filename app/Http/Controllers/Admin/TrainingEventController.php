@@ -235,4 +235,75 @@ class TrainingEventController extends Controller
     {
         //
     }
+
+
+
+    /**
+     * Archive the speaker.
+     */
+    public function archive(string $id)
+    {
+        $event = TrainingEvent::findOrFail($id);
+
+        if ($event->status === 'archived') {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'This training event is already archived.'
+            ]);
+        }
+
+        $event->update(['status' => 'archived']);
+
+          // Log the activity
+        activity()
+            ->causedBy(auth()->user())
+            ->performedOn($event)
+            ->event('archived')
+            ->withProperties([
+                'status' => [
+                    'old' => 'active',
+                    'new' => 'archived'
+                ],
+        ])
+        ->log("{$event->formatted_training_date} at {$event->full_address}'s record has been archived.");
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Training Event archived successfully!'
+        ]);
+    }
+
+    /**
+     * Unarchive the specified user.
+     */
+    public function unarchive(string $id)
+    {
+        $event = TrainingEvent::findOrFail($id);
+
+        if ($event->status === 'active') {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'This admin account is already active.'
+            ]);
+        }
+        $event->update(['status' => 'active']);
+
+        // Log the activity
+        activity()
+            ->causedBy(auth()->user())
+            ->performedOn($event)
+            ->event('activated')
+            ->withProperties([
+                'status' => [
+                    'old' => 'deactivated',
+                    'new' => 'active'
+                ],
+        ])
+        ->log("{$event->formatted_training_date} at {$event->full_address}'s record has been unarchived.");
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Speaker unarchived successfully!'
+        ]);
+    }
 }

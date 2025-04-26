@@ -12,6 +12,10 @@ Route::prefix('training-evaluation-management')->group(function () {
     Route::post('/store', [TrainingEventController::class, 'store'])->name('training-event-management.store');
     Route::put('/{id}', [TrainingEventController::class, 'update'])->name('training-event-management.update');
 
+
+    Route::put('/{id}/archive', [TrainingEventController::class, 'archive'])->name('training-event-management.archive');
+    Route::put('/{id}/unarchive', [TrainingEventController::class, 'unarchive'])->name('training-event-management.unarchive');
+
     Route::post('/validate-step', [TrainingEvaluationController::class, 'validateStep'])->name('training-evaluation-management.validateStep');
     Route::post('/validate-all', [TrainingEvaluationController::class, 'validateAllSteps'])->name('training-evaluation-management.validateAll');
 

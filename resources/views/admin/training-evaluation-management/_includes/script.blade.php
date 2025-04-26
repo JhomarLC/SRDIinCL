@@ -358,4 +358,88 @@
             $("#update" + $(this).attr("id") + "_error").text(""); // Clear error message
         });
     });
+
+
+    $(document).ready(function () {
+        // Handle the Edit button click
+        $(document).on("click", ".status-activate", function () {
+            // Get data from the button attributes
+            let eventId = $(this).data("id");
+
+            // Populate the modal fields
+            $("#unarchive-edit-id").val(eventId);
+
+            // Show the modal
+            $("#unarchiveTrainingEventModal").modal("show");
+        });
+
+        $("#activateTrainingEventForm").submit(function (e) {
+            e.preventDefault(); // Prevent default form submission
+
+            let eventId = $("#unarchive-edit-id").val(); // Get the admin ID
+
+            let formData = {
+                _token: $('meta[name="csrf-token"]').attr('content')
+            };
+
+            $.ajax({
+                url: "/admin/training-evaluation-management/" + eventId + "/unarchive", // Laravel route for updating admin
+                type: "PUT",
+                data: formData,
+                dataType: "json",
+                success: function (response) {
+                    if (response.status === "success") {
+                        $("#training_events").DataTable().ajax.reload(); // Reload DataTable
+                    }
+                    $("#unarchiveTrainingEventModal").modal("hide");
+                    showAlertModal(response.status, response.message);
+
+                },
+                error: function (xhr) {
+                    let errors = xhr.responseJSON.errors;
+                    console.log(xhr);
+                }
+            });
+        });
+
+        // Handle the Edit button click
+        $(document).on("click", ".status-archive", function () {
+            // Get data from the button attributes
+            let eventId = $(this).data("id");
+
+            // Populate the modal fields
+            $("#archive-edit-id").val(eventId);
+
+            // Show the modal
+            $("#archiveTrainingEventModal").modal("show");
+        });
+
+        $("#archiveTrainingEventForm").submit(function (e) {
+            e.preventDefault(); // Prevent default form submission
+
+            let eventId = $("#archive-edit-id").val(); // Get the admin ID
+
+            let formData = {
+                _token: $('meta[name="csrf-token"]').attr('content')
+            };
+
+            $.ajax({
+                url: "/admin/training-evaluation-management/" + eventId + "/archive", // Laravel route for updating admin
+                type: "PUT",
+                data: formData,
+                dataType: "json",
+                success: function (response) {
+                    if (response.status === "success") {
+                        $("#training_events").DataTable().ajax.reload(); // Reload DataTable
+                    }
+                    $("#archiveTrainingEventModal").modal("hide"); // Hide modal
+                    showAlertModal(response.status, response.message);
+                },
+                error: function (xhr) {
+                    let errors = xhr.responseJSON.errors;
+                    console.log(xhr);
+                }
+            });
+        });
+    });
 </script>
