@@ -24,12 +24,22 @@
             var total = parseFloat($('#total_no_meetings').val());
             var attended = parseFloat($('#meetings_attended').val());
 
+            const pre = parseFloat(document.getElementById('pre_test_score').value) || 0;
+            const post = parseFloat(document.getElementById('post_test_score').value) || 0;
+
+            let gik = 0;
+            if (post > 0) {
+                gik = ((post - pre) / post) * 100;
+            }
+
+            document.getElementById('gain_in_knowledge_display').value = gik.toFixed(2) + ' %';
+            document.getElementById('gain_in_knowledge').value = gik.toFixed(2);
             if (!isNaN(total) && total > 0 && !isNaN(attended)) {
                 var percentage = (attended / total) * 100;
                 $('#percentage_meetings_attended').val(percentage.toFixed(2));
 
-                if (percentage >= 75) {
-                    $('#certificate_type').val('Recognition');
+                if ((percentage >= 70 && gik >= 45) || (percentage <=70 && gik >= 40)) {
+                    $('#certificate_type').val('Completion');
                 } else {
                     $('#certificate_type').val('Participation');
                 }
@@ -40,10 +50,24 @@
         }
 
         // Attach event handlers
-        $('#total_no_meetings, #meetings_attended').on('input', updateCertificateInfo);
+        $('#total_no_meetings, #meetings_attended, #pre_test_score, #post_test_score').on('input', updateCertificateInfo);
 
         // Trigger on page load if values are already filled
         updateCertificateInfo();
+
+        // document.addEventListener('input', function () {
+        //     const pre = parseFloat(document.getElementById('pre_test_score').value) || 0;
+        //     const post = parseFloat(document.getElementById('post_test_score').value) || 0;
+
+        //     let gik = 0;
+        //     if (post > 0) {
+        //         gik = ((post - pre) / post) * 100;
+        //     }
+
+        //     document.getElementById('gain_in_knowledge_display').value = gik.toFixed(2) + ' %';
+        //     document.getElementById('gain_in_knowledge').value = gik.toFixed(2);
+        // });
+
     });
 
     document.addEventListener('DOMContentLoaded', function () {
@@ -1256,19 +1280,6 @@
                 }
             });
         });
-    });
-
-    document.addEventListener('input', function () {
-        const pre = parseFloat(document.getElementById('pre_test_score').value) || 0;
-        const post = parseFloat(document.getElementById('post_test_score').value) || 0;
-
-        let gik = 0;
-        if (post > 0) {
-            gik = ((post - pre) / post) * 100;
-        }
-
-        document.getElementById('gain_in_knowledge_display').value = gik.toFixed(2) + ' %';
-        document.getElementById('gain_in_knowledge').value = gik.toFixed(2);
     });
 
     // Clear fields functionality
