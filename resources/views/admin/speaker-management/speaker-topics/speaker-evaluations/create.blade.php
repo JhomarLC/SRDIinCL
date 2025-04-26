@@ -27,13 +27,17 @@
 <div class="row justify-content-center">
     <div class="col-xl-12">
         <div class="card">
-            <div class="card-header">
-                <h4 class="card-title mb-0">Speaker Evaluation</h4>
+            <div class="card-header d-flex">
+                <h4 class="card-title mb-0 flex-grow-1">Speaker Evaluation</h4>
+                <a style="margin-right: 10px" href="{{ route('speaker-eval.index',  [$speaker->id, $speaker_topic->id]) }}" class="btn btn-secondary">
+                    <i class="ri-arrow-left-fill"></i> Back
+                </a>
             </div><!-- end card header -->
             <div class="card-body">
                 <form action="#" class="form-steps" autocomplete="off">
                     <div class="text-center pt-3 pb-4 mb-1">
                         <h5>Fillout Speaker Evaluation</h5>
+
                     </div>
                     <div id="custom-progress-bar" class="progress-nav mb-4">
                         <div class="progress" style="height: 1px;">

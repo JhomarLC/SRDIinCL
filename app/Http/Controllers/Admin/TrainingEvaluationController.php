@@ -172,7 +172,7 @@ class TrainingEvaluationController extends Controller
                                 </button>';
 
                 $activateButton = ($events->status === 'archived')
-                    ? '<button class="btn btn-sm btn-secondary status-activate"
+                    ? '<button class="btn btn-sm btn-secondary status-unarchive"
                             data-id="' . $events->id . '">
                             <i class="ri-service-fill"></i>
                             Unarchive

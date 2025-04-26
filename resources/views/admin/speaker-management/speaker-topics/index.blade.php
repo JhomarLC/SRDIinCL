@@ -76,7 +76,11 @@
     <div class="col-lg-12">
         <div class="card">
             <div class="card-header d-flex align-items-center">
+                <a style="margin-right: 10px" href="{{ route('speaker-management.index') }}" class="btn btn-secondary">
+                    <i class="ri-arrow-left-fill"></i> Back
+                </a>
                 <h5 class="card-title mb-0 flex-grow-1">Lists of Speaker's Topics</h5>
+
                 <a style="margin-right: 10px" href="{{ route('admin-management.export') }}">
                     <button class="btn btn-success"><i class="ri-file-excel-2-fill"></i> Export</button>
                 </a>

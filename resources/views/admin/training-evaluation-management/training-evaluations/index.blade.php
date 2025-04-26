@@ -68,6 +68,9 @@
     <div class="col-lg-12">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
+                <a style="margin-right: 10px" href="{{ route('training-event-management.index') }}" class="btn btn-secondary">
+                    <i class="ri-arrow-left-fill"></i> Back
+                </a>
                 <div class="mb-2">
                     {{-- <p><strong>Avg. Content Score:</strong> {{ $training_event->avg_content_score ?? 'N/A' }}</p>
                     <p><strong>Avg. Course Score:</strong> {{ $training_event->avg_course_score ?? 'N/A' }}</p>

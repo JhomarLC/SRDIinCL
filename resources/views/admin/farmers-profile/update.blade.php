@@ -73,8 +73,11 @@
 <div class="row justify-content-center">
     <div class="col-xl-12">
         <div class="card">
-            <div class="card-header">
-                <h4 class="card-title mb-0">Farmers Profile</h4>
+            <div class="card-header d-flex">
+                <h4 class="card-title mb-0 flex-grow-1">Farmers Profile</h4>
+                <a style="margin-right: 10px" href="{{ route('farmers-profile.index') }}" class="btn btn-secondary">
+                    <i class="ri-arrow-left-fill"></i> Cancel
+                </a>
             </div><!-- end card header -->
             <div class="card-body">
                 <form action="#" id="updateFarmersProfileForm" class="form-steps" autocomplete="off">

@@ -49,8 +49,11 @@
 <div class="row justify-content-center">
     <div class="col-xl-12">
         <div class="card">
-            <div class="card-header">
-                <h4 class="card-title mb-0">Training Evaluation</h4>
+            <div class="card-header d-flex">
+                <h4 class="card-title mb-0 flex-grow-1">Training Evaluation</h4>
+                <a style="margin-right: 10px" href="{{ route('training-evaluation-management.index', $training_event->id) }}" class="btn btn-secondary">
+                    <i class="ri-arrow-left-fill"></i> Back
+                </a>
             </div><!-- end card header -->
             <div class="card-body">
                 <form action="#" class="form-steps" autocomplete="off">
