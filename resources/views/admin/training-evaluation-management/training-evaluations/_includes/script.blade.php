@@ -607,4 +607,88 @@
 
     })
 
+    $(document).ready(function () {
+        // Handle the Edit button click
+        $(document).on("click", ".status-unarchive", function () {
+            // Get data from the button attributes
+            let evalId = $(this).data("id");
+
+            // Populate the modal fields
+            $("#unarchive-edit-id").val(evalId);
+
+            // Show the modal
+            $("#unarchiveEvalModal").modal("show");
+        });
+
+        $("#unarchiveEvalForm").submit(function (e) {
+            e.preventDefault(); // Prevent default form submission
+
+            let trainingEventId = $("#training_event").val();
+            let evalId = $("#unarchive-edit-id").val();
+
+            let formData = {
+                _token: $('meta[name="csrf-token"]').attr('content')
+            };
+
+            $.ajax({
+                url: "/admin/training-evaluation-management/" + trainingEventId + "/evaluations/" + evalId + '/unarchive',
+                type: "PUT",
+                data: formData,
+                dataType: "json",
+                success: function (response) {
+                    if (response.status === "success") {
+                        $("#eval").DataTable().ajax.reload(); // Reload DataTable
+                    }
+                    $("#unarchiveEvalModal").modal("hide");
+                    showAlertModal(response.status, response.message);
+
+                },
+                error: function (xhr) {
+                    let errors = xhr.responseJSON.errors;
+                    console.log(xhr);
+                }
+            });
+        });
+
+        // Handle the Edit button click
+        $(document).on("click", ".status-archive", function () {
+            // Get data from the button attributes
+            let evalId = $(this).data("id");
+
+            // Populate the modal fields
+            $("#archive-edit-id").val(evalId);
+
+            // Show the modal
+            $("#archiveEvalModal").modal("show");
+        });
+
+        $("#archiveEvalForm").submit(function (e) {
+            e.preventDefault(); // Prevent default form submission
+
+            let trainingEventId = $("#training_event").val();
+            let evalId = $("#archive-edit-id").val();
+
+            let formData = {
+                _token: $('meta[name="csrf-token"]').attr('content')
+            };
+
+            $.ajax({
+                url: "/admin/training-evaluation-management/" + trainingEventId + "/evaluations/" + evalId + '/archive',
+                type: "PUT",
+                data: formData,
+                dataType: "json",
+                success: function (response) {
+                    if (response.status === "success") {
+                        $("#eval").DataTable().ajax.reload(); // Reload DataTable
+                    }
+                    $("#archiveEvalModal").modal("hide"); // Hide modal
+                    showAlertModal(response.status, response.message);
+                },
+                error: function (xhr) {
+                    let errors = xhr.responseJSON.errors;
+                    console.log(xhr);
+                }
+            });
+        });
+    });
 </script>

@@ -26,7 +26,7 @@
     @endslot
 @endcomponent
 @include('components.alert')
-@include('admin.speaker-management.speaker-topics.speaker-evaluations.components.status-update')
+@include('admin.training-evaluation-management.training-evaluations.components.status-update')
 
 
 <div class="profile-foreground position-relative mx-n4 mt-n4">

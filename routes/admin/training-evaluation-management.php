@@ -29,8 +29,8 @@ Route::prefix('training-evaluation-management')->group(function () {
         // Route::get('/{id}', [SpeakerEvaluationController::class, 'edit'])->name('speaker-eval.edit');
         // Route::put('/{id}', [SpeakerEvaluationController::class, 'update'])->name('speaker-eval.update');
 
-        // Route::put('/{id}/archive', [SpeakerEvaluationController::class, 'archive'])->name('speaker-eval.archive');
-        // Route::put('/{id}/unarchive', [SpeakerEvaluationController::class, 'unarchive'])->name('speaker-eval.unarchive');
+        Route::put('/{id}/archive', [TrainingEvaluationController::class, 'archive'])->name('training-evaluation-management.archive');
+        Route::put('/{id}/unarchive', [TrainingEvaluationController::class, 'unarchive'])->name('training-evaluation-management.unarchive');
     });
 });
 

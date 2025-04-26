@@ -16,7 +16,7 @@
                     </lord-icon>
                     <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
                         <h4>Are you Sure ?</h4>
-                        <p class="text-muted mx-4 mb-0">Are you sure you want to unarchive speaker evaluation?</p>
+                        <p class="text-muted mx-4 mb-0">Are you sure you want to unarchive training evaluation?</p>
                     </div>
                 </div>
                 <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
@@ -35,8 +35,7 @@
     </div>
 </div>
 <!--end modal -->
-<input type="hidden" id="speaker_id" value="{{ $speaker->id }}">
-<input type="hidden" id="speaker_topic_id" value="{{ $speaker_topic->id }}">
+<input type="hidden" id="training_event" value="{{ $training_event->id }}">
 <!-- Modal -->
 <div class="modal fade zoomIn" id="archiveEvalModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -55,7 +54,7 @@
                     </lord-icon>
                     <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
                         <h4>Are you Sure ?</h4>
-                        <p class="text-muted mx-4 mb-0">Are you sure you want to archive speaker evaluation?</p>
+                        <p class="text-muted mx-4 mb-0">Are you sure you want to archive training evaluation?</p>
                     </div>
                 </div>
                 <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
@@ -63,8 +62,7 @@
                     <form id="archiveEvalForm" method="POST" style="display:inline;">
                         @csrf
                         @method('PUT')
-                        <input type="hidden" id="speaker_id" value="{{ $speaker->id }}">
-                        <input type="hidden" id="speaker_topic_id" value="{{ $speaker_topic->id }}">
+                        {{-- <input type="hidden" id="speaker_id" value="{{ $speaker->id }}"> --}}
                         <input type="hidden" id="archive-edit-id">
                         <button type="submit" class="btn w-sm btn-danger">Yes, Archive It!</button>
                     </form>

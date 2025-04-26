@@ -340,18 +340,18 @@ class SpeakerEvaluationController extends Controller
         activity()
             ->causedBy(auth()->user())
             ->performedOn($eval)
-            ->event('topic_archived')
+            ->event('speaker_evaluation_archived')
             ->withProperties([
                 'status' => [
                     'old' => 'active',
                     'new' => 'archived'
                 ],
             ])
-            ->log("Evaluation with overall score with {$eval->overall_score} has been archived.");
+            ->log("Speaker Evaluation with overall score with {$eval->overall_score} has been archived.");
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Evaluation archived successfully!',
+            'message' => 'Speaker Evaluation archived successfully!',
             'eval' => $eval
         ]);
     }
@@ -377,18 +377,18 @@ class SpeakerEvaluationController extends Controller
         activity()
             ->causedBy(auth()->user())
             ->performedOn($eval)
-            ->event('topic_unarchived')
+            ->event('speaker_evaluation_unarchived')
             ->withProperties([
                 'status' => [
                     'old' => 'archived',
                     'new' => 'active'
                 ],
             ])
-            ->log("Evaluation with overall score with {$eval->overall_score} has been unarchive.");
+            ->log("Speaker Evaluation with overall score with {$eval->overall_score} has been unarchive.");
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Evaluation unarchived successfully!',
+            'message' => 'Speaker Evaluation unarchived successfully!',
             'eval' => $eval
         ]);
     }

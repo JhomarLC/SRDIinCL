@@ -421,4 +421,76 @@ class TrainingEvaluationController extends Controller
     {
         //
     }
+
+
+    public function archive(string $eventId, string $evalId)
+    {
+        $eval = TrainingEvaluation::where('id', $evalId)
+                    ->where('training_event_id', $eventId)
+                    ->firstOrFail();
+
+        if ($eval->status === 'archived') {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'This training evaluation is already archived.'
+            ]);
+        }
+
+        $eval->update(['status' => 'archived']);
+
+        // Log the activity
+        activity()
+            ->causedBy(auth()->user())
+            ->performedOn($eval)
+            ->event('training_evaluation_archived')
+            ->withProperties([
+                'status' => [
+                    'old' => 'active',
+                    'new' => 'archived'
+                ],
+            ])
+            ->log("Training Evaluation has been archived.");
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Training Evaluation archived successfully!',
+            'eval' => $eval
+        ]);
+    }
+
+
+    public function unarchive(string $eventId, string $evalId)
+    {
+        $eval = TrainingEvaluation::where('id', $evalId)
+                             ->where('training_event_id', $eventId)
+                             ->firstOrFail();
+
+        if ($eval->status === 'active') {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'This training evaluation is already unarchived.'
+            ]);
+        }
+
+        $eval->update(['status' => 'active']);
+
+        // Log the activity
+        activity()
+            ->causedBy(auth()->user())
+            ->performedOn($eval)
+            ->event('training_evaluation_unarchived')
+            ->withProperties([
+                'status' => [
+                    'old' => 'archived',
+                    'new' => 'active'
+                ],
+            ])
+            ->log("Training Evaluation has been unarchive.");
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Training Evaluation unarchived successfully!',
+            'eval' => $eval
+        ]);
+    }
 }

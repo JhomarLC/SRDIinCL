@@ -45,6 +45,7 @@ class TrainingEvent extends Model
     public function getAvgContentScoreAttribute()
     {
         $scores = $this->evaluations
+            ->where('status', 'active')
             ->pluck('training_content_evaluation.overall_score')
             ->filter();
 
@@ -55,6 +56,7 @@ class TrainingEvent extends Model
     public function getAvgCourseScoreAttribute()
     {
         $scores = $this->evaluations
+        ->where('status', 'active')
             ->pluck('course_management_evaluation.overall_score')
             ->filter();
 
@@ -65,6 +67,7 @@ class TrainingEvent extends Model
     public function getMostCommonGoalAchievementAttribute()
     {
         $goals = $this->evaluations
+        ->where('status', 'active')
             ->pluck('overall_training_assessment.goal_achievement')
             ->filter();
 
@@ -79,6 +82,7 @@ class TrainingEvent extends Model
     public function getMostCommonOverallQualityAttribute()
     {
         $qualities = $this->evaluations
+        ->where('status', 'active')
             ->pluck('overall_training_assessment.overall_quality')
             ->filter();
 
