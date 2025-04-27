@@ -159,6 +159,9 @@ class SpeakerTopicController extends Controller
         $validatedData = $request->validate([
             'topic_discussed' => 'required|string|max:255',
             'topic_date' => 'nullable|string|max:255',
+            'province_code' => 'required|string',
+            'municipality_code' => 'required|string',
+            'barangay_code' => 'required|string',
         ]);
 
         // You can optionally check if the topic really belongs to the speaker
@@ -172,6 +175,9 @@ class SpeakerTopicController extends Controller
         $topic->update([
             'topic_discussed' => $validatedData['topic_discussed'],
             'topic_date' => $validatedData['topic_date'] ?? null,
+            'province_code' => $validatedData['province_code'],
+            'municipality_code' => $validatedData['municipality_code'],
+            'barangay_code' => $validatedData['barangay_code'],
         ]);
 
         $changes = [];

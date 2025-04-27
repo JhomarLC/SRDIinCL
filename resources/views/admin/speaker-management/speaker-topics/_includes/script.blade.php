@@ -318,6 +318,9 @@
             let formData = {
                 topic_discussed: $("#update_topic_discussed").val(),
                 topic_date: $("#update_topic_date").val(),
+                province_code: $('#update_province').val(),
+                municipality_code: $('#update_municipality').val(),
+                barangay_code: $('#update_barangay').val(),
                 _token: $('meta[name="csrf-token"]').attr("content") // CSRF Token
             };
 
