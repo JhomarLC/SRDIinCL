@@ -37,7 +37,7 @@ class RouteServiceProvider extends ServiceProvider
                 return '/login';
             }
                 // Redirect based on role
-                return $user->role === 'admin' ? '/admin/dashboard' : '/dashboard';
+                return '/dashboard';
             }
 
         return '/login';

@@ -32,30 +32,23 @@ Route::middleware('auth')->group(function () {
 });
 
 // ADMIN
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
+Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/dashboard', function () {
-        return view('admin.index');
-    })->name('admin.dashboard');
+        return view('index');
+    })->name('dashboard');
 
     // FARMERS PROFILE
-    require __DIR__.'/admin/farmers-profile.php';
+    require __DIR__.'/main/farmers-profile.php';
     // SPEAKER EVAL
-    require __DIR__.'/admin/speaker-management.php';
+    require __DIR__.'/main/speaker-management.php';
     // TRANING EVAL
-    require __DIR__.'/admin/training-evaluation-management.php';
+    require __DIR__.'/main/training-evaluation-management.php';
     // ADMIN MANAGEMENT
-    require __DIR__.'/admin/admin-management.php';
+    require __DIR__.'/main/admin-management.php';
     // AEWS MANAGEMENT
-    require __DIR__.'/admin/aews-management.php';
+    require __DIR__.'/main/aews-management.php';
     // ACTIVITY LOGS/
-    require __DIR__.'/admin/activity-logs.php';
-});
-
-// AEWS
-Route::middleware('auth', 'role:aews')->group(function (){
-    Route::get('/dashboard', function () {
-        return view('aews.index');
-    })->name('dashboard');
+    require __DIR__.'/main/activity-logs.php';
 });
 
 require __DIR__.'/auth.php';
