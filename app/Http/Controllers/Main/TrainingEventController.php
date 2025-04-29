@@ -20,8 +20,22 @@ class TrainingEventController extends Controller
 
     public function getIndex()
     {
+        $user = auth()->user();
+
         // Get only topics for the specific speaker, eager load speaker relationship
-        $training_events = TrainingEvent::all();
+        $query = TrainingEvent::query();
+
+        if ($user->isAew()) {
+            if ($user->isProvincialAew()) {
+                // Provincial AEW → only topics within their province
+                $query->where('province_code', $user->profile->province);
+            } elseif ($user->isMunicipalAew()) {
+                // Municipal AEW → only topics within their municipality
+                $query->where('municipality_code', $user->profile->municipality);
+            }
+        }
+
+        $training_events = $query->get();
 
         return DataTables::of($training_events)
             ->addColumn('actions', function ($events)   {
