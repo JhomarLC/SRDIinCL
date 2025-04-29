@@ -14,8 +14,33 @@
                 <div class="col-12">
                     <div class="d-flex align-items-lg-center flex-lg-row flex-column">
                         <div class="flex-grow-1">
-                            <h4 class="fs-16 mb-1">Good Morning, Admin!</h4>
-                            <p class="text-muted mb-0">Here's what's happening with your dashboard today.</p>
+                            @php
+                                $user = Auth::user();
+                                $greeting = 'Good Morning';
+
+                                if (now()->hour >= 12 && now()->hour < 18) {
+                                    $greeting = 'Good Afternoon';
+                                } elseif (now()->hour >= 18) {
+                                    $greeting = 'Good Evening';
+                                }
+                            @endphp
+
+                            <h4 class="fs-16 mb-1">
+                                {{ $greeting }},
+                                @if ($user->isAdmin())
+                                    Admin!
+                                @elseif ($user->isProvincialAew())
+                                    Provincial AEW!
+                                @elseif ($user->isMunicipalAew())
+                                    Municipal AEW!
+                                @else
+                                    {{ $user->first_name }}!
+                                @endif
+                            </h4>
+
+                            <p class="text-muted mb-0">
+                                Here's what's happening with your dashboard today.
+                            </p>
                         </div>
 
                     </div>
@@ -32,6 +57,7 @@
 </div>
 
 @endsection
+
 @section('script')
 <!-- apexcharts -->
 <script src="{{ URL::asset('build/libs/apexcharts/apexcharts.min.js') }}"></script>

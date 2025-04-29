@@ -68,26 +68,35 @@
                         <span>Baseline Monitoring</span>
                     </a>
                 </li>
-                <li class="menu-title"><span>Account Management</span></li>
-                <li class="nav-item">
-                    <a class="nav-link menu-link {{ request()->is('admin-management*') ? 'active' : '' }}"
-                        href="{{ route('admin-management.index') }}">
-                        <i class="ri-admin-fill"></i> <span>Admin Management</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link menu-link" href="aews-management">
-                        <i class="ri-group-fill"></i>
-                        <span>AEWs Management</span>
-                    </a>
-                </li>
-                <li class="menu-title"><span>Settings</span></li>
-                <li class="nav-item">
-                    <a class="nav-link menu-link {{ request()->is('activity-logs*') ? 'active' : '' }}" href="{{ route('activity-logs.index') }}">
-                        <i class="ri-list-settings-fill"></i>
-                        <span>Activity Logs</span>
-                    </a>
-                </li>
+               {{-- Only Admin sees Account Management --}}
+               @auth
+                    @if (auth()->user()->isAdmin())
+                        <li class="menu-title"><span>Account Management</span></li>
+
+                        <li class="nav-item">
+                            <a class="nav-link menu-link {{ request()->is('admin-management*') ? 'active' : '' }}"
+                                href="{{ route('admin-management.index') }}">
+                                <i class="ri-admin-fill"></i> <span>Admin Management</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="{{ route('aews-management.index') }}">
+                                <i class="ri-group-fill"></i>
+                                <span>AEWs Management</span>
+                            </a>
+                        </li>
+
+                        <li class="menu-title"><span>Settings</span></li>
+
+                        <li class="nav-item">
+                            <a class="nav-link menu-link {{ request()->is('activity-logs*') ? 'active' : '' }}" href="{{ route('activity-logs.index') }}">
+                                <i class="ri-list-settings-fill"></i>
+                                <span>Activity Logs</span>
+                            </a>
+                        </li>
+                    @endif
+                @endauth
             </ul>
         </div>
         <!-- Sidebar -->

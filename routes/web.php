@@ -31,8 +31,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// ADMIN
-Route::middleware(['auth', 'role:admin'])->group(function () {
+// MAIN
+Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', function () {
         return view('index');
     })->name('dashboard');
@@ -43,12 +43,21 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     require __DIR__.'/main/speaker-management.php';
     // TRANING EVAL
     require __DIR__.'/main/training-evaluation-management.php';
-    // ADMIN MANAGEMENT
-    require __DIR__.'/main/admin-management.php';
-    // AEWS MANAGEMENT
-    require __DIR__.'/main/aews-management.php';
-    // ACTIVITY LOGS/
-    require __DIR__.'/main/activity-logs.php';
+
+    // ADMIN MANAGEMENT — Only Admins allowed
+    Route::middleware('role:admin')->group(function () {
+        require __DIR__.'/main/admin-management.php';
+    });
+
+    // AEWS MANAGEMENT — Only Admins allowed
+    Route::middleware('role:admin')->group(function () {
+        require __DIR__.'/main/aews-management.php';
+    });
+
+    // ACTIVITY LOGS — Maybe admin only too
+    Route::middleware('role:admin')->group(function () {
+        require __DIR__.'/main/activity-logs.php';
+    });
 });
 
 require __DIR__.'/auth.php';

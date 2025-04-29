@@ -69,4 +69,25 @@ class User extends Authenticatable
     {
         return $this->hasOne(AewsProfile::class, 'user_id');
     }
+
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isAew()
+    {
+        return $this->role === 'aews';
+    }
+
+    public function isProvincialAew()
+    {
+        return $this->isAew() && optional($this->profile->position)->position_name === 'Rice AEW Provincial';
+    }
+
+    public function isMunicipalAew()
+    {
+        return $this->isAew() && optional($this->profile->position)->position_name === 'Rice AEW Municipal/City';
+    }
+
 }
