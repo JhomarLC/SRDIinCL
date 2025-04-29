@@ -114,7 +114,7 @@ class TrainingEvaluationController extends Controller
                         $badgeClass = 'bg-success';
                         break;
                     case 'Partially Achieved':
-                        $badgeClass = 'bg-warning text-dark';
+                        $badgeClass = 'bg-secondary';
                         break;
                     case 'Not Achieved':
                         $badgeClass = 'bg-danger';
@@ -134,11 +134,14 @@ class TrainingEvaluationController extends Controller
                 }
 
                 switch ($overall_quality) {
+                    case 'Excellent':
+                        $badgeClass = 'bg-success';
+                        break;
                     case 'Very Good':
                         $badgeClass = 'bg-success';
                         break;
                     case 'Good':
-                        $badgeClass = 'bg-primary';
+                        $badgeClass = 'bg-secondary';
                         break;
                     case 'Fair':
                         $badgeClass = 'bg-warning text-dark';

@@ -75,7 +75,7 @@ class TrainingEvent extends Model
 
         return $modes->isNotEmpty()
             ? $modes->implode(', ') // Returns all ties, comma-separated
-            : 'N/A';
+            : 'No Evaluations';
     }
 
     // 🌟 Get most common overall quality
@@ -90,7 +90,7 @@ class TrainingEvent extends Model
 
         return $modes->isNotEmpty()
             ? $modes->implode(', ')  // Show all ties as comma-separated
-            : 'N/A';
+            : 'No Evaluations';
     }
 
     public function evaluations() {

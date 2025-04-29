@@ -17,7 +17,6 @@ class TrainingEventController extends Controller
         return view('training-evaluation-management.index');
     }
 
-
     public function getIndex()
     {
         $user = auth()->user();
@@ -87,10 +86,10 @@ class TrainingEventController extends Controller
                 foreach ($goals as $goal) {
                     $goal = trim($goal);
                     $class = match($goal) {
-                        'Achieve' => 'bg-success',
-                        'Partially Achieved' => 'bg-warning text-dark',
+                        'Achieved' => 'bg-success',
+                        'Partially Achieved' => 'bg-secondary',
                         'Not Achieved' => 'bg-danger',
-                        default => 'bg-secondary'
+                        default => 'bg-secondary-subtle text-dark'
                     };
 
                     $output .= '<span class="badge ' . $class . '">' . $goal . '</span> ';
@@ -105,11 +104,12 @@ class TrainingEventController extends Controller
                 foreach ($qualities as $quality) {
                     $quality = trim($quality);
                     $class = match($quality) {
+                        'Excellent' => 'bg-success',
                         'Very Good' => 'bg-success',
-                        'Good' => 'bg-primary',
+                        'Good' => 'bg-secondary',
                         'Fair' => 'bg-warning text-dark',
                         'Poor' => 'bg-danger',
-                        default => 'bg-secondary'
+                        default => 'bg-secondary-subtle text-dark'
                     };
 
                     $output .= '<span class="badge ' . $class . '">' . $quality . '</span> ';

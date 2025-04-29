@@ -53,9 +53,9 @@
                 <div class="col p-2">
                     <h4 class="text-white mb-1">
                         {{-- {{ $average_overall_score == 0 ? 'No Evaluations' : $average_overall_score . ' ' . scoreLabel($average_overall_score) }} --}}
-                        No Training Evaluations
+                        {{-- No Training Evaluations --}}
                     </h4>
-                    <p class="fs-14 mb-0">Total Rating</p>
+                    {{-- <p class="fs-14 mb-0">Total Rating</p> --}}
                 </div>
             </div>
         </div>
