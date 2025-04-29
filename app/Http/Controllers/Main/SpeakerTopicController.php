@@ -22,9 +22,22 @@ class SpeakerTopicController extends Controller
 
     public function getIndex(string $speakerId)
     {
-        // Get only topics for the specific speaker, eager load speaker relationship
-        $speaker_topics = SpeakerTopic::with('speaker')
-                        ->where('speaker_id', $speakerId)->get();
+        $user = auth()->user();
+
+        $query = SpeakerTopic::with('speaker')
+                    ->where('speaker_id', $speakerId);
+
+        if ($user->isAew()) {
+            if ($user->isProvincialAew()) {
+                // Provincial AEW → only topics within their province
+                $query->where('province_code', $user->profile->province);
+            } elseif ($user->isMunicipalAew()) {
+                // Municipal AEW → only topics within their municipality
+                $query->where('municipality_code', $user->profile->municipality);
+            }
+        }
+
+        $speaker_topics = $query->get();
 
         return DataTables::of($speaker_topics)
             ->addColumn('actions', function ($topic) use ($speakerId)  {
