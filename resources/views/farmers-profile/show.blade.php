@@ -97,7 +97,7 @@
                     <li class="nav-item">
                         <a class="nav-link fs-14" data-bs-toggle="tab" href="#trainings_tab" role="tab">
                             <i class="ri-folder-4-line d-inline-block d-md-none"></i> <span
-                                class="d-none d-md-inline-block">Trainings</span>
+                                class="d-none d-md-inline-block">Past Trainings</span>
                         </a>
                     </li>
                     <li class="nav-item">

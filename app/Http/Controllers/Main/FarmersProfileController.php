@@ -67,7 +67,21 @@ class FarmersProfileController extends Controller
 
     public function getIndex()
     {
-        $participants = Participant::latest()->get();
+        $query = Participant::query()->latest();
+
+        $user = auth()->user();
+
+        if ($user->isAew()) {
+            if ($user->isProvincialAew()) {
+                // Only show participants within same province
+                $query->where('province_code', $user->profile->province);
+            } elseif ($user->isMunicipalAew()) {
+                // Only show participants within same municipality
+                $query->where('municipality_code', $user->profile->municipality);
+            }
+        }
+
+        $participants = $query->get();
 
         return DataTables::of($participants)
             ->editColumn('full_name', function ($participants) {

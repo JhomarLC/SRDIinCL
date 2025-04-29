@@ -76,12 +76,14 @@
                         <li class="nav-item">
                             <a class="nav-link menu-link {{ request()->is('admin-management*') ? 'active' : '' }}"
                                 href="{{ route('admin-management.index') }}">
-                                <i class="ri-admin-fill"></i> <span>Admin Management</span>
+                                <i class="ri-admin-fill"></i>
+                                <span>Admin Management</span>
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link menu-link" href="{{ route('aews-management.index') }}">
+                            <a class="nav-link menu-link {{ request()->is('aews-management*') ? 'active' : '' }}"
+                                href="{{ route('aews-management.index') }}">
                                 <i class="ri-group-fill"></i>
                                 <span>AEWs Management</span>
                             </a>

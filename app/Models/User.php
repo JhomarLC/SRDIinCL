@@ -79,15 +79,25 @@ class User extends Authenticatable
     {
         return $this->role === 'aews';
     }
-
     public function isProvincialAew()
     {
-        return $this->isAew() && optional($this->profile->position)->position_name === 'Rice AEW Provincial';
+        $position = optional(optional($this->profile)->position)->position_name;
+        $provincialPositions = [
+            'Rice AEW Provincial',
+            'Provincial Agriculturist',
+        ];
+        return $this->isAew() && in_array($position, $provincialPositions);
     }
 
     public function isMunicipalAew()
     {
-        return $this->isAew() && optional($this->profile->position)->position_name === 'Rice AEW Municipal/City';
+        $position = optional(optional($this->profile)->position)->position_name;
+        $municipalPositions = [
+            'Rice AEW Municipal/City',
+            'Municipal/City Agriculturist',
+        ];
+        return $this->isAew() && in_array($position, $municipalPositions);
     }
+
 
 }

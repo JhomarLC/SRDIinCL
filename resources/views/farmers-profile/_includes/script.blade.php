@@ -1,5 +1,11 @@
 <script>
     // VIEW
+    var userRole = "{{ Auth::user()->role }}";
+    var aewProvinceCode = "{{ Auth::user()->profile?->province ?? '' }}";
+    var aewMunicipalityCode = "{{ Auth::user()->profile?->municipality ?? '' }}";
+    var provincialUser = @json(Auth::user()->isProvincialAew());
+    var municipalityUser = @json(Auth::user()->isMunicipalAew());
+
     $(document).ready(function () {
         $("#farmers").DataTable({
             processing: true,
@@ -134,6 +140,16 @@
                         `<option value="${province.code}">${province.name}</option>`
                     );
                 });
+
+                if (provincialUser && aewProvinceCode) {
+                    provinceDropdown.val(aewProvinceCode).trigger('change');
+                    provinceDropdown.prop('disabled', true); // lock province for provincial AEW
+                }
+
+                if (municipalityUser && aewProvinceCode) {
+                    provinceDropdown.val(aewProvinceCode).trigger('change');
+                    provinceDropdown.prop('disabled', true); // lock province for municipal AEW too
+                }
             },
             error: function (xhr, status, error) {
                 console.error("Failed to load provinces:", error);
@@ -159,6 +175,11 @@
                             `<option value="${municipality.code}">${municipality.name}</option>`
                         );
                     });
+
+                    if (municipalityUser && aewMunicipalityCode) {
+                        municipalityDropdown.val(aewMunicipalityCode).trigger('change');
+                        municipalityDropdown.prop('disabled', true); // lock municipality for municipal AEW
+                    }
                 },
                 error: function (xhr, status, error) {
                     console.error("Failed to load municipalities:", error);
@@ -204,6 +225,16 @@
                         `<option value="${province.code}">${province.name}</option>`
                     );
                 });
+
+                if (provincialUser && aewProvinceCode) {
+                    provinceDropdown.val(aewProvinceCode).trigger('change');
+                    provinceDropdown.prop('disabled', true); // lock province for provincial AEW
+                }
+
+                if (municipalityUser && aewProvinceCode) {
+                    provinceDropdown.val(aewProvinceCode).trigger('change');
+                    provinceDropdown.prop('disabled', true); // lock province for municipal AEW too
+                }
             },
             error: function (xhr, status, error) {
                 console.error("Failed to load provinces:", error);
@@ -229,6 +260,11 @@
                             `<option value="${municipality.code}">${municipality.name}</option>`
                         );
                     });
+
+                    if (municipalityUser && aewMunicipalityCode) {
+                        municipalityDropdown.val(aewMunicipalityCode).trigger('change');
+                        municipalityDropdown.prop('disabled', true); // lock municipality for municipal AEW
+                    }
                 },
                 error: function (xhr, status, error) {
                     console.error("Failed to load municipalities:", error);
@@ -439,6 +475,13 @@
                     $("#update_province").append(`<option value="${province.code}">${province.name}</option>`);
                 });
 
+                 // AUTO SELECT BASED ON USER
+                if (provincialUser && aewProvinceCode) {
+                    $("#update_province").val(aewProvinceCode).trigger('change').prop('disabled', true);
+                } else if (municipalityUser && aewProvinceCode) {
+                    $("#update_province").val(aewProvinceCode).trigger('change').prop('disabled', true);
+                }
+
                 if (provinceCode) {
                     $("#update_province").val(provinceCode).trigger("change");
 
@@ -454,7 +497,11 @@
                             });
 
                             if (municipalityCode) {
-                                $("#update_municipality").val(municipalityCode).trigger("change");
+                                if (municipalityUser && aewMunicipalityCode) {
+                                    $("#update_municipality").val(aewMunicipalityCode).trigger('change').prop('disabled', true);
+                                } else if (municipalityCode) {
+                                    $("#update_municipality").val(municipalityCode).trigger('change');
+                                }
 
                                 // ✅ Load Barangay after Municipality is Selected
                                 $.ajax({
@@ -499,6 +546,13 @@
                     $("#update_ts_province").append(`<option value="${province.code}">${province.name}</option>`);
                 });
 
+                // AUTO SELECT BASED ON USER
+                if (provincialUser && aewProvinceCode) {
+                    $("#update_ts_province").val(aewProvinceCode).trigger('change').prop('disabled', true);
+                } else if (municipalityUser && aewProvinceCode) {
+                    $("#update_ts_province").val(aewProvinceCode).trigger('change').prop('disabled', true);
+                }
+
                 if (tsprovinceCode) {
                     $("#update_ts_province").val(tsprovinceCode).trigger("change");
 
@@ -512,6 +566,12 @@
                             data.forEach(municipality => {
                                 $("#update_ts_municipality").append(`<option value="${municipality.code}">${municipality.name}</option>`);
                             });
+
+                            if (municipalityUser && aewMunicipalityCode) {
+                                $("#update_ts_municipality").val(aewMunicipalityCode).trigger('change').prop('disabled', true);
+                            } else if (tsmunicipalityCode) {
+                                $("#update_ts_municipality").val(tsmunicipalityCode).trigger('change');
+                            }
 
                             if (tsmunicipalityCode) {
                                 $("#update_ts_municipality").val(tsmunicipalityCode).trigger("change");

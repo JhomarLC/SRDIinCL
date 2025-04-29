@@ -41,7 +41,7 @@
                                 </div>
                             </div>
 
-                            @include('admin.farmers-profile.partials._season_fields', ['data' => $seasons['Wet Season']])
+                            @include('farmers-profile.partials._season_fields', ['data' => $seasons['Wet Season']])
                         </div>
                     </div>
                 </div>
@@ -61,7 +61,7 @@
                                 </div>
                             </div>
 
-                            @include('admin.farmers-profile.partials._season_fields', ['data' => $seasons['Dry Season']])
+                            @include('farmers-profile.partials._season_fields', ['data' => $seasons['Dry Season']])
                         </div>
                     </div>
                 </div>
