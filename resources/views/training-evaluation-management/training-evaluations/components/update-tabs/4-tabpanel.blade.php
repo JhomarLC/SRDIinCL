@@ -122,7 +122,7 @@ aria-labelledby="pills-personal-info-tab">
         data-previous="pills-overall-evaluation-tab"><i
             class="ri-arrow-left-line label-icon align-middle fs-16 me-2"></i>
         Previous</button>
-    <button type="button" id="submitTrainingEvaluation"
+    <button type="button" id="updateTrainingEvaluation"
         class="btn btn-success btn-label right ms-auto nexttab"
         data-nexttab="pills-bill-finish"><i
             class="ri-arrow-right-line label-icon align-middle fs-16 ms-2"></i>

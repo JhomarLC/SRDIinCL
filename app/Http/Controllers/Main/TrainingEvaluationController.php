@@ -387,53 +387,142 @@ class TrainingEvaluationController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $trainingEventId, string $trainingEvalId)
     {
-        $validatedData = $request->validate([
-            'training_title' => 'required|string|max:255',
-            'training_date' => 'required|string|max:255',
-            'province_code' => 'required|string',
-            'municipality_code' => 'required|string',
-            'barangay_code' => 'required|string',
-        ]);
+        $rules = TrainingValidationRules::rules('all');
+        $messages = TrainingValidationRules::messages();
+        $validated = $request->validate($rules, $messages);
 
-        // You can optionally check if the topic really belongs to the speaker
-        $training_event = TrainingEvent::findOrFail($id);
+        DB::beginTransaction();
 
-        $originalData = $training_event->only(['training_title', 'training_date']);
+        try {
+            $training_eval = TrainingEvaluation::with([
+                'training_content_evaluation.useful_topics',
+                'course_management_evaluation',
+                'overall_training_assessment.notable_employees',
+                'training_participant_info',
+            ])->where('training_event_id', $trainingEventId)
+                ->where('id', $trainingEvalId)
+                ->firstOrFail();
 
-        $training_event->update([
-            'training_title' => $validatedData['training_title'],
-            'training_date' => $validatedData['training_date'],
-            'province_code' => $validatedData['province_code'],
-            'municipality_code' => $validatedData['municipality_code'],
-            'barangay_code' => $validatedData['barangay_code'],
-        ]);
+            // Step 1: Update Training Content Evaluation
+            $content_eval = $training_eval->training_content_evaluation;
+            $content_eval->update([
+                'objective_score' => $validated['objective_score'],
+                'relevance_score' => $validated['relevance_score'],
+                'content_completeness_score' => $validated['content_completeness_score'],
+                'lecture_hands_on_score' => $validated['lecture_hands_on_score'],
+                'sequence_score' => $validated['sequence_score'],
+                'duration_score' => $validated['duration_score'],
+                'assessment_method_score' => $validated['assessment_method_score'],
 
-        $changes = [];
-        foreach ($originalData as $key => $value) {
-            if ($value !== $training_event->$key) {
-                $changes['topic'][$key] = [
-                    'old' => $value,
-                    'new' => $training_event->$key,
-                ];
+                'objective_comment' => $validated['objective_comment'] ?? null,
+                'relevance_comment' => $validated['relevance_comment'] ?? null,
+                'content_completeness_comment' => $validated['content_completeness_comment'] ?? null,
+                'lecture_hands_on_comment' => $validated['lecture_hands_on_comment'] ?? null,
+                'sequence_comment' => $validated['sequence_comment'] ?? null,
+                'duration_comment' => $validated['duration_comment'] ?? null,
+                'assessment_method_comment' => $validated['assessment_method_comment'] ?? null,
+
+                'low_score_comment_1' => $validated['low_score_comment_1'] ?? null,
+            ]);
+
+            // Replace useful topics
+            $content_eval->useful_topics()->delete();
+
+            if ($request->filled('three_topics')) {
+                $topics = explode(',', $request->input('three_topics'));
+
+                foreach ($topics as $topic) {
+                    UsefulTopics::create([
+                        'training_content_evaluation_id' => $content_eval->id,
+                        'topic_name' => trim($topic),
+                    ]);
+                }
             }
-        }
 
-        if (!empty($changes)) {
-            activity()
-                ->causedBy(auth()->user())
-                ->performedOn($training_event)
-                ->event('training_event_updated')
-                ->withProperties($changes)
-                ->log("Training event updated for {$training_event->training_title}.");
-        }
+            // Step 2: Update Course Management Evaluation
+            $training_eval->course_management_evaluation->update([
+                'coordination_score' => $validated['coordination_score'],
+                'time_management_score' => $validated['time_management_score'],
+                'speaker_quality_score' => $validated['speaker_quality_score'],
+                'facilitators_score' => $validated['facilitators_score'],
+                'support_staff_score' => $validated['support_staff_score'],
+                'materials_score' => $validated['materials_score'],
+                'facility_score' => $validated['facility_score'],
+                'accommodation_score' => $validated['accommodation_score'],
+                'food_quality_score' => $validated['food_quality_score'],
+                'transportation_score' => $validated['transportation_score'],
+                'overall_management_score' => $validated['overall_management_score'],
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Training event updated successfully!',
-            'training_event' => $training_event
-        ]);
+                'coordination_comment' => $validated['coordination_comment'] ?? null,
+                'time_management_comment' => $validated['time_management_comment'] ?? null,
+                'speaker_quality_comment' => $validated['speaker_quality_comment'] ?? null,
+                'facilitators_comment' => $validated['facilitators_comment'] ?? null,
+                'support_staff_comment' => $validated['support_staff_comment'] ?? null,
+                'materials_comment' => $validated['materials_comment'] ?? null,
+                'facility_comment' => $validated['facility_comment'] ?? null,
+                'accommodation_comment' => $validated['accommodation_comment'] ?? null,
+                'food_quality_comment' => $validated['food_quality_comment'] ?? null,
+                'transportation_comment' => $validated['transportation_comment'] ?? null,
+                'overall_management_comment' => $validated['overall_management_comment'] ?? null,
+
+                'low_score_comment_2' => $validated['low_score_comment_2'] ?? null,
+            ]);
+
+            // Step 3: Update Overall Training Assessment
+            $assessment = $training_eval->overall_training_assessment;
+            $assessment->update([
+                'goal_achievement' => $validated['goal_achievement'],
+                'overall_quality' => $validated['overall_quality'],
+                'additional_feedback_or_suggestions' => $validated['additional_feedback_or_suggestions'] ?? null,
+                'recommend_training' => $validated['recommend_training'],
+                'recommendation_reason' => $validated['recommendation_reason'] ?? null,
+                'preferred_future_trainings' => $validated['preferred_future_trainings'] ?? null,
+            ]);
+
+            // Replace Notable Employees
+            $assessment->notable_employees()->delete();
+            foreach ($validated['employee_name'] as $index => $employee_name) {
+                $employee_reason = $validated['employee_reason'][$index] ?? null;
+                if (empty($employee_name) && empty($employee_reason)) {
+                    continue;
+                }
+
+                NotableEmployee::create([
+                    'overall_training_assessment_id' => $assessment->id,
+                    'employee_name' => $employee_name,
+                    'employee_reason' => $employee_reason,
+                ]);
+            }
+
+            // Step 4: Update Training Participant Info
+            $training_eval->training_participant_info->update([
+                'first_name' => $validated['first_name'] ?? null,
+                'middle_name' => $validated['middle_name'] ?? null,
+                'last_name' => $validated['last_name'] ?? null,
+                'suffix' => $validated['suffix'] ?? null,
+                'age_group' => $validated['age_group'],
+                'sex' => $validated['sex'],
+                'province_code' => $validated['province_code'],
+                'primary_sector' => $validated['primary_sector'],
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Training evaluation updated successfully!',
+            ]);
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to update the evaluation.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**

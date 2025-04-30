@@ -92,7 +92,7 @@
                     if (response.status === 'success') {
                         showAlertModal(response.status, response.message);
                         setTimeout(function () {
-                            window.location.href = "/admin/farmers-profile";
+                            window.location.href = "/farmers-profile";
                         }, 1500);
                     }
                 },

@@ -249,7 +249,6 @@ class SpeakerEvaluationController extends Controller
      */
     public function update(Request $request, string $speakerId, string $topicId, string $evalId)
     {
-
                // Step 1: Validate the request
         $validated = $request->validate(
             EvaluationValidationRules::rules('all'),

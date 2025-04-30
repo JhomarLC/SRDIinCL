@@ -125,7 +125,7 @@ aria-labelledby="pills-training-content-tab">
         <div class="row g-3">
             <div class="col-sm-12">
                 <label for="gender" class="form-label">List 3 topics that you think would be helpful in your current work/duties</label>
-                <select class="form-control" id="choices-multiple-remove-button" name="three_topics[]"
+                <select class="form-control" id="choices-multiple-remove-button" name="three_topics"
                 data-choices data-choices-limit="3" data-choices-removeItem multiple>
                 <option selected disabled hidden>-- SELECT TOPIC DISCUSSED --</option>
 

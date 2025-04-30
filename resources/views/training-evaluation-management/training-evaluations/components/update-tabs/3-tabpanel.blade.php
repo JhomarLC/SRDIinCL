@@ -54,7 +54,7 @@ aria-labelledby="pills-overall-evaluation-tab">
             </div>
             <div class="form-check form-check-inline">
                 <input class="form-check-input" type="radio" name="overall_quality" id="quality_poor" value="Poor"
-                {{ $overAllEval->overall_quality === 'Fair' ? 'checked' : '' }}>
+                {{ $overAllEval->overall_quality === 'Poor' ? 'checked' : '' }}>
                 <label class="form-check-label" for="quality_poor">Poor</label>
             </div>
             <div class="invalid-feedback">Please enter a middle name</div>
