@@ -27,7 +27,7 @@ class TrainingContentEvaluation extends Model
         'duration_comment',
         'assessment_method_comment',
 
-        'low_score_comment',
+        'low_score_comment_1',
     ];
 
     protected $appends = ['overall_score'];

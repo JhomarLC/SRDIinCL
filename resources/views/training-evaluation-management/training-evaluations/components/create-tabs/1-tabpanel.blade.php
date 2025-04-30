@@ -94,8 +94,8 @@ aria-labelledby="pills-training-content-tab">
     </div>
 
     <div class="mt-3">
-        <label for="low_score_comment" class="form-label">Reason or comment for any rating lower than 3 (Good):</label>
-        <textarea class="form-control" id="low_score_comment" name="low_score_comment" rows="3"></textarea>
+        <label for="low_score_comment_1" class="form-label">Reason or comment for any rating lower than 3 (Good):</label>
+        <textarea class="form-control" id="low_score_comment_1" name="low_score_comment_1" rows="3"></textarea>
     </div>
 
     <div class="mt-3">

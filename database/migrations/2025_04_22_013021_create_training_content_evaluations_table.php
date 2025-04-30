@@ -30,7 +30,7 @@ return new class extends Migration
             $table->longText('duration_comment')->nullable();
             $table->longText('assessment_method_comment')->nullable();
 
-            $table->longText('low_score_comment')->nullable();
+            $table->longText('low_score_comment_1')->nullable();
 
             $table->timestamps();
         });

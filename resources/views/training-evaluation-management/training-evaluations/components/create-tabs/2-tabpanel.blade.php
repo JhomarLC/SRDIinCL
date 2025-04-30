@@ -33,7 +33,7 @@ aria-labelledby="pills-course-management-tab">
                 <td class="text-center"><input class="form-check-input" type="radio" name="coordination_score" value="3"></td>
                 <td class="text-center"><input class="form-check-input" type="radio" name="coordination_score" value="2"></td>
                 <td class="text-center"><input class="form-check-input" type="radio" name="coordination_score" value="1"></td>
-                <td><textarea type="text" class="form-control" name="coordination_score_reason"></textarea></td>
+                <td><textarea type="text" class="form-control" id="coordination_comment" name="coordination_comment"></textarea></td>
             </tr>
             <tr>
                 <td>Time management</td>
@@ -42,7 +42,7 @@ aria-labelledby="pills-course-management-tab">
                 <td class="text-center"><input class="form-check-input" type="radio" name="time_management_score" value="3"></td>
                 <td class="text-center"><input class="form-check-input" type="radio" name="time_management_score" value="2"></td>
                 <td class="text-center"><input class="form-check-input" type="radio" name="time_management_score" value="1"></td>
-                <td><textarea type="text" class="form-control" name="time_management_score_reason"></textarea></td>
+                <td><textarea type="text" class="form-control" id="time_management_comment" name="time_management_comment"></textarea></td>
             </tr>
             <tr>
                 <td>Resource persons (speakers)</td>
@@ -51,7 +51,7 @@ aria-labelledby="pills-course-management-tab">
                 <td class="text-center"><input class="form-check-input" type="radio" name="speaker_quality_score" value="3"></td>
                 <td class="text-center"><input class="form-check-input" type="radio" name="speaker_quality_score" value="2"></td>
                 <td class="text-center"><input class="form-check-input" type="radio" name="speaker_quality_score" value="1"></td>
-                <td><textarea type="text" class="form-control" name="speaker_quality_score_reason"></textarea></td>
+                <td><textarea type="text" class="form-control" id="speaker_quality_comment" name="speaker_quality_comment"></textarea></td>
             </tr>
             <tr>
                 <td>Facilitators</td>
@@ -60,7 +60,7 @@ aria-labelledby="pills-course-management-tab">
                 <td class="text-center"><input class="form-check-input" type="radio" name="facilitators_score" value="3"></td>
                 <td class="text-center"><input class="form-check-input" type="radio" name="facilitators_score" value="2"></td>
                 <td class="text-center"><input class="form-check-input" type="radio" name="facilitators_score" value="1"></td>
-                <td><textarea type="text" class="form-control" name="facilitators_score_reason"></textarea></td>
+                <td><textarea type="text" class="form-control" id="facilitators_comment" name="facilitators_comment"></textarea></td>
             </tr>
             <tr>
                 <td>Training support staff</td>
@@ -69,7 +69,7 @@ aria-labelledby="pills-course-management-tab">
                 <td class="text-center"><input class="form-check-input" type="radio" name="support_staff_score" value="3"></td>
                 <td class="text-center"><input class="form-check-input" type="radio" name="support_staff_score" value="2"></td>
                 <td class="text-center"><input class="form-check-input" type="radio" name="support_staff_score" value="1"></td>
-                <td><textarea type="text" class="form-control" name="support_staff_score_reason"></textarea></td>
+                <td><textarea type="text" class="form-control" id="support_staff_comment" name="support_staff_comment"></textarea></td>
             </tr>
             <tr>
                 <td>Materials provided for the training (videos, presentation, etc.)</td>
@@ -78,7 +78,7 @@ aria-labelledby="pills-course-management-tab">
                 <td class="text-center"><input class="form-check-input" type="radio" name="materials_score" value="3"></td>
                 <td class="text-center"><input class="form-check-input" type="radio" name="materials_score" value="2"></td>
                 <td class="text-center"><input class="form-check-input" type="radio" name="materials_score" value="1"></td>
-                <td><textarea type="text" class="form-control" name="materials_score_reason"></textarea></td>
+                <td><textarea type="text" class="form-control" id="materials_comment" name="materials_comment"></textarea></td>
             </tr>
             <tr>
                 <td>Venue and facilities for the training</td>
@@ -87,7 +87,7 @@ aria-labelledby="pills-course-management-tab">
                 <td class="text-center"><input class="form-check-input" type="radio" name="facility_score" value="3"></td>
                 <td class="text-center"><input class="form-check-input" type="radio" name="facility_score" value="2"></td>
                 <td class="text-center"><input class="form-check-input" type="radio" name="facility_score" value="1"></td>
-                <td><textarea type="text" class="form-control" name="facility_score_reason"></textarea></td>
+                <td><textarea type="text" class="form-control" id="facility_comment" name="facility_comment"></textarea></td>
             </tr>
             <tr>
                 <td>Lodging/sleeping accommodations</td>
@@ -96,7 +96,7 @@ aria-labelledby="pills-course-management-tab">
                 <td class="text-center"><input class="form-check-input" type="radio" name="accommodation_score" value="3"></td>
                 <td class="text-center"><input class="form-check-input" type="radio" name="accommodation_score" value="2"></td>
                 <td class="text-center"><input class="form-check-input" type="radio" name="accommodation_score" value="1"></td>
-                <td><textarea type="text" class="form-control" name="accommodation_score_reason"></textarea></td>
+                <td><textarea type="text" class="form-control" id="accommodation_comment" name="accommodation_comment"></textarea></td>
             </tr>
             <tr>
                 <td>Food and service</td>
@@ -105,7 +105,7 @@ aria-labelledby="pills-course-management-tab">
                 <td class="text-center"><input class="form-check-input" type="radio" name="food_quality_score" value="3"></td>
                 <td class="text-center"><input class="form-check-input" type="radio" name="food_quality_score" value="2"></td>
                 <td class="text-center"><input class="form-check-input" type="radio" name="food_quality_score" value="1"></td>
-                <td><textarea type="text" class="form-control" name="food_quality_score_reason"></textarea></td>
+                <td><textarea type="text" class="form-control" id="food_quality_comment" name="food_quality_comment"></textarea></td>
             </tr>
             <tr>
                 <td>Transportation and travel arrangements</td>
@@ -114,7 +114,7 @@ aria-labelledby="pills-course-management-tab">
                 <td class="text-center"><input class="form-check-input" type="radio" name="transportation_score" value="3"></td>
                 <td class="text-center"><input class="form-check-input" type="radio" name="transportation_score" value="2"></td>
                 <td class="text-center"><input class="form-check-input" type="radio" name="transportation_score" value="1"></td>
-                <td><textarea type="text" class="form-control" name="transportation_score_reason"></textarea></td>
+                <td><textarea type="text" class="form-control" id="transportation_comment" name="transportation_comment"></textarea></td>
             </tr>
             <tr>
                 <td>Overall quality of the training</td>
@@ -123,14 +123,14 @@ aria-labelledby="pills-course-management-tab">
                 <td class="text-center"><input class="form-check-input" type="radio" name="overall_management_score" value="3"></td>
                 <td class="text-center"><input class="form-check-input" type="radio" name="overall_management_score" value="2"></td>
                 <td class="text-center"><input class="form-check-input" type="radio" name="overall_management_score" value="1"></td>
-                <td><textarea type="text" class="form-control" name="overall_management_score_reason"></textarea></td>
+                <td><textarea type="text" class="form-control" id="overall_management_comment" name="overall_management_comment"></textarea></td>
             </tr>
         </tbody>
     </table>
 </div>
 <div class="mt-3">
-    <label for="low_score_comment" class="form-label">Reason or comment for any rating lower than 3 (Good):</label>
-    <textarea class="form-control" id="low_score_comment" name="low_score_comment" rows="3"></textarea>
+    <label for="low_score_comment_2" class="form-label">Reason or comment for any rating lower than 3 (Good):</label>
+    <textarea class="form-control" id="low_score_comment_2" name="low_score_comment_2" rows="3"></textarea>
 </div>
 
 <div class="d-flex align-items-start gap-3 mt-4">

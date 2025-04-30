@@ -88,7 +88,7 @@ aria-labelledby="pills-evaluation-personal-info-tab">
 <div class="mt-3">
     <div class="row g-3">
         <div class="col-sm-6" >
-            <label for="province" class="form-label">Province <span class="text-danger">*</span></label>
+            <label for="update_province" class="form-label">Province <span class="text-danger">*</span></label>
             <select class="form-control select2" id="update_province" name="province_code" aria-label="Default select example">
                 <option selected disabled hidden>-- SELECT PROVINCE --</option>
             </select>

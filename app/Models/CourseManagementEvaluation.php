@@ -22,7 +22,20 @@ class CourseManagementEvaluation extends Model
         'food_quality_score',
         'transportation_score',
         'overall_management_score',
-        'low_score_comment',
+
+        'coordination_comment',
+        'time_management_comment',
+        'speaker_quality_comment',
+        'facilitators_comment',
+        'support_staff_comment',
+        'materials_comment',
+        'facility_comment',
+        'accommodation_comment',
+        'food_quality_comment',
+        'transportation_comment',
+        'overall_management_comment',
+
+        'low_score_comment_2',
     ];
 
     protected $appends = ['overall_score'];

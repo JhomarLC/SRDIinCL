@@ -24,7 +24,7 @@ Route::prefix('training-evaluation-management')->group(function () {
 
         Route::get('/create', [TrainingEvaluationController::class, 'create'])->name('training-evaluation-management.create');
         Route::post('/store', [TrainingEvaluationController::class, 'store'])->name('training-evaluation-management.store');
-        // Route::get('/{id}', [SpeakerEvaluationController::class, 'edit'])->name('speaker-eval.edit');
+        Route::get('/{id}', [TrainingEvaluationController::class, 'edit'])->name('training-evaluation-management.edit');
         // Route::put('/{id}', [SpeakerEvaluationController::class, 'update'])->name('speaker-eval.update');
 
         Route::put('/{id}/archive', [TrainingEvaluationController::class, 'archive'])->name('training-evaluation-management.archive');

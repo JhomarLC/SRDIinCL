@@ -74,10 +74,10 @@ class TrainingEvaluationController extends Controller
         return view('training-evaluation-management.training-evaluations.index', compact(['training_event']));
     }
 
-    public function getIndex(string $id)
+    public function getIndex(string $trainingEventId)
     {
         // Get only topics for the specific speaker, eager load speaker relationship
-        $training_eval = TrainingEvaluation::where('training_event_id', $id);
+        $training_eval = TrainingEvaluation::where('training_event_id', $trainingEventId);
 
         return DataTables::of($training_eval)
             ->addColumn('training_content_evaluation', function ($events) {
@@ -156,7 +156,7 @@ class TrainingEvaluationController extends Controller
 
                 return '<span class="badge ' . $badgeClass . '">' . $overall_quality . '</span>';
             })
-            ->addColumn('actions', function ($events)   {
+            ->addColumn('actions', function ($events) use ($trainingEventId)   {
                 $viewButton  = ($events->status !== 'archived')
                         ? '<a href="' . route('training-evaluation-management.index', $events->id)  . '"
                                 class="btn btn-sm btn-secondary">
@@ -164,15 +164,9 @@ class TrainingEvaluationController extends Controller
                             </a>'
                         : '';
 
-                $editButton = '<button class="btn btn-sm btn-success editTrainingEvent"
-                                    data-id="' . $events->id . '"
-                                    data-training_title="' . $events->training_title . '"
-                                    data-training_date="' . $events->training_date . '"
-                                    data-province="' . $events->province_code . '"
-                                    data-municipality="' .$events->municipality_code . '"
-                                    data-barangay="' . $events->barangay_code . '">
-                                    <i class="ri-edit-fill"></i> Update
-                                </button>';
+                $editButton = '<a href="' . route('training-evaluation-management.edit', [$trainingEventId, $events->id]) . '" class="btn btn-sm btn-success">
+                                    <i class="ri-eye-fill"></i> Update
+                                </a>';
 
                 $activateButton = ($events->status === 'archived')
                     ? '<button class="btn btn-sm btn-secondary status-unarchive"
@@ -251,7 +245,7 @@ class TrainingEvaluationController extends Controller
                 'duration_comment' => $validated['duration_comment'] ?? null,
                 'assessment_method_comment' => $validated['assessment_method_comment'] ?? null,
 
-                'low_score_comment' => $validated['low_score_comment'] ?? null,
+                'low_score_comment_1' => $validated['low_score_comment_1'] ?? null,
             ]);
 
             if ($request->filled('three_topics')) {
@@ -290,7 +284,7 @@ class TrainingEvaluationController extends Controller
                 'transportation_comment' => $validated['transportation_comment'] ?? null,
                 'overall_management_comment' => $validated['overall_management_comment'] ?? null,
 
-                'low_score_comment' => $validated['low_score_comment'] ?? null,
+                'low_score_comment_2' => $validated['low_score_comment_2'] ?? null,
             ]);
 
             // Step 3: Overall Training Assessment
@@ -348,7 +342,6 @@ class TrainingEvaluationController extends Controller
         }
     }
 
-
     /**
      * Display the specified resource.
      */
@@ -360,9 +353,35 @@ class TrainingEvaluationController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(string $trainingEventId, string $trainingEvalId)
     {
-        //
+        $training_event = TrainingEvent::with([
+            'evaluations' => function ($query) use ($trainingEvalId) {
+                $query->where('id', $trainingEvalId)
+                    ->with([
+                        'training_content_evaluation',
+                        'course_management_evaluation',
+                        'overall_training_assessment',
+                        'training_participant_info',
+                        // 'useful_topics' // if you want to load this too
+                    ]);
+            }
+        ])->findOrFail($trainingEventId);
+
+        $evaluation = TrainingEvaluation::with([
+            'training_content_evaluation',
+            'course_management_evaluation',
+            'overall_training_assessment',
+            'overall_training_assessment.notable_employees',
+            'training_participant_info',
+        ])->where('training_event_id', $trainingEventId)
+          ->where('id', $trainingEvalId)
+          ->firstOrFail();
+
+        $trainingContent = $evaluation->training_content_evaluation;
+        $selectedTopics = $trainingContent?->useful_topics?->pluck('topic_name')->toArray() ?? [];
+
+        return view('training-evaluation-management.training-evaluations.update', compact(['training_event', 'evaluation', 'selectedTopics']));
     }
 
     /**

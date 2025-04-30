@@ -24,7 +24,7 @@ class TrainingValidationRules
                 'duration_comment' => 'nullable',
                 'assessment_method_comment' => 'nullable',
 
-                'low_score_comment' => 'nullable',
+                'low_score_comment_1' => 'nullable',
 
                 'topic_name' => 'nullable'
             ],
@@ -53,7 +53,7 @@ class TrainingValidationRules
                 'transportation_comment' => 'nullable',
                 'overall_management_comment' => 'nullable',
 
-                'low_score_comment' => 'nullable',
+                'low_score_comment_2' => 'nullable',
             ],
             'overall-evaluation' => [
                 'goal_achievement' => 'required|string|max:255',

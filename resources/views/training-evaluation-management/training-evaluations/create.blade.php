@@ -24,7 +24,6 @@
     @endslot
 @endcomponent
 
-
 <div class="profile-foreground position-relative mx-n4 mt-n4">
     <div class="profile-wid-bg">
         <img src="{{ URL::asset('build/images/philrice.jpg') }}" alt="" class="profile-wid-img" />

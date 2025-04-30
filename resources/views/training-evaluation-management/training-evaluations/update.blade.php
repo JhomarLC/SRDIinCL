@@ -24,16 +24,40 @@
     @endslot
 @endcomponent
 
+<div class="profile-foreground position-relative mx-n4 mt-n4">
+    <div class="profile-wid-bg">
+        <img src="{{ URL::asset('build/images/philrice.jpg') }}" alt="" class="profile-wid-img" />
+    </div>
+</div>
+<div class="pt-4 mb-4 mb-lg-3 pb-lg-4 profile-wrapper">
+    <div class="row g-4">
+        <!--end col-->
+        <div class="col">
+            <div class="p-2">
+                <h3 class="text-white mb-1">{{ $training_event->formatted_training_date }}</h3>
+                <p class="text-white text-opacity-75">{{ $training_event->training_title }}</p>
+                <div class="hstack text-white-50 gap-1">
+                    <div class="me-2"><i
+                            class="ri-map-pin-user-line me-1 text-white text-opacity-75 fs-16 align-middle"></i>{{ $training_event->full_address }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end row-->
+</div>
 <div class="row justify-content-center">
     <div class="col-xl-12">
         <div class="card">
-            <div class="card-header">
-                <h4 class="card-title mb-0">Speaker Evaluation</h4>
+            <div class="card-header d-flex">
+                <h4 class="card-title mb-0 flex-grow-1">Training Evaluation</h4>
+                <a style="margin-right: 10px" href="{{ route('training-evaluation-management.index', $training_event->id) }}" class="btn btn-secondary">
+                    <i class="ri-close-fill"></i> Cancel
+                </a>
             </div><!-- end card header -->
             <div class="card-body">
                 <form action="#" class="form-steps" autocomplete="off">
                     <div class="text-center pt-3 pb-4 mb-1">
-                        <h5>Update Speaker Evaluation</h5>
+                        <h5>Fillout Training Evaluation</h5>
                     </div>
                     <div id="custom-progress-bar" class="progress-nav mb-4">
                         <div class="progress" style="height: 1px;">
@@ -44,21 +68,36 @@
                         <ul class="nav nav-pills progress-bar-tab custom-nav" role="tablist">
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link rounded-pill active" data-progressbar="custom-progress-bar"
-                                    id="pills-speaker-evaluation-tab" data-bs-toggle="pill" data-bs-target="#pills-speaker-evaluation"
-                                    type="button" role="tab" aria-controls="pills-speaker-evaluation"
+                                    id="pills-training-content-tab" data-bs-toggle="pill" data-bs-target="#pills-training-content"
+                                    type="button" role="tab" aria-controls="pills-training-content"
                                     aria-selected="true">1</button>
                             </li>
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link rounded-pill" data-progressbar="custom-progress-bar"
-                                    id="pills-evaluation-personal-info-tab" data-bs-toggle="pill" data-bs-target="#pills-evaluation-personal-info"
-                                    type="button" role="tab" aria-controls="pills-evaluation-personal-info"
+                                    id="pills-course-management-tab" data-bs-toggle="pill" data-bs-target="#pills-course-management"
+                                    type="button" role="tab" aria-controls="pills-course-management"
                                     aria-selected="false">2</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link rounded-pill" data-progressbar="custom-progress-bar"
+                                    id="pills-overall-evaluation-tab" data-bs-toggle="pill" data-bs-target="#pills-overall-evaluation"
+                                    type="button" role="tab" aria-controls="pills-overall-evaluation"
+                                    aria-selected="false">3</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link rounded-pill" data-progressbar="custom-progress-bar"
+                                    id="pills-personal-info-tab" data-bs-toggle="pill" data-bs-target="#pills-personal-info"
+                                    type="button" role="tab" aria-controls="pills-personal-info"
+                                    aria-selected="false">4</button>
                             </li>
                         </ul>
                     </div>
+
                     <div class="tab-content">
-                        @include('speaker-management.speaker-topics.speaker-evaluations.components.update-tabs.1-tabpanel')
-                        @include('speaker-management.speaker-topics.speaker-evaluations.components.update-tabs.2-tabpanel')
+                        @include('training-evaluation-management.training-evaluations.components.update-tabs.1-tabpanel')
+                        @include('training-evaluation-management.training-evaluations.components.update-tabs.2-tabpanel')
+                        @include('training-evaluation-management.training-evaluations.components.update-tabs.3-tabpanel')
+                        @include('training-evaluation-management.training-evaluations.components.update-tabs.4-tabpanel')
                     </div>
                     <!-- end tab content -->
                 </form>
@@ -96,6 +135,6 @@
 <script src="{{ URL::asset('admin-js/admin.js') }}"></script>
 <script src='{{ URL::asset('build/libs/choices.js/public/assets/scripts/choices.min.js') }}'></script>
 <script src="{{ URL::asset('build/js/app.js') }}"></script>
-@include('speaker-management.speaker-topics.speaker-evaluations._includes.script')
-@include('speaker-management.speaker-topics.speaker-evaluations._includes.update-script')
+@include('training-evaluation-management.training-evaluations._includes.script')
+@include('training-evaluation-management.training-evaluations._includes.update-script')
 @endsection

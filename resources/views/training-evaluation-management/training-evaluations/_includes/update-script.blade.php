@@ -1,4 +1,4 @@
-<script>
+{{-- <script>
     $(document).ready(function () {
         $("#updateEvaluationProfile").on("click", function (e) {
             e.preventDefault();
@@ -61,4 +61,4 @@
             });
         });
     });
-    </script>
+    </script> --}}

@@ -8,10 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class OverallTrainingAssessment extends Model
 {
     use HasFactory;
-    protected $casts = [
-        'notable_employees' => 'array',
-    ];
-
     protected $fillable = [
         'training_evaluation_id',
         'goal_achievement',

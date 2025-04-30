@@ -38,7 +38,7 @@ return new class extends Migration
             $table->longText('transportation_comment')->nullable();
             $table->longText('overall_management_comment')->nullable();
 
-            $table->longText('low_score_comment')->nullable();
+            $table->longText('low_score_comment_2')->nullable();
             $table->timestamps();
         });
     }
