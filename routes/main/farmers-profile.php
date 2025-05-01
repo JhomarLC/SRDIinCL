@@ -6,6 +6,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/farmers-profile/get-index', [FarmersProfileController::class, 'getIndex'])
         ->name('farmers-profile.get-index');
 
+Route::get('/farmers-profile/export', [FarmersProfileController::class, 'exportFarmersProfile'])
+        ->name('farmers-profile.export');
+
 Route::get('/farmers-profile/get-trainings', [FarmersProfileController::class, 'getTrainings'])
 ->name('farmers-profile.get-trainings');
 

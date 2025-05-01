@@ -22,6 +22,9 @@ class Training extends Model
         'personally_paid',
     ];
 
+    protected $casts = [
+        'training_date' => 'date',
+    ];
     public function participant()
     {
         return $this->belongsTo(Participant::class, 'participant_id');

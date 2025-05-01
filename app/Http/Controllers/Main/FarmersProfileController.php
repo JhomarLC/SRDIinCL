@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Main;
 
+use App\Exports\FarmersProfileExport;
 use App\Helpers\FarmerValidationRules;
 use App\Http\Controllers\Controller;
 use App\Models\EmergencyContact;
@@ -15,10 +16,22 @@ use App\Models\TrainingResults;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\DataTables;
 
 class FarmersProfileController extends Controller
 {
+    public function exportFarmersProfile(Request $request)
+    {
+        $province = $request->input('province');
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        return Excel::download(
+            new FarmersProfileExport($province, $startDate, $endDate),
+            'farmers_profile.xlsx'
+        );
+    }
     public function validateStep(Request $request)
     {
         $step = $request->input('step');
