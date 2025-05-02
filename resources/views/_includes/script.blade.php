@@ -1,6 +1,5 @@
 <script>
-    const apiKey = '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'; // Replace with your actual key
-
+    const openrouterApiKey = "{{ $openrouterApiKey }}";
     /**
      * Generates a subtitle for any chart given labels, counts, and a target element ID.
      * @param {Array} labels - The labels (categories) for the data.
@@ -40,7 +39,7 @@
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${apiKey}`
+                'Authorization': `Bearer ${openrouterApiKey}`
             },
             body: JSON.stringify(requestData)
         })

@@ -111,7 +111,7 @@ class DashboardController extends Controller
             )
             ->groupBy('season')
             ->get();
-
+        $openrouterApiKey = config('services.openrouter.api_key');
         return view('index', compact(
             'totalFarmers',
             'farmersGrowthPercentage',
@@ -121,7 +121,8 @@ class DashboardController extends Controller
             'trainingAttendance',
             'averageGainInKnowledge',
             'farmSizeBuckets',
-            'yieldPerSeason'
+            'yieldPerSeason',
+            'openrouterApiKey'
         ));
     }
 
