@@ -1,23 +1,24 @@
 <script>
+    const apiKey = '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'; // Replace with your actual key
 
-    var genderLabels = {!! json_encode($genderDistribution->pluck('gender')) !!};
-    var genderCounts = {!! json_encode($genderDistribution->pluck('total')) !!};
-
-    function generateGenderSubtitle() {
-        const apiKey = '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'; // Replace with your actual key
-
-        let genderData = "Farmers by gender - ";
-        const genderParts = genderLabels.map((label, index) => {
-            return `${label}: ${genderCounts[index]}`;
-        });
-        genderData += genderParts.join(', ');
+    /**
+     * Generates a subtitle for any chart given labels, counts, and a target element ID.
+     * @param {Array} labels - The labels (categories) for the data.
+     * @param {Array} counts - The counts/values for each label.
+     * @param {string} title - The title to prepend in the data summary.
+     * @param {string} elementId - The ID of the DOM element where the subtitle will appear.
+     */
+    function generateChartSubtitle(labels, counts, title, elementId) {
+        let dataSummary = `${title} - `;
+        const parts = labels.map((label, index) => `${label}: ${counts[index]}`);
+        dataSummary += parts.join(', ');
 
         const prompt = `
             You are a data analyst. Given the following chart data, write a concise summary in this style:
             "From this data, it can be observed that [key findings]. The distribution shows [overall trend or demographic insights]."
 
             Data:
-            ${genderData}
+            ${dataSummary}
         `;
 
         const requestData = {
@@ -30,8 +31,10 @@
             ]
         };
 
-        // Optional: set a different subtitle element for gender if needed
-        document.getElementById('gender-subtitle').innerText = "Analyzing data...";
+        const subtitleElement = document.getElementById(elementId);
+        if (subtitleElement) {
+            subtitleElement.innerText = "Analyzing data...";
+        }
 
         fetch('https://openrouter.ai/api/v1/chat/completions', {
             method: 'POST',
@@ -43,21 +46,19 @@
         })
         .then(response => response.json())
         .then(data => {
-            const subtitleElement = document.getElementById('gender-subtitle');
             const reply = data?.choices?.[0]?.message?.content?.trim();
-            if (reply) {
-                subtitleElement.innerText = reply;
-            } else {
-                subtitleElement.innerText = "Could not generate description.";
-            }
+            subtitleElement.innerText = reply || "Could not generate description.";
         })
         .catch(error => {
             console.error('Error:', error);
-            document.getElementById('gender-subtitle').innerText = "Error generating description.";
+            subtitleElement.innerText = "Error generating description.";
         });
     }
 
-    generateGenderSubtitle();
+    var genderLabels = {!! json_encode($genderDistribution->pluck('gender')) !!};
+    var genderCounts = {!! json_encode($genderDistribution->pluck('total')) !!};
+    generateChartSubtitle(genderLabels, genderCounts, "Farmers by gender", "gender-subtitle");
+
 
     // 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
     var chartPieBasicColors = getChartColorsArray("farmers_by_sex");
@@ -100,59 +101,7 @@
 
     var ageGroupLabels = {!! json_encode(collect($ageGroupDistribution)->pluck('age_group')) !!};
     var ageGroupCounts = {!! json_encode(collect($ageGroupDistribution)->pluck('total')) !!};
-    function generateSubtitle() {
-        const apiKey = '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'; // Replace with your actual key
-
-         // Combine labels and counts into the same format as the static example:
-        let ageData = "Farmers by age group - ";
-        const ageParts = ageGroupLabels.map((label, index) => {
-            return `${label}: ${ageGroupCounts[index]}`;
-        });
-        ageData += ageParts.join(', ');
-
-        const prompt = `
-            You are a data analyst. Given the following chart data, write a concise summary in this style:
-            "From this data, it can be observed that [key findings]. The distribution shows [overall trend or demographic insights]."
-
-            Data:
-            ${ageData}
-            `;
-        const requestData = {
-            model: "mistralai/mistral-small-3.1-24b-instruct:free",
-            messages: [
-                {
-                    role: "user",
-                    content: prompt
-                }
-            ]
-        };
-
-        fetch('https://openrouter.ai/api/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${apiKey}`
-            },
-            body: JSON.stringify(requestData)
-        })
-        .then(response => response.json())
-        .then(data => {
-            const subtitleElement = document.getElementById('subtitle');
-            const reply = data?.choices?.[0]?.message?.content;
-            if (reply) {
-                subtitleElement.innerText = reply;
-            } else {
-                subtitleElement.innerText = "Could not generate description.";
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            document.getElementById('subtitle').innerText = "Error generating description.";
-        });
-    }
-
-    generateSubtitle();
-
+    generateChartSubtitle(ageGroupLabels, ageGroupCounts, "Farmers by age group", "subtitle");
 
     // Custom DataLabels Bar
     var chartDatalabelsBarColors = getChartColorsArray("custom_datalabels_bar");
