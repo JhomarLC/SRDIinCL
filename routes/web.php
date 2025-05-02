@@ -3,6 +3,8 @@
 use App\Http\Controllers\Admin\ActivityLogsController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AEWSController;
+use App\Http\Controllers\AIController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -21,6 +23,7 @@ Route::get('/', function () {
     return view('auth.login');
 })->middleware('guest');
 
+
 // Route::get('/dashboard', function () {
 //     return view('dashboard');
 // })->middleware(['auth', 'verified'])->name('dashboard');
@@ -31,11 +34,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::post('/generate-subtitle', [AIController::class, 'generateSubtitle']);
 // MAIN
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('index');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // FARMERS PROFILE
     require __DIR__.'/main/farmers-profile.php';

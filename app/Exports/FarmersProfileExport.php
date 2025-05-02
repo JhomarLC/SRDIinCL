@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Models\Participant;
+use App\Models\Province;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithCustomStartCell;
@@ -14,6 +15,8 @@ use Maatwebsite\Excel\Concerns\WithDrawings;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use Maatwebsite\Excel\Concerns\WithMultipleSheets;
+use Maatwebsite\Excel\Concerns\WithTitle;
 
 class FarmersProfileExport implements
     FromCollection,
@@ -22,7 +25,9 @@ class FarmersProfileExport implements
     ShouldAutoSize,
     WithStyles,
     WithEvents,
-    WithDrawings
+    WithDrawings,
+    WithMultipleSheets,
+    WithTitle
 {
     protected ?string $province;
     protected ?string $startDate;
@@ -78,13 +83,13 @@ class FarmersProfileExport implements
             optional($p->emergency_contact)->full_name
                 . ' (' . optional($p->emergency_contact)->contact_number . ')',
             optional($p->training_results)->training_title_main
-                . ' – Gain: ' . optional($p->training_results)->gain_in_knowledge,
+                . ' – Gain in Knowledge: ' . optional($p->training_results)->gain_in_knowledge,
         ];
     }
 
     public function styles(Worksheet $sheet): array
     {
-        return [7 => ['font' => ['bold' => true]]];
+        return [8 => ['font' => ['bold' => true]]];
     }
 
     public function registerEvents(): array
@@ -111,12 +116,12 @@ class FarmersProfileExport implements
                 $sheet
                     ->mergeCells('A2:K2')->setCellValue('A2','Central Experiment Station');
                 $sheet->getStyle('A2')->getFont()->setSize(12);
-                $sheet->getStyle('A2')->getAlignment()->setHorizontal('center');
+                // $sheet->getStyle('A2')->getAlignment()->setHorizontal('center');
 
                 $sheet
                     ->mergeCells('A3:K3')->setCellValue('A3','Maligaya, Science City of Muñoz, 3119 Nueva Ecija');
                 $sheet->getStyle('A3')->getFont()->setSize(12);
-                $sheet->getStyle('A3')->getAlignment()->setHorizontal('center');
+                // $sheet->getStyle('A3')->getAlignment()->setHorizontal('center');
 
                 //
                 // 3) Title & timestamp (rows 5–6)
@@ -124,31 +129,31 @@ class FarmersProfileExport implements
                 $sheet
                     ->mergeCells('A5:K5')->setCellValue('A5','Farmers Profile Report');
                 $sheet->getStyle('A5')->getFont()->setSize(14)->setBold(true);
-                $sheet->getStyle('A5')->getAlignment()->setHorizontal('center');
+                // $sheet->getStyle('A5')->getAlignment()->setHorizontal('center');
 
                 $sheet
                     ->mergeCells('A6:K6')->setCellValue('A6','Report generated at '.now()->format('F d, Y H:i:s'));
-                $sheet->getStyle('A6')->getAlignment()->setHorizontal('center');
+                // $sheet->getStyle('A6')->getAlignment()->setHorizontal('center');
 
                 //
                 // 4) Column headers (row 7)
                 //
                 $cols = [
-                    'A7'=>'Full Name','B7'=>'Phone Number','C7'=>'Gender',
-                    'D7'=>'Civil Status','E7'=>'Address','F7'=>'Food Restrictions',
-                    'G7'=>'Medical Conditions','H7'=>'Trainings Attended',
-                    'I7'=>'Farm Data','J7'=>'Emergency Contact','K7'=>'Training Result',
+                    'A8'=>'Full Name','B8'=>'Phone Number','C8'=>'Gender',
+                    'D8'=>'Civil Status','E8'=>'Address','F8'=>'Food Restrictions',
+                    'G8'=>'Medical Conditions','H8'=>'Trainings Attended',
+                    'I8'=>'Farm Data','J8'=>'Emergency Contact','K8'=>'Training Result',
                 ];
                 foreach ($cols as $cell=>$text) {
                     $sheet->setCellValue($cell,$text);
                 }
-                $sheet->getStyle('A7:K7')->getFont()->setBold(true);
+                $sheet->getStyle('A8:K8')->getFont()->setBold(true);
 
                 //
                 // 5) Conditional formatting from row 8 onward
                 //
                 $max = $sheet->getHighestRow();
-                for ($r=8; $r<=$max; $r++) {
+                for ($r=9; $r<=$max; $r++) {
                     $v = $sheet->getCell("K{$r}")->getValue();
                     if (empty($v) || trim($v)==='-') {
                         $sheet->getStyle("A{$r}:K{$r}")
@@ -167,7 +172,7 @@ class FarmersProfileExport implements
      */
     public function startCell(): string
     {
-        return 'A8';
+        return 'A9';
     }
 
     /**
@@ -182,7 +187,7 @@ class FarmersProfileExport implements
         $drawing->setHeight(100);
 
         // anchor at the middle of A1:K1
-        $drawing->setCoordinates('H1');
+        $drawing->setCoordinates('A1');
         // no horizontal offset so it’s exactly centered
         $drawing->setOffsetX(0);
         // keep your vertical nudge if you like
@@ -190,4 +195,32 @@ class FarmersProfileExport implements
         return [$drawing];
     }
 
+    public function sheets(): array
+    {
+        $sheets = [];
+
+        // First sheet: all data
+        $sheets[] = new FarmersProfileExport();
+
+        // Get unique provinces from the database
+        $provinces = Participant::query()
+            ->select('province_code')
+            ->distinct()
+            ->pluck('province_code');
+
+        // Add a sheet for each province
+        foreach ($provinces as $province) {
+            $sheets[] = new FarmersProfileExport($province);
+        }
+
+        return $sheets;
+    }
+    public function title(): string
+    {
+        if ($this->province) {
+            $provinceName = Province::where('code', $this->province)->value('name');
+            return 'Province - ' . ($provinceName ?? $this->province);
+        }
+        return 'All Farmers';
+    }
 }

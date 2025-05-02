@@ -57,7 +57,7 @@ aria-labelledby="pills-personal-info-tab">
             <!-- Hidden input to store age value -->
             <input type="hidden" name="age" id="age" value="21">
             <!-- Hidden input to store age group -->
-            <input type="hidden" name="age_group" id="age_group" value="18 - 30">
+            <input type="hidden" name="age_group" id="age_group" value="18-30">
 
             <div class="col-sm-3">
                 <label for="gender" class="form-label">Sex <span class="text-danger">*</span></label>

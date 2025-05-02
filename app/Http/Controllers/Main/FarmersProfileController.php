@@ -18,20 +18,44 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\DataTables;
+use Carbon\Carbon;
 
 class FarmersProfileController extends Controller
 {
     public function exportFarmersProfile(Request $request)
     {
-        $province = $request->input('province');
+        $province  = $request->input('province');
         $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
+        $endDate   = $request->input('end_date');
+
+        // start with a base name
+        $filename = 'Farmers_Profile';
+
+        // append province if given
+        if ($province) {
+            // sanitize (no spaces, uppercase)
+            $filename .= '_' . strtoupper(str_replace(' ', '', $province));
+        }
+
+        // append date range if both given
+        if ($startDate && $endDate) {
+            $from = Carbon::parse($startDate)->format('Ymd');
+            $to   = Carbon::parse($endDate)->format('Ymd');
+            $filename .= "_{$from}_to_{$to}";
+        }
+
+        // optional: append a timestamp so repeated downloads don’t collide
+        $filename .= '_' . now()->format('Ymd_His');
+
+        // finally tack on the extension
+        $filename .= '.xlsx';
 
         return Excel::download(
             new FarmersProfileExport($province, $startDate, $endDate),
-            'farmers_profile.xlsx'
+            $filename
         );
     }
+
     public function validateStep(Request $request)
     {
         $step = $request->input('step');

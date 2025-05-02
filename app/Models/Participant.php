@@ -36,6 +36,7 @@ class Participant extends Model
         'education_level',
         'farm_role',
         'rsbsa_number',
+        'status'
     ];
     // In Participants.php model
     public function getFullNameAttribute()

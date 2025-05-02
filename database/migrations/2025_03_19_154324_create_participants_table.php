@@ -70,6 +70,7 @@ return new class extends Migration
                 'Relative of Farm Owner'
             ]);
             $table->string('rsbsa_number')->nullable();
+            $table->enum('status', ['active', 'archived'])->default('active');
             $table->timestamps();
         });
     }
