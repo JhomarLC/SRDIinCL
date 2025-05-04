@@ -56,7 +56,7 @@
 
     var genderLabels = {!! json_encode($genderDistribution->pluck('gender')) !!};
     var genderCounts = {!! json_encode($genderDistribution->pluck('total')) !!};
-    generateChartSubtitle(genderLabels, genderCounts, "Farmers by gender", "gender-subtitle");
+    // generateChartSubtitle(genderLabels, genderCounts, "Farmers by gender", "gender-subtitle");
 
 
     // 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
@@ -100,7 +100,6 @@
 
     var ageGroupLabels = {!! json_encode(collect($ageGroupDistribution)->pluck('age_group')) !!};
     var ageGroupCounts = {!! json_encode(collect($ageGroupDistribution)->pluck('total')) !!};
-    generateChartSubtitle(ageGroupLabels, ageGroupCounts, "Farmers by age group", "subtitle");
 
     // Custom DataLabels Bar
     var chartDatalabelsBarColors = getChartColorsArray("custom_datalabels_bar");
