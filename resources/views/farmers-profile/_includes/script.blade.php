@@ -7,24 +7,51 @@
     var municipalityUser = @json(Auth::user()->isMunicipalAew());
 
     $(document).ready(function () {
-        $("#farmers").DataTable({
+        var table = $("#farmers").DataTable({
             processing: true,
             serverSide: true,
             responsive: true,
-            ajax: "{{ route('farmers-profile.get-index') }}",
+            ajax: {
+                url: "{{ route('farmers-profile.get-index') }}",
+                data: function (d) {
+                    d.date_range = $('#dateRange').val();
+                    d.province = $('#province').val();
+                }
+            },
             columns: [
                 { data: 'full_name', name: 'full_name' },
                 { data: 'phone_number', name: 'phone_number' },
                 { data: 'gender', name: 'gender' },
-                { data: 'civil_status', name: 'civil_status' },
                 { data: 'address', name: 'address' },
+                { data: 'training_date', name: 'training_date' },
                 { data: 'actions', name: 'actions' }
             ]
         });
+        $('#dateRange, #province').on('change', function () {
+            table.ajax.reload();
+        });
+
+        $('#dateRange').on('change', function () {
+            table.ajax.reload();
+        });
+
+        $('#resetFiltersBtn').on('click', function () {
+        // Reset province to "All Province"
+        $('#province').val('').trigger('change');
+
+        // Reset date range
+        $('#dateRange').val('');
+
+        // Reload DataTable
+        table.ajax.reload();
+    });
+
     });
 
     $(document).ready(function () {
-        $('.select2').select2();
+        $('#province').select2({
+            width: '100%'
+        });
 
         function updateCertificateInfo() {
             var total = parseFloat($('#total_no_meetings').val());
@@ -1259,7 +1286,7 @@
 
         function initializeSelect2() {
             $('.select2').select2({
-                placeholder: '-- SELECT YEAR --',
+                // placeholder: '-- SELECT YEAR --',
                 width: '100%'
             });
         }
@@ -1361,4 +1388,123 @@
             });
         }
     });
+
+    /**
+     * flatpickr
+     */
+    var flatpickrExamples = document.querySelectorAll("[data-provider]");
+    Array.from(flatpickrExamples).forEach(function (item) {
+        if (item.getAttribute("data-provider") == "flatpickr") {
+            var dateData = {};
+            var isFlatpickerVal = item.attributes;
+            dateData.disableMobile = "true";
+            if (isFlatpickerVal["data-date-format"])
+                dateData.dateFormat = isFlatpickerVal["data-date-format"].value.toString();
+            if (isFlatpickerVal["data-enable-time"]) {
+                (dateData.enableTime = true),
+                    (dateData.dateFormat = isFlatpickerVal["data-date-format"].value.toString() + " H:i");
+            }
+            if (isFlatpickerVal["data-altFormat"]) {
+                (dateData.altInput = true),
+                    (dateData.altFormat = isFlatpickerVal["data-altFormat"].value.toString());
+            }
+            if (isFlatpickerVal["data-minDate"]) {
+                dateData.minDate = isFlatpickerVal["data-minDate"].value.toString();
+                dateData.dateFormat = isFlatpickerVal["data-date-format"].value.toString();
+            }
+            if (isFlatpickerVal["data-maxDate"]) {
+                dateData.maxDate = isFlatpickerVal["data-maxDate"].value.toString();
+                dateData.dateFormat = isFlatpickerVal["data-date-format"].value.toString();
+            }
+            if (isFlatpickerVal["data-deafult-date"]) {
+                dateData.defaultDate = isFlatpickerVal["data-deafult-date"].value.toString();
+                dateData.dateFormat = isFlatpickerVal["data-date-format"].value.toString();
+            }
+            if (isFlatpickerVal["data-multiple-date"]) {
+                dateData.mode = "multiple";
+                dateData.dateFormat = isFlatpickerVal["data-date-format"].value.toString();
+            }
+            if (isFlatpickerVal["data-range-date"]) {
+                dateData.mode = "range";
+                dateData.dateFormat = isFlatpickerVal["data-date-format"].value.toString();
+            }
+            if (isFlatpickerVal["data-inline-date"]) {
+                (dateData.inline = true),
+                    (dateData.defaultDate = isFlatpickerVal["data-deafult-date"].value.toString());
+                dateData.dateFormat = isFlatpickerVal["data-date-format"].value.toString();
+            }
+            if (isFlatpickerVal["data-disable-date"]) {
+                var dates = [];
+                dates.push(isFlatpickerVal["data-disable-date"].value);
+                dateData.disable = dates.toString().split(",");
+            }
+            if (isFlatpickerVal["data-week-number"]) {
+                var dates = [];
+                dates.push(isFlatpickerVal["data-week-number"].value);
+                dateData.weekNumbers = true
+            }
+            flatpickr(item, dateData);
+        } else if (item.getAttribute("data-provider") == "timepickr") {
+            var timeData = {};
+            var isTimepickerVal = item.attributes;
+            if (isTimepickerVal["data-time-basic"]) {
+                (timeData.enableTime = true),
+                    (timeData.noCalendar = true),
+                    (timeData.dateFormat = "H:i");
+            }
+            if (isTimepickerVal["data-time-hrs"]) {
+                (timeData.enableTime = true),
+                    (timeData.noCalendar = true),
+                    (timeData.dateFormat = "H:i"),
+                    (timeData.time_24hr = true);
+            }
+            if (isTimepickerVal["data-min-time"]) {
+                (timeData.enableTime = true),
+                    (timeData.noCalendar = true),
+                    (timeData.dateFormat = "H:i"),
+                    (timeData.minTime = isTimepickerVal["data-min-time"].value.toString());
+            }
+            if (isTimepickerVal["data-max-time"]) {
+                (timeData.enableTime = true),
+                    (timeData.noCalendar = true),
+                    (timeData.dateFormat = "H:i"),
+                    (timeData.minTime = isTimepickerVal["data-max-time"].value.toString());
+            }
+            if (isTimepickerVal["data-default-time"]) {
+                (timeData.enableTime = true),
+                    (timeData.noCalendar = true),
+                    (timeData.dateFormat = "H:i"),
+                    (timeData.defaultDate = isTimepickerVal["data-default-time"].value.toString());
+            }
+            if (isTimepickerVal["data-time-inline"]) {
+                (timeData.enableTime = true),
+                    (timeData.noCalendar = true),
+                    (timeData.defaultDate = isTimepickerVal["data-time-inline"].value.toString());
+                timeData.inline = true;
+            }
+            flatpickr(item, timeData);
+        }
+    });
+
+    document.getElementById('exportBtn').addEventListener('click', function () {
+        let dateRange = document.getElementById('dateRange').value.trim();
+        let province = document.getElementById('province') ? document.getElementById('province').value : '';
+
+        // Parse date range
+        let startDate = '';
+        let endDate = '';
+        if (dateRange.includes('to')) {
+            let parts = dateRange.split('to');
+            startDate = parts[0].trim();
+            endDate = parts[1].trim();
+        }
+
+        let url = "{{ route('farmers-profile.export') }}" + "?province=" + encodeURIComponent(province)
+            + "&start_date=" + encodeURIComponent(startDate)
+            + "&end_date=" + encodeURIComponent(endDate);
+
+        window.location.href = url;
+    });
+
+
 </script>

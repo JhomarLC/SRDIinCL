@@ -28,6 +28,22 @@ class FarmersProfileController extends Controller
         $startDate = $request->input('start_date');
         $endDate   = $request->input('end_date');
 
+        // Convert start and end date to Y-m-d format if necessary
+        if ($request->start_date && $request->end_date) {
+            try {
+                $startDate = Carbon::createFromFormat('d M, Y', $request->start_date)->startOfDay();
+                $endDate = Carbon::createFromFormat('d M, Y', $request->end_date)->endOfDay();
+
+                // Prevent future dates
+                $now = Carbon::now();
+                if ($endDate->greaterThan($now)) {
+                    $endDate = $now;
+                }
+            } catch (Exception $e) {
+                $startDate = null;
+                $endDate = null;
+            }
+        }
         // start with a base name
         $filename = 'Farmers_Profile';
 
@@ -102,9 +118,50 @@ class FarmersProfileController extends Controller
     }
 
 
-    public function getIndex()
+    public function getIndex(Request $request)
     {
         $query = Participant::query()->latest();
+
+        // Filter by province
+        if (!empty($request->province)) {
+            $query->whereHas('training_results', function ($q) use ($request) {
+                $q->where('ts_province_code', $request->province);
+            });
+        }
+
+        // Filter by date range
+        if ($request->date_range) {
+            $parts = explode('to', $request->date_range);
+
+            $start = isset($parts[0]) ? trim($parts[0]) : null;
+            $end = isset($parts[1]) ? trim($parts[1]) : null;
+
+            // If only one date selected, use it as both start and end
+            if ($start && !$end) {
+                $end = $start;
+            }
+
+            if ($start && $end) {
+                try {
+                    $startDate = Carbon::createFromFormat('d M, Y', $start)->startOfDay();
+                    $endDate = Carbon::createFromFormat('d M, Y', $end)->endOfDay();
+
+                    // Prevent future dates
+                    $now = Carbon::now();
+                    if ($endDate->greaterThan($now)) {
+                        $endDate = $now;
+                    }
+
+                    $query->whereHas('training_results', function ($q) use ($startDate, $endDate) {
+                        $q->whereBetween('training_date_main', [$startDate, $endDate]);
+                    });
+
+                } catch (Exception $e) {
+                    // Skip filtering if parsing fails
+                }
+            }
+        }
+
 
         $user = auth()->user();
 
@@ -130,8 +187,10 @@ class FarmersProfileController extends Controller
                 return $participants->phone_number ?? 'N/A'; // Safely access profile attribute
             })
             ->addColumn('address', function ($participants) {
-
-                return $participants->full_address;
+                return $participants->training_results->full_address;
+            })
+            ->addColumn('training_date', function ($participants) {
+                return $participants->training_results->training_date_main_formatted;
             })
             ->addColumn('actions', function ($participants) {
                 return '

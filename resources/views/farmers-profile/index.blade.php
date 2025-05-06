@@ -9,6 +9,8 @@
 <link href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap.min.css" rel="stylesheet" type="text/css" />
 <link href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css" rel="stylesheet" type="text/css" />
 <meta name="csrf-token" content="{{ csrf_token() }}">
+<!-- select2  -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" type="text/css" />
 @endsection
 @section('content')
 
@@ -24,11 +26,45 @@
 @include('admin-management.components.modal-create')
 @include('admin-management.components.modal-update')
 @include('admin-management.components.status-update')
+<div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between">
+    <div class="flex-grow-1 mb-3 mb-lg-0">
+        <!-- You can optionally add a title or leave this empty -->
+    </div>
+    <form action="javascript:void(0);" class="d-flex flex-wrap gap-3 align-items-end">
+        <div class="d-flex flex-column" style="min-width: 250px;">
+            <label for="province" class="form-label">Filter Province</label>
+            <select class="form-control select2 filter" id="province" name="province_code">
+                <option value="" selected>All Province</option>
+            </select>
+        </div>
+        <div class="d-flex flex-column">
+            <label for="dateRange" class="form-label">Filter Training Date</label>
+            <div class="input-group">
+                <input type="text" name="date_range" id="dateRange"
+                    class="form-control border-0 dash-filter-picker shadow"
+                    data-provider="flatpickr" data-range-date="true"
+                    data-date-format="d M, Y" placeholder="All Dates">
+                <div class="input-group-text bg-primary border-primary text-white">
+                    <i class="ri-calendar-2-line"></i>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex gap-2">
+            <button type="button" id="exportBtn" class="btn btn-success">
+                <i class="ri-file-excel-2-fill"></i> Export
+            </button>
+            <button type="button" id="resetFiltersBtn" class="btn btn-outline-secondary">
+                <i class="ri-refresh-line"></i> Reset
+            </button>
+        </div>
+    </form>
+</div>
 
-<div class="row">
+<div class="row mt-3">
     <div class="col-lg-12">
         <div class="card">
             <div class="card-header d-flex align-items-center">
+
                 <h5 class="card-title mb-0 flex-grow-1">Lists of Farmers Profile</h5>
                  <!-- Export Filter Form -->
                 {{-- <form action="{{ route('farmers-profile.export') }}" method="GET" class="d-flex gap-2">
@@ -40,9 +76,7 @@
                         <i class="ri-file-excel-2-fill"></i> Export
                     </button>
                 </form> --}}
-                <a style="margin-right: 10px" href="{{ route('farmers-profile.export') }}">
-                    <button class="btn btn-success"><i class="ri-file-excel-2-fill"></i> Export</button>
-                </a>
+
                 <a href="{{ route('farmers-profile.create') }}"  class="btn btn-secondary">
                     <i class="ri-user-add-line"></i> New Farmers Profile
                 </a>
@@ -54,8 +88,8 @@
                             <th data-ordering="false">Full Name</th>
                             <th data-ordering="false">Phone Number</th>
                             <th data-ordering="false">Gender</th>
-                            <th data-ordering="false">Civil Status</th>
-                            <th data-ordering="false">Address</th>
+                            <th data-ordering="false">Training Address</th>
+                            <th data-ordering="false">Training Date</th>
                             <th>Action</th>
                         </tr>
                     </thead>
