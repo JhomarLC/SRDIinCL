@@ -74,7 +74,7 @@
     <div class="col-lg-12">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
-                <a style="margin-right: 10px" href="{{ route('speaker-topics.index', $speaker_topic->id) }}" class="btn btn-secondary">
+                <a style="margin-right: 10px" href="{{ route('speaker-topics.index', $speaker->id) }}" class="btn btn-secondary">
                     <i class="ri-arrow-left-fill"></i> Back
                 </a>
                 <div class="mb-2">

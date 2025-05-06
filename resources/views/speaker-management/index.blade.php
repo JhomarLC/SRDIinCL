@@ -31,8 +31,8 @@
         <div class="card">
             <div class="card-header d-flex align-items-center">
                 <h5 class="card-title mb-0 flex-grow-1">Lists of Speakers</h5>
-                <a style="margin-right: 10px" href="{{ route('admin-management.export') }}">
-                    <button class="btn btn-success"><i class="ri-file-excel-2-fill"></i> Export</button>
+                <a style="margin-right: 10px" href="{{ route('speaker-management.exportFull') }}">
+                    <button class="btn btn-success"><i class="ri-file-excel-2-fill"></i> Export Full Speaker Data</button>
                 </a>
                 <button  class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#addnewspeakermodal">
                     <i class="ri-user-add-fill"></i> New Speaker

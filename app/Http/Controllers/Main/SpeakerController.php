@@ -6,9 +6,17 @@ use App\Http\Controllers\Controller;
 use App\Models\Speaker;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
+use App\Exports\SpeakerFullExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SpeakerController extends Controller
 {
+    public function exportFull()
+    {
+        $filename = 'Speaker_Full_Report_' . now()->format('Ymd_His') . '.xlsx';
+        return Excel::download(new SpeakerFullExport, $filename);
+    }
+
     /**
      * Display a listing of the resource.
      */

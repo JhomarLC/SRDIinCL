@@ -88,8 +88,10 @@ class FarmersProfileExport implements
                 ->implode('; '),
             optional($p->emergency_contact)->full_name
                 . ' (' . optional($p->emergency_contact)->contact_number . ')',
-            optional($p->training_results)->training_title_main
-                . ' – Gain in Knowledge: ' . optional($p->training_results)->gain_in_knowledge,
+            optional($p->training_results)->gain_in_knowledge . "%",
+            optional($p->training_results)->full_address,
+            optional($p->training_results)->training_date_main_formatted,
+            optional($p->training_results)->training_title_main,
         ];
     }
 
@@ -156,12 +158,13 @@ class FarmersProfileExport implements
                     'A10'=>'Full Name','B10'=>'Phone Number','C10'=>'Gender',
                     'D10'=>'Civil Status','E10'=>'Address','F10'=>'Food Restrictions',
                     'G10'=>'Medical Conditions','H10'=>'Trainings Attended',
-                    'I10'=>'Farm Data','J10'=>'Emergency Contact','K10'=>'Training Result',
+                    'I10'=>'Farm Data','J10'=>'Emergency Contact','K10'=>'Gain in Knowledge',
+                    'L10'=>'Training Location', 'M10'=>'Training Date', 'N10'=>'Training Name'
                 ];
                 foreach ($cols as $cell=>$text) {
                     $sheet->setCellValue($cell,$text);
                 }
-                $sheet->getStyle('A10:K10')->getFont()->setBold(true);
+                $sheet->getStyle('A10:N10')->getFont()->setBold(true);
 
                 //
                 // 5) Conditional formatting from row 9 onward

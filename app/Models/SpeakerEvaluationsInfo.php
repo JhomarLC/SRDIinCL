@@ -23,12 +23,14 @@ class SpeakerEvaluationsInfo extends Model
         'province_code',
         'primary_sector',
     ];
+
     public function getFullNameAttribute()
     {
         $middleName = $this->middle_name ? ' ' . $this->middle_name : '';
         $suffix = $this->suffix ? ' ' . $this->suffix : '';
-        return "{$this->first_name}{$middleName} {$this->last_name}{$suffix}";
+        return "{$this->first_name} {$middleName} {$this->last_name} {$suffix}";
     }
+
     public function speaker_evaluation()
     {
         return $this->belongsTo(SpeakerEvaluation::class, 'speaker_evaluation_id');
