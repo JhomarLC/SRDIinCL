@@ -81,9 +81,9 @@
                 </a>
                 <h5 class="card-title mb-0 flex-grow-1">Lists of Speaker's Topics</h5>
 
-                <a style="margin-right: 10px" href="{{ route('admin-management.export') }}">
+                {{-- <a style="margin-right: 10px" href="{{ route('admin-management.export') }}">
                     <button class="btn btn-success"><i class="ri-file-excel-2-fill"></i> Export</button>
-                </a>
+                </a> --}}
                 <button  class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#addnewtopicmodal">
                     <i class="ri-chat-new-fill"></i> New Topic
                 </button>

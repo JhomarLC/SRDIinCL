@@ -91,9 +91,9 @@
                 </div>
 
                 <div class="d-flex gap-2 align-items-start">
-                    <a href="{{ route('admin-management.export') }}" class="btn btn-success">
+                    {{-- <a href="{{ route('admin-management.export') }}" class="btn btn-success">
                         <i class="ri-file-excel-2-fill"></i> Export
-                    </a>
+                    </a> --}}
                     <a href="{{ route('speaker-eval.create', [$speaker->id, $speaker_topic->id]) }}" class="btn btn-secondary">
                         <i class="ri-file-add-fill"></i> New Evaluation
                     </a>
