@@ -20,9 +20,10 @@ Route::prefix('speaker-management')->group(function () {
     Route::post('/validate-step', [SpeakerEvaluationController::class, 'validateStep'])->name('speaker-eval.validateStep');
     Route::post('/validate-all', [SpeakerEvaluationController::class, 'validateAllSteps'])->name('speaker-eval.validateAll');
 
-
     // Nested topics under a specific speaker
     Route::prefix('{speaker}/topics')->group(function () {
+        Route::get('/export', [SpeakerTopicController::class, 'exportSpeakerTopics'])->name('speaker-topics.export');
+
         Route::get('/', [SpeakerTopicController::class, 'index'])->name('speaker-topics.index');
         Route::get('/get-index', [SpeakerTopicController::class, 'getIndex'])->name('speaker-topics.get-index');
 
@@ -34,6 +35,8 @@ Route::prefix('speaker-management')->group(function () {
 
         // Nested evaluations under a specific topic
         Route::prefix('{topic}/evaluations')->group(function () {
+            Route::get('/export', [SpeakerEvaluationController::class, 'exportEvaluations'])->name('speaker-eval.export');
+
             Route::get('/', [SpeakerEvaluationController::class, 'index'])->name('speaker-eval.index');
             Route::get('/get-index', [SpeakerEvaluationController::class, 'getIndex'])->name('speaker-eval.get-index');
 

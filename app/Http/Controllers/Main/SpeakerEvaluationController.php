@@ -12,9 +12,20 @@ use DB;
 use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
+use App\Exports\SpeakerTopicEvaluationsExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SpeakerEvaluationController extends Controller
 {
+    public function exportEvaluations($speakerId, $topicId)
+    {
+        $speaker = Speaker::findOrFail($speakerId);
+        $topic = SpeakerTopic::findOrFail($topicId);
+
+        $filename = 'Evaluations_of_' . $speaker->full_name . '_' . now()->format('Ymd_His') . '.xlsx';
+
+        return Excel::download(new SpeakerTopicEvaluationsExport($topicId), $filename);
+    }
     public function validateStep(Request $request)
     {
         $step = $request->input('step');

@@ -69,6 +69,18 @@
     </div>
     <!--end row-->
 </div>
+@php
+    $user = auth()->user();
+    $canAddEvaluation = true;
+
+    if ($user->isAew()) {
+        if ($user->isProvincialAew()) {
+            $canAddEvaluation = $speaker_topic->province_code === $user->profile->province;
+        } elseif ($user->isMunicipalAew()) {
+            $canAddEvaluation = $speaker_topic->municipality_code === $user->profile->municipality;
+        }
+    }
+@endphp
 
 <div class="row">
     <div class="col-lg-12">
@@ -94,9 +106,16 @@
                     {{-- <a href="{{ route('admin-management.export') }}" class="btn btn-success">
                         <i class="ri-file-excel-2-fill"></i> Export
                     </a> --}}
+                    <a style="margin-right: 10px" href="{{ route('speaker-eval.export', [$speaker->id, $speaker_topic->id]) }}">
+                        <button class="btn btn-success">
+                            <i class="ri-file-excel-2-fill"></i> Export Evaluations
+                        </button>
+                    </a>
+                    @if ($canAddEvaluation)
                     <a href="{{ route('speaker-eval.create', [$speaker->id, $speaker_topic->id]) }}" class="btn btn-secondary">
                         <i class="ri-file-add-fill"></i> New Evaluation
                     </a>
+                @endif
                 </div>
             </div>
 

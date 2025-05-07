@@ -80,10 +80,11 @@
                     <i class="ri-arrow-left-fill"></i> Back
                 </a>
                 <h5 class="card-title mb-0 flex-grow-1">Lists of Speaker's Topics</h5>
-
-                {{-- <a style="margin-right: 10px" href="{{ route('admin-management.export') }}">
-                    <button class="btn btn-success"><i class="ri-file-excel-2-fill"></i> Export</button>
-                </a> --}}
+                <a style="margin-right: 10px" href="{{ route('speaker-topics.export', $speaker->id) }}">
+                    <button class="btn btn-success">
+                        <i class="ri-file-excel-2-fill"></i> Export Speaker Topics
+                    </button>
+                </a>
                 <button  class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#addnewtopicmodal">
                     <i class="ri-chat-new-fill"></i> New Topic
                 </button>

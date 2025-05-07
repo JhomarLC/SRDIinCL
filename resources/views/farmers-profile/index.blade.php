@@ -64,19 +64,7 @@
     <div class="col-lg-12">
         <div class="card">
             <div class="card-header d-flex align-items-center">
-
                 <h5 class="card-title mb-0 flex-grow-1">Lists of Farmers Profile</h5>
-                 <!-- Export Filter Form -->
-                {{-- <form action="{{ route('farmers-profile.export') }}" method="GET" class="d-flex gap-2">
-                    <input type="text" name="province" class="form-control" placeholder="Province Code" value="{{ request('province') }}" style="width: 150px;">
-                    <input type="date" name="start_date" class="form-control" value="{{ request('start_date') }}">
-                    <input type="date" name="end_date" class="form-control" value="{{ request('end_date') }}">
-
-                    <button type="submit" class="btn btn-success">
-                        <i class="ri-file-excel-2-fill"></i> Export
-                    </button>
-                </form> --}}
-
                 <a href="{{ route('farmers-profile.create') }}"  class="btn btn-secondary">
                     <i class="ri-user-add-line"></i> New Farmers Profile
                 </a>

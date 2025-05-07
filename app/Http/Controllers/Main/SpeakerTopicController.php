@@ -2,14 +2,22 @@
 
 namespace App\Http\Controllers\Main;
 
+use App\Exports\SpeakerTopicsExport;
 use App\Http\Controllers\Controller;
 use App\Models\Speaker;
 use App\Models\SpeakerTopic;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\DataTables;
 
 class SpeakerTopicController extends Controller
 {
+    public function exportSpeakerTopics($speakerId)
+    {
+        $speaker = Speaker::findOrFail($speakerId);
+        $filename = 'Topics_of_' . $speaker->full_name . '_' . now()->format('Ymd_His') . '.xlsx';
+        return Excel::download(new SpeakerTopicsExport($speakerId), $filename);
+    }
     /**
      * Display a listing of the resource.
      */
@@ -27,20 +35,31 @@ class SpeakerTopicController extends Controller
         $query = SpeakerTopic::with('speaker')
                     ->where('speaker_id', $speakerId);
 
-        if ($user->isAew()) {
-            if ($user->isProvincialAew()) {
-                // Provincial AEW → only topics within their province
-                $query->where('province_code', $user->profile->province);
-            } elseif ($user->isMunicipalAew()) {
-                // Municipal AEW → only topics within their municipality
-                $query->where('municipality_code', $user->profile->municipality);
-            }
-        }
+        // if ($user->isAew()) {
+        //     if ($user->isProvincialAew()) {
+        //         // Provincial AEW → only topics within their province
+        //         $query->where('province_code', $user->profile->province);
+        //     } elseif ($user->isMunicipalAew()) {
+        //         // Municipal AEW → only topics within their municipality
+        //         $query->where('municipality_code', $user->profile->municipality);
+        //     }
+        // }
 
         $speaker_topics = $query->get();
 
         return DataTables::of($speaker_topics)
-            ->addColumn('actions', function ($topic) use ($speakerId)  {
+            ->addColumn('actions', function ($topic) use ($speakerId, $user)  {
+                  // Determine if the user is allowed to edit this topic
+                $canEdit = true; // default
+
+                if ($user->isAew()) {
+                    if ($user->isProvincialAew()) {
+                        $canEdit = $topic->province_code === $user->profile->province;
+                    } elseif ($user->isMunicipalAew()) {
+                        $canEdit = $topic->municipality_code === $user->profile->municipality;
+                    }
+                }
+
                 $viewButton  = ($topic->status !== 'archived')
                         ? '<a href="' . route('speaker-eval.index', [$speakerId, $topic->id]) . '"
                                 class="btn btn-sm btn-secondary">
@@ -48,7 +67,7 @@ class SpeakerTopicController extends Controller
                             </a>'
                         : '';
 
-                $editButton = '<button class="btn btn-sm btn-success editTopic"
+                $editButton = $canEdit ? '<button class="btn btn-sm btn-success editTopic"
                                     data-id="' . $topic->id . '"
                                     data-topic_discussed="' . $topic->topic_discussed . '"
                                     data-topic_date="' . $topic->topic_date . '"
@@ -56,9 +75,9 @@ class SpeakerTopicController extends Controller
                                     data-municipality="' .$topic->municipality_code . '"
                                     data-barangay="' . $topic->barangay_code . '">
                                     <i class="ri-edit-fill"></i> Update
-                                </button>';
+                                </button>' : '';
 
-                $activateButton = ($topic->status === 'archived')
+                $activateButton = ($canEdit && $topic->status === 'archived')
                     ? '<button class="btn btn-sm btn-secondary status-activate"
                             data-id="' . $topic->id . '">
                             <i class="ri-service-fill"></i>
@@ -66,7 +85,7 @@ class SpeakerTopicController extends Controller
                         </button>'
                     : '';
 
-                $deactivateButton = ($topic->status === 'active')
+                $deactivateButton = ($canEdit && $topic->status === 'active')
                 ? '<button class="btn btn-sm btn-danger status-archive"
                         data-id="' . $topic->id . '">
                         <i class="ri-archive-fill"></i>
