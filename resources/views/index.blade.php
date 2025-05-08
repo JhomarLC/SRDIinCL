@@ -56,6 +56,7 @@
         </div> <!-- end .h-100-->
     </div> <!-- end col -->
 </div>
+
 <div class="row">
     <div class="col-xl-3 col-md-6">
         <div class="card card-animate">
@@ -65,8 +66,6 @@
                         <p class="fw-medium text-muted mb-0">Farmers</p>
                         <h2 class="mt-4 ff-secondary fw-semibold"><span class="counter-value"
                                 data-target="{{ $totalFarmers }}"></span></h2>
-                        <p class="mb-0 text-muted"><span class="badge bg-light text-success mb-0"><i
-                                    class="ri-arrow-up-line align-middle"></i> {{ $farmersGrowthPercentage }} % </span> vs. previous month</p>
                     </div>
                     <div>
                         <div class="avatar-sm flex-shrink-0">
@@ -88,8 +87,6 @@
                         <p class="fw-medium text-muted mb-0">Speaker Evaluations</p>
                         <h2 class="mt-4 ff-secondary fw-semibold"><span class="counter-value"
                                 data-target="791">0</span></h2>
-                        <p class="mb-0 text-muted"><span class="badge bg-light text-danger mb-0"><i
-                                    class="ri-arrow-down-line align-middle"></i> 3.96 % </span> vs. previous month</p>
                     </div>
                     <div>
                         <div class="avatar-sm flex-shrink-0">
@@ -111,8 +108,6 @@
                         <p class="fw-medium text-muted mb-0">Training Evaluations</p>
                         <h2 class="mt-4 ff-secondary fw-semibold"><span class="counter-value"
                                 data-target="1203">0</span></h2>
-                        <p class="mb-0 text-muted"><span class="badge bg-light text-success mb-0"><i
-                                    class="ri-arrow-up-line align-middle"></i> 40.96 % </span> vs. previous month</p>
                     </div>
                     <div>
                         <div class="avatar-sm flex-shrink-0">
@@ -134,8 +129,6 @@
                         <p class="fw-medium text-muted mb-0">Baseline Records</p>
                         <h2 class="mt-4 ff-secondary fw-semibold"><span class="counter-value"
                                 data-target="{{ $totalFarmers * 2 }}"></span></h2>
-                        <p class="mb-0 text-muted"><span class="badge bg-light text-success mb-0"><i
-                                    class="ri-arrow-up-line align-middle"></i> {{ $farmersGrowthPercentage }} % </span> vs. previous month</p>
                     </div>
                     <div>
                         <div class="avatar-sm flex-shrink-0">
@@ -149,53 +142,53 @@
         </div> <!-- end card-->
     </div> <!-- end col-->
 </div> <!-- end row-->
+
 <div class="row">
-    <div class="col-xl-6">
+    <div class="col-xxl-12">
         <div class="card">
-            <div class="card-header d-flex">
-                <h4 class="card-title mb-0 flex-grow-1">Farmers by Sex</h4>
-                <button class="btn btn-sm bg-success text-white" onclick='generateChartSubtitle(genderLabels, genderCounts, "Farmers by gender", "gender-subtitle")'>
-                    <i class="ri-refresh-line"></i> Analyze Data
-                </button>
-            </div><!-- end card header -->
-
             <div class="card-body">
-                <div id="farmers_by_sex"
-                    data-colors='["#c90076", "#2986cc"]'
-                    class="apex-charts" dir="ltr"></div>
-                    <div id="gender-subtitle" class="mt-1"></div>
+                <!-- Nav tabs -->
+                <ul class="nav nav-pills nav-success" role="tablist">
+                    <li class="nav-item waves-effect waves-light">
+                        <a class="nav-link active" data-bs-toggle="tab" href="#farmers-profile" role="tab">
+                            <i class="ri-group-fill"></i> Farmers Profile
+                        </a>
+                    </li>
+                    <li class="nav-item waves-effect waves-light">
+                        <a class="nav-link" data-bs-toggle="tab" href="#speaker-evaluations" role="tab">
+                            <i class="ri-user-voice-fill"></i> Speaker Evaluations
+                        </a>
+                    </li>
+                    <li class="nav-item waves-effect waves-light">
+                        <a class="nav-link" data-bs-toggle="tab" href="#training-evaluations" role="tab">
+                            <i class="ri-booklet-fill"></i> Training Evaluations
+                        </a>
+                    </li>
+                    <li class="nav-item waves-effect waves-light">
+                        <a class="nav-link" data-bs-toggle="tab" href="#baseline-monitoring" role="tab">
+                            <i class="ri-bar-chart-grouped-fill"></i> Baseline Monitoring
+                        </a>
+                    </li>
+                </ul>
+                <!-- Tab panes -->
+
             </div><!-- end card-body -->
         </div><!-- end card -->
+    </div><!--end col-->
+</div>
+<div class="tab-content text-muted">
+    <div class="tab-pane active" id="farmers-profile" role="tabpanel">
+        @include('dashboard-tab.farmers-profile-tab')
     </div>
-    <!-- end col -->
-    <div class="col-xl-6">
-        <div class="card">
-            <div class="card-header d-flex">
-                <h4 class="card-title mb-0 flex-grow-1">Farmers by Age Group</h4>
-                <button class="btn btn-sm bg-success text-white" onclick='generateChartSubtitle(ageGroupLabels, ageGroupCounts, "Farmers by age group", "subtitle")'>
-                    <i class="ri-refresh-line"></i> Analyze Data
-                </button>
-            </div><!-- end card header -->
+    <div class="tab-pane" id="speaker-evaluations" role="tabpanel">
 
-            <div class="card-body">
-                <div id="custom_datalabels_bar" data-colors='["#4CAF50", "#2196F3", "#FFC107", "#FF5722", "#9C27B0"]' class="apex-charts" dir="ltr"></div>
-                <div id="subtitle" class="mt-1"></div>
-            </div><!-- end card-body -->
-        </div><!-- end card -->
     </div>
-    <!-- end col -->
-    {{-- <div class="col-lg-6">
-        <div class="card">
-            <div class="card-header">
-                <h4 class="card-title mb-0">PH Vector Map</h4>
-            </div><!-- end card header -->
+    <div class="tab-pane" id="training-evaluations" role="tabpanel">
 
-            <div class="card-body">
-                <div id="map" style="height: 350px"></div>
-            </div><!-- end card-body -->
-        </div><!-- end card -->
-    </div> --}}
-    <!-- end col -->
+    </div>
+    <div class="tab-pane" id="baseline-monitoring" role="tabpanel">
+
+    </div>
 </div>
 @endsection
 

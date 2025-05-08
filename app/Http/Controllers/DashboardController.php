@@ -41,14 +41,20 @@ class DashboardController extends Controller
         // 📌 Total Farmers Overall
         $totalFarmers = $participantsQuery->count();
 
-        // Farmers by province
-        // $farmersByProvince = $participantsQuery->select('province_code', DB::raw('COUNT(*) as total'))
-        //     ->groupBy('province_code')
-        //     ->get();
-
         $genderDistribution = (clone $participantsQuery)
-            ->select(DB::raw("LOWER(gender) as gender"), DB::raw('COUNT(*) as total'))
-            ->groupBy(DB::raw("LOWER(gender)"))
+            ->select(
+                DB::raw("CASE
+                            WHEN LOWER(gender) = 'male' THEN 'Men'
+                            WHEN LOWER(gender) = 'female' THEN 'Women'
+                            ELSE 'Other'
+                        END as gender"),
+                DB::raw('COUNT(*) as total')
+            )
+            ->groupBy(DB::raw("CASE
+                            WHEN LOWER(gender) = 'male' THEN 'Men'
+                            WHEN LOWER(gender) = 'female' THEN 'Women'
+                            ELSE 'Other'
+                        END"))
             ->get();
 
         // Age Group distribution

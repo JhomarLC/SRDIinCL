@@ -112,10 +112,10 @@
                         </button>
                     </a>
                     @if ($canAddEvaluation)
-                    <a href="{{ route('speaker-eval.create', [$speaker->id, $speaker_topic->id]) }}" class="btn btn-secondary">
-                        <i class="ri-file-add-fill"></i> New Evaluation
-                    </a>
-                @endif
+                        <a href="{{ route('speaker-eval.create', [$speaker->id, $speaker_topic->id]) }}" class="btn btn-secondary">
+                            <i class="ri-file-add-fill"></i> New Evaluation
+                        </a>
+                    @endif
                 </div>
             </div>
 
