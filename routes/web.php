@@ -45,6 +45,8 @@ Route::middleware(['auth'])->group(function () {
     require __DIR__.'/main/speaker-management.php';
     // TRANING EVAL
     require __DIR__.'/main/training-evaluation-management.php';
+    // BASELINE MONITORING
+    require __DIR__.'/main/baseline-monitoring.php';
 
     // ADMIN MANAGEMENT — Only Admins allowed
     Route::middleware('role:admin')->group(function () {

@@ -35,7 +35,8 @@
             <ul class="navbar-nav" id="navbar-nav">
                 <li class="menu-title"><span>Analytics</span></li>
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="dashboard">
+                    <a class="nav-link menu-link {{ request()->is('dashboard*') ? 'active' : '' }}"
+                        href="{{ route('dashboard') }}">
                         <i class="ri-dashboard-2-fill"></i> <span>Dashboard</span>
                     </a>
                 </li>
@@ -63,7 +64,8 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="dashboard">
+                    <a class="nav-link menu-link {{ request()->is('baseline-monitoring*') ? 'active' : '' }}"
+                        href="{{ route('baseline-monitoring.index') }}">
                         <i class="ri-bar-chart-grouped-fill"></i>
                         <span>Baseline Monitoring</span>
                     </a>
