@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Main;
 
+use App\Helpers\SeasonHelper;
 use App\Models\Participant;
+use App\Models\Variety;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Yajra\DataTables\DataTables;
@@ -62,13 +64,9 @@ class BaselineMonitoringController extends Controller
                                 ->first();
 
                 if ($wetRecord && $wetRecord->total_income !== null && $wetRecord->total_cost !== null) {
-                    return '<button class="btn btn-sm btn-success">
-                                <i class="ri-eye-fill"></i> View Baseline
-                            </button>';
+                    return '<span class="badge bg-success">Baseline Complete</span>';
                 } else {
-                    return '<button class="btn btn-sm btn-warning">
-                                <i class="ri-add-fill"></i> Add Baseline
-                            </button>';
+                    return '<span class="badge bg-danger">No Baseline</span>';
                 }
             })
             ->addColumn('dry_season', function ($participants) {
@@ -77,20 +75,15 @@ class BaselineMonitoringController extends Controller
                                 ->first();
 
                 if ($dryRecord && $dryRecord->total_income !== null && $dryRecord->total_cost !== null) {
-                    return '<button class="btn btn-sm btn-success">
-                                <i class="ri-eye-fill"></i> View Baseline
-                            </button>';
+                    return '<span class="badge bg-success">Baseline Complete</span>';
                 } else {
-                    return '<button class="btn btn-sm btn-warning">
-                                <i class="ri-add-fill"></i> Add Baseline
-                            </button>';
+                    return '<span class="badge bg-danger">No Baseline</span>';
                 }
             })
-
             ->addColumn('actions', function ($participants) {
                 return '
-                <a href="' . route('farmers-profile.show', $participants->id) . '" class="btn btn-sm btn-secondary editAdmin">
-                    <i class="ri-eye-fill"></i> View Both
+                <a href="' . route('baseline-monitoring.show', $participants->id) . '" class="btn btn-sm btn-secondary editAdmin">
+                    <i class="ri-eye-fill"></i> View Baseline
                 </a>
 
                 <button class="btn btn-sm btn-danger status-deactivate">
@@ -104,9 +97,25 @@ class BaselineMonitoringController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(string $id, $season)
     {
-        //
+        $participant = Participant::with('farming_data')->findOrFail($id);
+        $normalizedSeason = ucwords(str_replace('-', ' ', $season));
+        // Filter farming_data by the given season
+        $filteredFarmingData = $participant->farming_data->where('season', $normalizedSeason);
+
+        $varieties = Variety::orderBy('name')->get();
+
+        // Generate year options using your helper
+        $yearOptions = SeasonHelper::yearOptions(2021, $season);
+
+        return view('baseline-monitoring.create', compact([
+            'participant',
+            'season',
+            'yearOptions',
+            'varieties',
+            'filteredFarmingData',
+        ]));
     }
 
     /**
@@ -122,7 +131,17 @@ class BaselineMonitoringController extends Controller
      */
     public function show(string $id)
     {
-        //
+         $participant = Participant::with([
+            'training_results' => function ($query) {
+                $query->latest();
+            },
+            'food_restrictions',
+            'medical_conditions',
+            'emergency_contact',
+            'farming_data',
+        ])->findOrFail($id);
+
+        return view('baseline-monitoring.show', compact(['participant']));
     }
 
     /**

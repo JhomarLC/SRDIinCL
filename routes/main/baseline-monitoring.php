@@ -15,5 +15,13 @@ Route::get('/baseline-monitoring/get-index', [BaselineMonitoringController::clas
 // Route::post('/validate-step', [FarmersProfileController::class, 'validateStep'])->name('participant.validateStep');
 // Route::post('/validate-all', [FarmersProfileController::class, 'validateAllSteps'])->name('participant.validateAll');
 
-Route::resource('baseline-monitoring', BaselineMonitoringController::class);
+// 1) Register a resource but exclude the default `create` (and you can exclude any others)
+//    This will give you index, store, show, edit, update, destroy—but no create.
+Route::resource('baseline-monitoring', BaselineMonitoringController::class)
+     ->except(['create']);
 
+// 2) Define your custom `create` route *after* (or before) the resource.
+//    Here we’re accepting 2 parameters, but you can adjust as needed.
+Route::get('baseline-monitoring/create/{id}/{season}',
+    [BaselineMonitoringController::class, 'create'])
+    ->name('baseline-monitoring.create');
