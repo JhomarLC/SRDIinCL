@@ -548,11 +548,10 @@
 
         // Remove application block
         $(document).on('click', '.remove-application-btn', function () {
-            if ($('.fertilizer-application-block').length === 1) {
-                alert("At least one application is required.");
-                return;
-            }
-
+            // if ($('.fertilizer-application-block').length === 1) {
+            //     // alert("At least one application is required.");
+            //     return;
+            // }
             $(this).closest('.fertilizer-application-block').remove();
             reindexApplicationLabels();
         });
@@ -728,4 +727,138 @@
         $('#water-management-pakyaw').on('change', togglePackageMode);
     });
 
+    let pestAppCounter = 1;
+
+    $(document).ready(function () {
+        // Initialize first static block
+        new Choices(document.getElementById('pesticide-application-selector-1'), {
+            removeItemButton: true
+        });
+
+        new Choices(document.getElementById('others-pesticide-application-1'), {
+            removeItemButton: true
+        });
+
+        initPesticideSelector({
+            selectorId: 'pesticide-application-selector-1',
+            othersInputId: 'others-pesticide-application-1',
+            containerId: 'pesticide-application-container-1',
+            blockPrefix: 'pesticide'
+        });
+
+        // Add Application
+        $('#add-pesticide-application-btn').on('click', function () {
+            pestAppCounter++;
+            const suffixes = ['st', 'nd', 'rd'];
+            const suffix = suffixes[pestAppCounter - 1] || 'th';
+
+            const template = $('#pesticide-application-template').html();
+            const newHtml = template.replace(/{index}/g, pestAppCounter);
+            $('#pesticide-applications-wrapper').append(newHtml);
+
+            $('.pesticide-application-block').last().find('.application-label')
+                .text(`${pestAppCounter}${suffix} Application`);
+
+            new Choices(document.getElementById(`pesticide-application-selector-${pestAppCounter}`), {
+                removeItemButton: true
+            });
+
+            new Choices(document.getElementById(`others-pesticide-application-${pestAppCounter}`), {
+                removeItemButton: true
+            });
+
+            initPesticideSelector({
+                selectorId: `pesticide-application-selector-${pestAppCounter}`,
+                othersInputId: `others-pesticide-application-${pestAppCounter}`,
+                containerId: `pesticide-application-container-${pestAppCounter}`,
+                blockPrefix: 'pesticide'
+            });
+        });
+
+        // Remove Application
+        $(document).on('click', '.remove-application-btn', function () {
+            // if ($('.pesticide-application-block').length === 1) {
+            //     alert("At least one application is required.");
+            //     return;
+            // }
+
+            $(this).closest('.pesticide-application-block').remove();
+            reindexPesticideApplicationLabels();
+        });
+    });
+
+    function reindexPesticideApplicationLabels() {
+        const suffixes = ['st', 'nd', 'rd'];
+        $('.pesticide-application-block').each(function (index) {
+            const suffix = suffixes[index] || 'th';
+            $(this).find('.application-label').text(`${index + 1}${suffix} Application`);
+        });
+    }
+
+    $(document).ready(function () {
+        const mechanicalBlock = $('#mechanical-block');
+        const manualFields = $('#manual-fields');
+        const packageCheckbox = $('#manual-package-checkbox');
+        const packageTotal = $('#manual-package-total-cost');
+
+        // Initial view
+        updateHarvestView();
+
+        // Change harvesting type
+        $('.harvesting-type').on('change', updateHarvestView);
+
+        // Toggle package total
+        packageCheckbox.on('change', function () {
+            if ($(this).is(':checked')) {
+                manualFields.hide();
+                packageTotal.show();
+            } else {
+                manualFields.show();
+                packageTotal.hide();
+            }
+        });
+
+        // Quantity adjustments
+        $(document).on('click', '.plus', function () {
+            const $input = $(this).siblings('input[type="number"]');
+            $input.val(parseInt($input.val() || 0) + 1).trigger('input');
+        });
+
+        $(document).on('click', '.minus', function () {
+            const $input = $(this).siblings('input[type="number"]');
+            const val = parseInt($input.val() || 0);
+            if (val > 0) {
+                $input.val(val - 1).trigger('input');
+            }
+        });
+
+        // Auto total cost
+        $(document).on('input', '.product-quantity, .unit-cost', function () {
+            const $row = $(this).closest('.row');
+            const qty = parseFloat($row.find('.product-quantity').val()) || 0;
+            const unit = parseFloat($row.find('.unit-cost').val()) || 0;
+            $row.find('.total-cost').val((qty * unit).toFixed(2));
+        });
+
+        function updateHarvestView() {
+            const type = $('input[name="harvesting-type"]:checked').val();
+
+            if (type === 'Mechanical') {
+                $('#mechanical-block').show();
+                $('#manual-fields').hide();
+                $('#manual-package-checkbox-container').hide();
+                $('#manual-package-total-cost').hide();
+                $('#manual-package-checkbox').prop('checked', false);
+            } else {
+                $('#mechanical-block').hide();
+                $('#manual-fields').show();
+                $('#manual-package-checkbox-container').show();
+            }
+        }
+    });
+
+// $(document).ready(function () {
+//     updateHarvestView(); // initial
+//     $('.harvesting-type').on('change', updateHarvestView);
+// });
 </script>

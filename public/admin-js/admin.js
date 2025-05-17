@@ -260,3 +260,74 @@ function initFertilizerSelector({
     // Initial trigger
     $selector.trigger(`${blockPrefix}-choices-updated`);
 }
+
+// Init Selector Logic
+function initPesticideSelector({ selectorId, othersInputId, containerId, blockPrefix = 'pesticide' }) {
+    const $selector = $(`#${selectorId}`);
+    const $othersInput = $(`#${othersInputId}`);
+    const $container = $(`#${containerId}`);
+    let otherCounter = 0;
+
+    const observer = new MutationObserver(() => {
+        $selector.trigger(`${blockPrefix}-choices-updated`);
+    });
+    const node = document.getElementById(selectorId);
+    if (node) observer.observe(node, { attributes: true, childList: true, subtree: true });
+
+    document.addEventListener('removeItem', function (event) {
+        if (event.detail?.value && event.target.id === othersInputId) {
+            const removedValue = event.detail.value.trim().toLowerCase();
+            $container.find(`.${blockPrefix}-block`).filter(function () {
+                const name = $(this).data(`${blockPrefix}-name`)?.toString().toLowerCase();
+                return name === removedValue;
+            }).remove();
+            reindexBlocks();
+        }
+    });
+
+    $(document).on(`${blockPrefix}-choices-updated`, `#${selectorId}`, function () {
+        $container.find(`.${blockPrefix}-block`).filter(function () {
+            return !$(this).data(`${blockPrefix}-id`)?.toString().startsWith('other_');
+        }).remove();
+
+        $selector.find('option:selected').each(function () {
+            const id = $(this).val();
+            const name = $(this).text();
+
+            const exists = $container.find(`.${blockPrefix}-block`).filter(function () {
+                return $(this).data(`${blockPrefix}-id`) === id;
+            }).length > 0;
+
+            if (!exists) createBlock(id, name);
+        });
+
+        reindexBlocks();
+    });
+
+    $othersInput.on('change', function () {
+        const val = $(this).val().trim();
+        if (!val) return;
+
+        const id = `other_${++otherCounter}`;
+        const name = val;
+        createBlock(id, name);
+        $(this).val('');
+        reindexBlocks();
+    });
+
+    function createBlock(id, name) {
+        const block = `
+            <div class="${blockPrefix}-block border rounded p-3 mb-3" data-${blockPrefix}-id="${id}" data-${blockPrefix}-name="${name}">
+                <label class="form-label"><strong>${name}</strong>: Input Brand Name</label>
+                <input type="text" name="brand_name_${id}" class="form-control" placeholder="Enter Brand Name">
+            </div>
+        `;
+        $container.append(block);
+    }
+
+    function reindexBlocks() {
+        // Optional: numbering or other logic
+    }
+
+    $selector.trigger(`${blockPrefix}-choices-updated`);
+}
