@@ -603,4 +603,129 @@
         });
     });
 
+    $(document).ready(function () {
+        let irrigationCount = 1;
+
+        function toggleMainIrrigationType() {
+            const selected = $('input[name="water-management-type"]:checked').val();
+            if (selected === 'supplementary') {
+                $('#water-management-regular-fields').show();
+                $('#water-management-nia-total-cost').hide();
+                togglePackageMode();
+            } else {
+                $('#water-management-regular-fields').hide();
+                $('#water-management-nia-total-cost').show();
+            }
+        }
+
+        function togglePackageMode() {
+            if ($('#water-management-pakyaw').is(':checked')) {
+                $('#water-management-pakyaw-total-cost').show();
+                $('#irrigation-blocks-container').hide();
+            } else {
+                $('#water-management-pakyaw-total-cost').hide();
+                $('#irrigation-blocks-container').show();
+                $('.irrigation-block').each(function () {
+                    toggleIrrigationBlockType($(this));
+                });
+            }
+        }
+
+        function toggleIrrigationBlockType($block) {
+            const selected = $block.find('input[type="radio"]:checked').val();
+            if (selected === 'is_suplementary_both') {
+                $block.find('.supplementary-irrigation-details').show();
+                $block.find('.nia-total-cost-irrigation').hide();
+            } else {
+                $block.find('.supplementary-irrigation-details').hide();
+                $block.find('.nia-total-cost-irrigation').show();
+            }
+        }
+
+        function ordinalSuffix(i) {
+            const j = i % 10, k = i % 100;
+            if (j === 1 && k !== 11) return i + "st";
+            if (j === 2 && k !== 12) return i + "nd";
+            if (j === 3 && k !== 13) return i + "rd";
+            return i + "th";
+        }
+
+        $(document).on('click', '.remove-irrigation', function () {
+            $(this).closest('.irrigation-block').remove();
+        });
+
+        $('.add-irrigation').on('click', function () {
+            irrigationCount++;
+
+            const $firstBlock = $('.irrigation-block').first();
+            const $newBlock = $firstBlock.clone();
+
+            // Add remove button
+            $newBlock.find('.irrigation-column').after(`
+                <button type="button" class="btn btn-sm btn-danger ms-3 remove-irrigation">
+                    <i class="ri-delete-bin-line"></i> Remove
+                </button>
+            `);
+
+            // Reset values
+            $newBlock.find('input[type="number"]').each(function () {
+                const isDisabled = $(this).prop('disabled');
+                if (!isDisabled) {
+                    if ($(this).hasClass('product-quantity')) {
+                        $(this).val(0);
+                    } else {
+                        $(this).val('');
+                    }
+                } else {
+                    $(this).val('0.00');
+                }
+            });
+
+            // Unique radio group
+            const groupName = `is_both_type_${irrigationCount}`;
+            $newBlock.find('input[type="radio"]').each(function (index) {
+                const $radio = $(this);
+                const val = $radio.val();
+
+                // Create unique id
+                const newId = `${val}_${irrigationCount}`;
+                $radio.attr('name', groupName);
+                $radio.attr('id', newId);
+
+                // Also update label "for"
+                $radio.next('label').attr('for', newId);
+
+                // Default to supplementary
+                $radio.prop('checked', val === 'is_suplementary_both');
+            });
+            // Update title
+            $newBlock.find('.irrigation-title').text(`${ordinalSuffix(irrigationCount)} Irrigation`);
+
+            // Reset state
+            $newBlock.find('.nia-total-cost-irrigation').hide();
+            $newBlock.find('.supplementary-irrigation-details').show();
+
+            // Remove IDs to prevent conflicts
+            $newBlock.removeAttr('id');
+
+            // Append to container
+            $('#irrigation-blocks-container').append($newBlock);
+        });
+
+        // Delegate radio change to handle cloned elements
+        $(document).on('change', 'input[type="radio"][name^="is_both_type"]', function () {
+            const $block = $(this).closest('.irrigation-block');
+            toggleIrrigationBlockType($block);
+        });
+
+        // Initialize
+        $('#water-management-supplementary').prop('checked', true);
+        toggleMainIrrigationType();
+        togglePackageMode();
+        toggleIrrigationBlockType($('.irrigation-block').first());
+
+        $('input[name="water-management-type"]').on('change', toggleMainIrrigationType);
+        $('#water-management-pakyaw').on('change', togglePackageMode);
+    });
+
 </script>
