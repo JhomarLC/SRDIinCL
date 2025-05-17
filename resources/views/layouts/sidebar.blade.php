@@ -50,6 +50,13 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link menu-link {{ request()->is('baseline-monitoring*') ? 'active' : '' }}"
+                        href="{{ route('baseline-monitoring.index') }}">
+                        <i class="ri-bar-chart-grouped-fill"></i>
+                        <span>Baseline Monitoring</span>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link menu-link {{ request()->is('speaker-management*') ? 'active' : '' }}"
                         href="{{ route('speaker-management.index') }}">
                         <i class="ri-user-voice-fill"></i>
@@ -61,13 +68,6 @@
                         href="{{ route('training-event-management.index') }}">
                         <i class="ri-booklet-fill"></i>
                         <span>Training Evaluation</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link menu-link {{ request()->is('baseline-monitoring*') ? 'active' : '' }}"
-                        href="{{ route('baseline-monitoring.index') }}">
-                        <i class="ri-bar-chart-grouped-fill"></i>
-                        <span>Baseline Monitoring</span>
                     </a>
                 </li>
                {{-- Only Admin sees Account Management --}}
