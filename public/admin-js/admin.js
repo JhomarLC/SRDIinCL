@@ -42,6 +42,7 @@ function hideLoader() {
         $(this).addClass('d-none');
     });
 }
+
 addEventListener("DOMContentLoaded", (event) => {
     /**
      * Choices Select plugin
@@ -93,3 +94,169 @@ addEventListener("DOMContentLoaded", (event) => {
     });
 
 });
+
+function initFertilizerSelector({
+    selectorId,
+    othersInputId,
+    containerId,
+    blockPrefix = 'fertilizer'
+}) {
+    const $selector = $(`#${selectorId}`);
+    const $othersInput = $(`#${othersInputId}`);
+    const $container = $(`#${containerId}`);
+    let otherCounter = 0;
+
+    const observer = new MutationObserver(() => {
+        $selector.trigger(`${blockPrefix}-choices-updated`);
+    });
+
+    const node = document.getElementById(selectorId);
+    if (node) {
+        observer.observe(node, { attributes: true, childList: true, subtree: true });
+    }
+
+    // Listen for removeItem events for others
+    document.addEventListener('removeItem', function (event) {
+        if (event.detail?.value && event.target.id === othersInputId) {
+            const removedValue = event.detail.value.trim().toLowerCase();
+            $container.find(`.${blockPrefix}-block`).filter(function () {
+                const id = $(this).data(`${blockPrefix}-id`);
+                const name = $(this).data(`${blockPrefix}-name`)?.toString().toLowerCase();
+                return id?.toString().startsWith('other_') && name === removedValue;
+            }).remove();
+
+            reindexBlocks();
+        }
+    });
+
+    // Handle selection changes
+    $(document).on(`${blockPrefix}-choices-updated`, `#${selectorId}`, function () {
+        // Remove non-other blocks
+        $container.find(`.${blockPrefix}-block`).filter(function () {
+            return !$(this).data(`${blockPrefix}-id`)?.toString().startsWith('other_');
+        }).remove();
+
+        $selector.find('option:selected').each(function () {
+            const id = $(this).val();
+            const name = $(this).text();
+
+            const exists = $container.find(`.${blockPrefix}-block`).filter(function () {
+                return $(this).data(`${blockPrefix}-id`) === id;
+            }).length > 0;
+
+            if (!exists) {
+                createBlock(id, name, false);
+            }
+        });
+
+        reindexBlocks();
+    });
+
+    // Handle "Others" input
+    $othersInput.on('change', function () {
+        const val = $(this).val().trim();
+        if (!val) return;
+
+        const id = `other_${++otherCounter}`;
+        const name = val;
+        createBlock(id, name, true);
+        $(this).val('');
+        reindexBlocks();
+    });
+
+    // Create block
+    function createBlock(id, name, isOther) {
+        const block = `
+            <div class="border rounded p-3 mb-3 ${blockPrefix}-block" data-${blockPrefix}-id="${id}" data-${blockPrefix}-name="${name}">
+                <h6 class="${blockPrefix}-label"></h6>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="${blockPrefix}_type_${id}" id="${blockPrefix}_free_${id}" value="free">
+                    <label class="form-check-label" for="${blockPrefix}_free_${id}">Free</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="${blockPrefix}_type_${id}" id="${blockPrefix}_purchase_${id}" value="purchase" checked>
+                    <label class="form-check-label" for="${blockPrefix}_purchase_${id}">Purchase</label>
+                </div>
+                <div class="row mt-2 bg-light p-3 rounded">
+                    <div class="col-4">
+                        <label class="form-label text-muted">Qty</label>
+                        <div class="input-step step-primary full-width d-flex">
+                            <button type="button" class="minus">–</button>
+                            <input type="number" class="form-control text-center quantity" value="0" min="0" step="1">
+                            <button type="button" class="plus">+</button>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label text-muted">Unit Cost</label>
+                        <input type="number" name="unit_cost_${id}" class="form-control unit-cost" placeholder="Unit Cost">
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label text-muted">Total Cost</label>
+                        <input type="number" name="total_cost_${id}" class="form-control total-cost" placeholder="0.00" readonly>
+                    </div>
+                </div>
+            </div>
+        `;
+        $container.append(block);
+        bindEvents();
+    }
+
+    // Reindex block labels
+    function reindexBlocks() {
+        const suffixes = ['st', 'nd', 'rd'];
+        $container.find(`.${blockPrefix}-block`).each(function (index) {
+            const label = `${index + 1}${suffixes[index] || 'th'} Fertilizer: ${$(this).data(`${blockPrefix}-name`)}`;
+            $(this).find(`.${blockPrefix}-label`).text(label);
+        });
+    }
+
+    // Bind quantity and cost logic
+    function bindEvents() {
+        $('.minus').off('click').on('click', function () {
+            const $input = $(this).siblings('input.quantity');
+            const val = parseInt($input.val()) || 0;
+            if (val > 0) $input.val(val - 1).trigger('input');
+        });
+
+        $('.plus').off('click').on('click', function () {
+            const $input = $(this).siblings('input.quantity');
+            const val = parseInt($input.val()) || 0;
+            $input.val(val + 1).trigger('input');
+        });
+
+        $('.quantity, .unit-cost').off('input').on('input', function () {
+            const $row = $(this).closest('.row');
+            const qty = parseFloat($row.find('.quantity').val()) || 0;
+            const unit = parseFloat($row.find('.unit-cost').val()) || 0;
+            $row.find('.total-cost').val((qty * unit).toFixed(2));
+        });
+
+        $(`input[type=radio][name^=${blockPrefix}_type_]`).off('change').on('change', function () {
+            const $block = $(this).closest(`.${blockPrefix}-block`);
+            const isFree = $(this).val() === 'free';
+
+            const $qty = $block.find('.quantity');
+            const $unit = $block.find('.unit-cost');
+            const $total = $block.find('.total-cost');
+            const $minus = $block.find('.minus');
+            const $plus = $block.find('.plus');
+
+            if (isFree) {
+                $qty.val(0).prop('disabled', true);
+                $unit.val('').prop('disabled', true);
+                $total.val('').prop('disabled', true);
+                $minus.prop('disabled', true);
+                $plus.prop('disabled', true);
+            } else {
+                $qty.prop('disabled', false);
+                $unit.prop('disabled', false);
+                $total.prop('disabled', false);
+                $minus.prop('disabled', false);
+                $plus.prop('disabled', false);
+            }
+        });
+    }
+
+    // Initial trigger
+    $selector.trigger(`${blockPrefix}-choices-updated`);
+}

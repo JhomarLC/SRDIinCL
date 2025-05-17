@@ -15,32 +15,6 @@ class DashboardController extends Controller
         // Exclude archived participants
         $participantsQuery = Participant::where('status', '!=', 'archived');
 
-         // 📌 Total Farmers Registered This Month (calendar month)
-        $currentMonthStart = now()->startOfMonth();
-        $currentMonthEnd = now(); // up to today
-
-        $totalFarmersThisMonth = Participant::where('status', '!=', 'archived')
-            ->whereBetween('created_at', [$currentMonthStart, $currentMonthEnd])
-            ->count();
-
-        // 📌 Total Farmers Registered Last Month (full last month)
-        $previousMonthStart = now()->subMonthNoOverflow()->startOfMonth();
-        $previousMonthEnd = now()->subMonthNoOverflow()->endOfMonth();
-
-        $totalFarmersPreviousMonth = Participant::where('status', '!=', 'archived')
-            ->whereBetween('created_at', [$previousMonthStart, $previousMonthEnd])
-            ->count();
-
-        // 📌 % growth this month vs last month
-        if ($totalFarmersPreviousMonth > 0) {
-            $farmersGrowthPercentage = (($totalFarmersThisMonth - $totalFarmersPreviousMonth) / $totalFarmersPreviousMonth) * 100;
-        } else {
-            $farmersGrowthPercentage = null;
-        }
-
-        // 📌 Total Farmers Overall
-        $totalFarmers = $participantsQuery->count();
-
         $genderDistribution = (clone $participantsQuery)
             ->select(
                 DB::raw("CASE
@@ -74,61 +48,133 @@ class DashboardController extends Controller
             ];
         }
 
-        // Training attendance over time
-        $trainingAttendance = TrainingResults::whereHas('participant', function ($q) {
-                $q->where('status', '!=', 'archived');
-            })
-            ->select(DB::raw('YEAR(training_date_main) as year'), DB::raw('COUNT(*) as total'))
-            ->groupBy('year')
-            ->orderBy('year')
+        $civilStatusDistribution = (clone $participantsQuery)
+            ->select('civil_status', DB::raw('COUNT(*) as total'))
+            ->groupBy('civil_status')
             ->get();
 
-        // Average gain in knowledge
-        $averageGainInKnowledge = TrainingResults::whereHas('participant', function ($q) {
+        // Averages for training results
+        $trainingAverages = TrainingResults::whereHas('participant', function ($q) {
                 $q->where('status', '!=', 'archived');
             })
-            ->avg('gain_in_knowledge');
+            ->selectRaw('
+                AVG(pre_test_score) as avg_pre_test,
+                AVG(post_test_score) as avg_post_test,
+                AVG(gain_in_knowledge) as avg_gik
+            ')
+            ->first();
 
-        // Farm size distribution (bucketed ranges)
-        $farmSizeBuckets = FarmingData::whereHas('participant', function ($q) {
-                $q->where('status', '!=', 'archived');
-            })
-            ->select(
-                DB::raw("
-                    CASE
-                        WHEN farm_size_hectares < 1 THEN '0-1 ha'
-                        WHEN farm_size_hectares BETWEEN 1 AND 3 THEN '1-3 ha'
-                        WHEN farm_size_hectares BETWEEN 3 AND 5 THEN '3-5 ha'
-                        ELSE '5+ ha'
-                    END as size_range
-                "),
-                DB::raw('COUNT(*) as total')
-            )
-            ->groupBy('size_range')
+        $educationLevelDistribution = (clone $participantsQuery)
+            ->select('education_level', DB::raw('COUNT(*) as total'))
+            ->groupBy('education_level')
             ->get();
 
-        // Average yield per season
-        $yieldPerSeason = FarmingData::whereHas('participant', function ($q) {
-                $q->where('status', '!=', 'archived');
+        $yearsInFarmingBuckets = [
+            '0-2 years' => [0, 2],
+            '3-5 years' => [3, 5],
+            '6-10 years' => [6, 10],
+            '11-20 years' => [11, 20],
+            '21+ years' => [21, null],
+        ];
+
+        $farmingExperienceDistribution = [];
+
+        foreach ($yearsInFarmingBuckets as $label => [$min, $max]) {
+            $query = (clone $participantsQuery)->whereNotNull('years_in_farming');
+
+            if (!is_null($max)) {
+                $query->whereBetween('years_in_farming', [$min, $max]);
+            } else {
+                $query->where('years_in_farming', '>=', $min);
+            }
+
+            $farmingExperienceDistribution[] = [
+                'range' => $label,
+                'total' => $query->count(),
+            ];
+        }
+        // Count of participants with a disability
+        $disabilityCount = (clone $participantsQuery)
+            ->where('is_pwd', true)
+            ->count();
+
+        $farmOwnershipDistributionRaw = (clone $participantsQuery)
+            ->select('farm_role', DB::raw('COUNT(*) as total'))
+            ->groupBy('farm_role')
+            ->pluck('total', 'farm_role')
+            ->toArray();
+
+        $totalFarmOwnership = array_sum($farmOwnershipDistributionRaw);
+
+        $farmOwnershipDistribution = [];
+
+        foreach (['Farm Owner', 'Relative of Farm Owner'] as $role) {
+            $count = $farmOwnershipDistributionRaw[$role] ?? 0;
+            $percentage = $totalFarmOwnership > 0 ? round(($count / $totalFarmOwnership) * 100, 2) : 0;
+
+            $farmOwnershipDistribution[] = [
+                'role' => $role,
+                'total' => $count,
+                'percentage' => $percentage,
+            ];
+        }
+
+        $regionData = (clone $participantsQuery)
+            ->whereNotNull('region_code')
+            ->select('region_code', DB::raw('COUNT(*) as total'))
+            ->groupBy('region_code')
+            ->with('region') // to get region name
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'code' => $item->region_code,
+                    'name' => optional($item->region)->name,
+                    'count' => $item->total,
+                ];
+            });
+
+        $provinceData = (clone $participantsQuery)
+            ->whereNotNull('province_code')
+            ->with('province')
+            ->select('province_code', DB::raw('COUNT(*) as total'))
+            ->groupBy('province_code')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'name' => optional($item->province)->name, // Match with NAME_1 in GeoJSON
+                    'count' => $item->total,
+                ];
+            });
+
+        $provinceChartData = (clone $participantsQuery)
+            ->whereNotNull('province_code')
+            ->with('province')
+            ->select('province_code', DB::raw('COUNT(*) as total'))
+            ->groupBy('province_code')
+            ->get()
+            ->map(function ($item) {
+                return (object)[
+                    'label' => optional($item->province)->name ?? 'Unknown',
+                    'value' => $item->total,
+                ];
             })
-            ->select(
-                'season',
-                DB::raw('AVG(total_yield_caban * weight_per_caban_kg) as average_yield_kg')
-            )
-            ->groupBy('season')
-            ->get();
+            ->sortByDesc('value')
+            ->values(); // Reindex for clean JSON
+
         $openrouterApiKey = config('services.openrouter.api_key');
         return view('index', compact(
-            'totalFarmers',
-            'farmersGrowthPercentage',
-            // 'farmersByProvince',
             'genderDistribution',
             'ageGroupDistribution',
-            'trainingAttendance',
-            'averageGainInKnowledge',
-            'farmSizeBuckets',
-            'yieldPerSeason',
-            'openrouterApiKey'
+            'openrouterApiKey',
+            'trainingAverages',
+            'civilStatusDistribution',
+            'educationLevelDistribution',
+            'farmingExperienceDistribution',
+            'farmOwnershipDistribution',
+            'disabilityCount',
+            'regionData',
+            'provinceData',          // for the map
+            'provinceChartData',     // for the bar chart
         ));
     }
 

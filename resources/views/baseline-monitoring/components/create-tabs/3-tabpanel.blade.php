@@ -131,6 +131,11 @@
                     </select>
                 </div>
             </div>
+            <div class="col-12 mt-2">
+                <label class="form-label text-muted">Others:</label>
+                <input class="form-control" id="others" name="others" data-choices data-choices-removeItem type="text"
+                    placeholder="Enter Medical Condition or Illness" />
+            </div>
             <div id="variety-container" class="mt-3">
             </div>
         </div>

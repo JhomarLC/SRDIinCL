@@ -16,85 +16,90 @@
         <hr class="text-muted">
     </div>
     <div class="mt-3">
-         <div id="fertilizer-applications-wrapper">
-            <div class="fertilizer-application-group" data-app-index="1">
-                <label class="form-label mb-0">1st Application</label>
+        <div id="fertilizer-applications-wrapper">
+            <!-- Initial Application Block -->
+            <div class="card profile-project-card shadow-none profile-project-primary fertilizer-application-block mt-4">
+                <div class="card-body">
+                    <h4>1st Application</h4>
+                    <div>
+                        <!-- Fertilizer Selection -->
+                        <div class="row g-3">
+                            <div class="col-sm-12">
+                                <label class="form-label">Select Fertilizer</label>
+                                <select class="form-control" id="fertilizer-application-selector-1" name="fertilizer-application[]" multiple data-choices data-choices-removeItem>
+                                    <option value="Complete (14-14-14-24S)">Complete (14-14-14-24S)</option>
+                                    <option value="Ammonium Phosphate (16-20-0)">Ammonium Phosphate (16-20-0)</option>
+                                    <option value="Ammonium Sulphate (21-0-0-24S)">Ammonium Sulphate (21-0-0-24S)</option>
+                                    <option value="Muriate of Potash (0-0-60)">Muriate of Potash (0-0-60)</option>
+                                    <option value="Urea (46-0-0)">Urea (46-0-0)</option>
+                                </select>
+                            </div>
+                        </div>
 
-                <div class="row g-3">
-                    <div class="col-sm-12">
-                        <label for="yearTrainingConducted" class="form-label">Select Fertilizer</label>
-                        <select class="form-control" id="fertilizer-application-selector"
-                            name="fertilizer-application[]"
-                            data-choices
-                            data-choices-removeItem
-                            multiple>
-                            <option value="Complete (14-14-14-24S)">Complete (14-14-14-24S)</option>
-                            <option value="Ammonium Phosphate (16-20-0)">Ammonium Phosphate (16-20-0)</option>
-                            <option value="Ammonium Sulphate (21-0-0-24S)">Ammonium Sulphate (21-0-0-24S)</option>
-                            <option value="Muriate of Potash (0-0-60)">Muriate of Potash (0-0-60)</option>
-                            <option value="Urea (46-0-0)">Urea (46-0-0)</option>
-                        </select>
+                        <div class="col-12 mt-2">
+                            <label class="form-label text-muted">Others:</label>
+                            <input class="form-control" id="others-fertilizer-application-1" name="others-fertilizer-application" data-choices data-choices-removeItem type="text" />
+                        </div>
+                        <div id="fertilizer-application-container-1" class="mt-3"></div>
                     </div>
-                </div>
-                <div id="fertilizer-application-container" class="mt-3"></div>
-            </div>
-            <!-- Regular Inputs -->
-        <div id="seedbed-fertilization-regular-fields">
-            <div class="block">
-                <div class="row g-3">
-                    <div class="col-12">
-                        <label class="form-label">Labor: Fertilizer application</label>
-                    </div>
-                </div>
-                <div class="row p-3 mb-3 rounded bg-light">
-                    <div class="col-4">
-                        <label class="form-label text-muted">Qty</label>
-                        <div class="input-step step-primary full-width d-flex">
-                            <button type="button" class="minus">–</button>
-                            <input type="number" class="product-quantity form-control text-center quantity" value="0" min="0" step="1">
-                            <button type="button" class="plus">+</button>
+
+                    <!-- Labor Section -->
+                    <div class="block mt-3">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label">Labor: Fertilizer application</label>
+                            </div>
+                        </div>
+                        <div class="row p-3 mb-3 rounded bg-light">
+                            <div class="col-4">
+                                <label class="form-label text-muted">Qty</label>
+                                <div class="input-step step-primary full-width d-flex">
+                                    <button type="button" class="minus">–</button>
+                                    <input type="number" class="form-control quantity text-center" value="0" min="0" step="1">
+                                    <button type="button" class="plus">+</button>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <label class="form-label text-muted">Unit Cost</label>
+                                <input type="number" class="form-control unit-cost" placeholder="Unit Cost" />
+                            </div>
+                            <div class="col-4">
+                                <label class="form-label text-muted">Total Cost</label>
+                                <input type="number" class="form-control total-cost" placeholder="Total Cost" disabled />
+                            </div>
                         </div>
                     </div>
-                    <div class="col-4">
-                        <label class="form-label text-muted">Unit Cost</label>
-                        <input type="number" class="form-control unit-cost" placeholder="Unit Cost" />
-                    </div>
-                    <div class="col-4">
-                        <label class="form-label text-muted">Total Cost</label>
-                        <input type="number" class="form-control total-cost" placeholder="Total Cost" disabled/>
-                    </div>
-                </div>
-            </div>
-            <hr class="text-muted">
 
-            <div class="block">
-                <div class="row g-3">
-                    <div class="col-12">
-                        <label class="form-label">Meals and Snacks</label>
-                    </div>
-                </div>
-                <div class="row p-3 mb-3 rounded bg-light">
-                    <div class="col-4">
-                        <label class="form-label text-muted">Qty</label>
-                        <div class="input-step step-primary full-width d-flex">
-                            <button type="button" class="minus">–</button>
-                            <input type="number" class="product-quantity form-control text-center quantity" value="0" min="0" step="1">
-                            <button type="button" class="plus">+</button>
+                    <!-- Meals and Snacks -->
+                    <div class="block">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label">Meals and Snacks</label>
+                            </div>
+                        </div>
+                        <div class="row p-3 mb-3 rounded bg-light">
+                            <div class="col-4">
+                                <label class="form-label text-muted">Qty</label>
+                                <div class="input-step step-primary full-width d-flex">
+                                    <button type="button" class="minus">–</button>
+                                    <input type="number" class="form-control quantity text-center" value="0" min="0" step="1">
+                                    <button type="button" class="plus">+</button>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <label class="form-label text-muted">Unit Cost</label>
+                                <input type="number" class="form-control unit-cost" placeholder="Unit Cost" />
+                            </div>
+                            <div class="col-4">
+                                <label class="form-label text-muted">Total Cost</label>
+                                <input type="number" class="form-control total-cost" placeholder="Total Cost" disabled />
+                            </div>
                         </div>
                     </div>
-                    <div class="col-4">
-                        <label class="form-label text-muted">Unit Cost</label>
-                        <input type="number" class="form-control unit-cost" placeholder="Unit Cost" />
-                    </div>
-                    <div class="col-4">
-                        <label class="form-label text-muted">Total Cost</label>
-                        <input type="number" class="form-control total-cost" placeholder="Total Cost" disabled/>
-                    </div>
                 </div>
             </div>
-            <hr class="text-muted">
         </div>
-        </div>
+
         <div class="d-flex align-items-start gap-3 mt-4">
             <button type="button" class="btn btn-light btn-label previestab" data-previous="v-pills-dry-season-info-tab">
                 <i class="ri-arrow-left-line label-icon align-middle fs-16 me-2"></i> Previous
@@ -104,6 +109,95 @@
             </button>
         </div>
     </div>
+
+    <!-- Template for Cloning -->
+    <template id="fertilizer-application-template">
+        <div class="card profile-project-card shadow-none profile-project-primary fertilizer-application-block mt-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="application-label">Application</h4>
+                    <button type="button" class="btn btn-sm btn-danger remove-application-btn">
+                        <i class="ri-delete-bin-6-line"></i> Remove
+                    </button>
+                </div>
+                <div>
+                    <div class="row g-3">
+                        <div class="col-sm-12">
+                            <label class="form-label">Select Fertilizer</label>
+                            <select class="form-control" id="fertilizer-application-selector-{index}" name="fertilizer-application[]" multiple data-choices data-choices-removeItem>
+                                <option value="Complete (14-14-14-24S)">Complete (14-14-14-24S)</option>
+                                <option value="Ammonium Phosphate (16-20-0)">Ammonium Phosphate (16-20-0)</option>
+                                <option value="Ammonium Sulphate (21-0-0-24S)">Ammonium Sulphate (21-0-0-24S)</option>
+                                <option value="Muriate of Potash (0-0-60)">Muriate of Potash (0-0-60)</option>
+                                <option value="Urea (46-0-0)">Urea (46-0-0)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-12 mt-2">
+                        <label class="form-label text-muted">Others:</label>
+                        <input class="form-control" id="others-fertilizer-application-{index}" name="others-fertilizer-application" data-choices data-choices-removeItem type="text" />
+                    </div>
+                    <div id="fertilizer-application-container-{index}" class="mt-3"></div>
+                </div>
+
+                <!-- Labor Section -->
+                <div class="block mt-3">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label">Labor: Fertilizer application</label>
+                        </div>
+                    </div>
+                    <div class="row p-3 mb-3 rounded bg-light">
+                        <div class="col-4">
+                            <label class="form-label text-muted">Qty</label>
+                            <div class="input-step step-primary full-width d-flex">
+                                <button type="button" class="minus">–</button>
+                                <input type="number" class="form-control quantity text-center" value="0" min="0" step="1">
+                                <button type="button" class="plus">+</button>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <label class="form-label text-muted">Unit Cost</label>
+                            <input type="number" class="form-control unit-cost" placeholder="Unit Cost" />
+                        </div>
+                        <div class="col-4">
+                            <label class="form-label text-muted">Total Cost</label>
+                            <input type="number" class="form-control total-cost" placeholder="Total Cost" disabled />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Meals and Snacks -->
+                <div class="block">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label">Meals and Snacks</label>
+                        </div>
+                    </div>
+                    <div class="row p-3 mb-3 rounded bg-light">
+                        <div class="col-4">
+                            <label class="form-label text-muted">Qty</label>
+                            <div class="input-step step-primary full-width d-flex">
+                                <button type="button" class="minus">–</button>
+                                <input type="number" class="form-control quantity text-center" value="0" min="0" step="1">
+                                <button type="button" class="plus">+</button>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <label class="form-label text-muted">Unit Cost</label>
+                            <input type="number" class="form-control unit-cost" placeholder="Unit Cost" />
+                        </div>
+                        <div class="col-4">
+                            <label class="form-label text-muted">Total Cost</label>
+                            <input type="number" class="form-control total-cost" placeholder="Total Cost" disabled />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
 </div>
 <!-- end tab pane-->
 

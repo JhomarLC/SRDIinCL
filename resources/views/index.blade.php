@@ -58,19 +58,19 @@
 </div>
 
 <div class="row">
-    <div class="col-xl-3 col-md-6">
+    <div class="col-xl-4 col-md-6">
         <div class="card card-animate">
             <div class="card-body">
                 <div class="d-flex justify-content-between">
                     <div>
-                        <p class="fw-medium text-muted mb-0">Farmers</p>
+                        <p class="fw-medium text-muted mb-0">AVG. PRE-TEST</p>
                         <h2 class="mt-4 ff-secondary fw-semibold"><span class="counter-value"
-                                data-target="{{ $totalFarmers }}"></span></h2>
+                                data-target="{{ number_format($trainingAverages->avg_pre_test, 2) }}"></span></h2>
                     </div>
                     <div>
                         <div class="avatar-sm flex-shrink-0">
-                            <span class="avatar-title bg-info rounded-circle fs-2">
-                                <i data-feather="users" class="text-dark"></i>
+                            <span class="avatar-title bg-success-subtle rounded-circle fs-2">
+                                <i data-feather="clipboard" class="text-success"></i>
                             </span>
                         </div>
                     </div>
@@ -79,19 +79,19 @@
         </div> <!-- end card-->
     </div> <!-- end col-->
 
-    <div class="col-xl-3 col-md-6">
+    <div class="col-xl-4 col-md-6">
         <div class="card card-animate">
             <div class="card-body">
                 <div class="d-flex justify-content-between">
                     <div>
-                        <p class="fw-medium text-muted mb-0">Speaker Evaluations</p>
+                        <p class="fw-medium text-muted mb-0">AVG. POST-TEST</p>
                         <h2 class="mt-4 ff-secondary fw-semibold"><span class="counter-value"
-                                data-target="791">0</span></h2>
+                                data-target="{{ number_format($trainingAverages->avg_post_test, 2) }}">0</span></h2>
                     </div>
                     <div>
                         <div class="avatar-sm flex-shrink-0">
-                            <span class="avatar-title bg-info rounded-circle fs-2">
-                                <i data-feather="clipboard" class="text-dark"></i>
+                            <span class="avatar-title bg-success-subtle rounded-circle fs-2">
+                                <i data-feather="award" class="text-success"></i>
                             </span>
                         </div>
                     </div>
@@ -100,19 +100,19 @@
         </div> <!-- end card-->
     </div> <!-- end col-->
 
-    <div class="col-xl-3 col-md-6">
+    <div class="col-xl-4 col-md-6">
         <div class="card card-animate">
             <div class="card-body">
                 <div class="d-flex justify-content-between">
                     <div>
-                        <p class="fw-medium text-muted mb-0">Training Evaluations</p>
+                        <p class="fw-medium text-muted mb-0">Gain in Knowledge</p>
                         <h2 class="mt-4 ff-secondary fw-semibold"><span class="counter-value"
-                                data-target="1203">0</span></h2>
+                                data-target="{{ number_format($trainingAverages->avg_gik, 2) }}">0</span> %</h2>
                     </div>
                     <div>
                         <div class="avatar-sm flex-shrink-0">
-                            <span class="avatar-title bg-info rounded-circle fs-2">
-                                <i data-feather="clipboard" class="text-dark"></i>
+                            <span class="avatar-title bg-success-subtle rounded-circle fs-2">
+                                <i data-feather="target" class="text-success"></i>
                             </span>
                         </div>
                     </div>
@@ -121,75 +121,69 @@
         </div> <!-- end card-->
     </div> <!-- end col-->
 
-    <div class="col-xl-3 col-md-6">
-        <div class="card card-animate">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <p class="fw-medium text-muted mb-0">Baseline Records</p>
-                        <h2 class="mt-4 ff-secondary fw-semibold"><span class="counter-value"
-                                data-target="{{ $totalFarmers * 2 }}"></span></h2>
-                    </div>
-                    <div>
-                        <div class="avatar-sm flex-shrink-0">
-                            <span class="avatar-title bg-info rounded-circle fs-2">
-                                <i data-feather="activity" class="text-dark"></i>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div><!-- end card body -->
-        </div> <!-- end card-->
-    </div> <!-- end col-->
 </div> <!-- end row-->
 
 <div class="row">
     <div class="col-xxl-12">
-        <div class="card">
+         <div class="card">
             <div class="card-body">
-                <!-- Nav tabs -->
-                <ul class="nav nav-pills nav-success" role="tablist">
-                    <li class="nav-item waves-effect waves-light">
-                        <a class="nav-link active" data-bs-toggle="tab" href="#farmers-profile" role="tab">
-                            <i class="ri-group-fill"></i> Farmers Profile
+                <ul class="nav nav-pills arrow-navtabs nav-success bg-light mb-3" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active p-4" data-bs-toggle="tab" href="#farmers-profile" role="tab">
+                            <span class="d-block d-sm-none"><i class="mdi mdi-home-variant"></i></span>
+                            <span class="d-none d-sm-block fs-16">
+                                <i class="ri-group-fill"></i> Farmers Profile
+                            </span>
                         </a>
                     </li>
-                    <li class="nav-item waves-effect waves-light">
-                        <a class="nav-link" data-bs-toggle="tab" href="#speaker-evaluations" role="tab">
-                            <i class="ri-user-voice-fill"></i> Speaker Evaluations
+                    <li class="nav-item">
+                        <a class="nav-link p-4" data-bs-toggle="tab" href="#speaker-evaluations" role="tab">
+                            <span class="d-block d-sm-none"><i class="mdi mdi-account"></i></span>
+                            <span class="d-none d-sm-block fs-16">
+                                <i class="ri-user-voice-fill"></i> Speaker Evaluations
+                            </span>
                         </a>
                     </li>
-                    <li class="nav-item waves-effect waves-light">
-                        <a class="nav-link" data-bs-toggle="tab" href="#training-evaluations" role="tab">
-                            <i class="ri-booklet-fill"></i> Training Evaluations
+                    <li class="nav-item">
+                        <a class="nav-link p-4" data-bs-toggle="tab" href="#training-evaluations" role="tab">
+                            <span class="d-block d-sm-none"><i class="mdi mdi-email"></i></span>
+                            <span class="d-none d-sm-block fs-16">
+                                <i class="ri-booklet-fill"></i> Training Evaluations
+                            </span>
                         </a>
                     </li>
-                    <li class="nav-item waves-effect waves-light">
-                        <a class="nav-link" data-bs-toggle="tab" href="#baseline-monitoring" role="tab">
-                            <i class="ri-bar-chart-grouped-fill"></i> Baseline Monitoring
+                    <li class="nav-item">
+                        <a class="nav-link p-4" data-bs-toggle="tab" href="#baseline-monitoring" role="tab">
+                            <span class="d-block d-sm-none"><i class="mdi mdi-email"></i></span>
+                            <span class="d-none d-sm-block fs-16">
+                                <i class="ri-bar-chart-grouped-fill"></i> Baseline Monitoring
+                            </span>
                         </a>
                     </li>
                 </ul>
                 <!-- Tab panes -->
+                <div class="tab-content text-muted">
+                    <div class="tab-pane active" id="farmers-profile" role="tabpanel">
+                        @include('dashboard-tab.farmers-profile-tab')
+                    </div>
+                    <div class="tab-pane" id="speaker-evaluations" role="tabpanel">
+                        <h6>Speaker Evaluations</h6>
 
+                    </div>
+                    <div class="tab-pane" id="training-evaluations" role="tabpanel">
+                        <h6>Training Evaluations</h6>
+
+                    </div>
+                    <div class="tab-pane" id="baseline-monitoring" role="tabpanel">
+                        <h6>Baseline Monitoring</h6>
+
+                    </div>
+                </div>
             </div><!-- end card-body -->
         </div><!-- end card -->
-    </div><!--end col-->
-</div>
-<div class="tab-content text-muted">
-    <div class="tab-pane active" id="farmers-profile" role="tabpanel">
-        @include('dashboard-tab.farmers-profile-tab')
-    </div>
-    <div class="tab-pane" id="speaker-evaluations" role="tabpanel">
-
-    </div>
-    <div class="tab-pane" id="training-evaluations" role="tabpanel">
-
-    </div>
-    <div class="tab-pane" id="baseline-monitoring" role="tabpanel">
-
     </div>
 </div>
+
 @endsection
 
 @section('script')
@@ -204,6 +198,7 @@
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.ajax"></script>
 <!-- Before </body> -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 @include('_includes.script')

@@ -17,7 +17,7 @@
             <div class="col-sm-12">
                 <label for="yearTrainingConducted" class="form-label">Select Fertilizer</label>
                 <select class="form-control" id="fertilizer-selector"
-                    name="vertilizer[]"
+                    name="fertilizer[]"
                     data-choices
                     data-choices-removeItem
                     multiple>
@@ -28,6 +28,10 @@
                     <option value="Urea (46-0-0)">Urea (46-0-0)</option>
                 </select>
             </div>
+        </div>
+        <div class="col-12 mt-2">
+            <label class="form-label text-muted">Others:</label>
+            <input class="form-control" id="others-fertilizer" name="others-fertilizer" data-choices data-choices-removeItem type="text"/>
         </div>
         <div id="fertilizer-container" class="mt-3">
     </div>

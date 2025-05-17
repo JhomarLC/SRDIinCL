@@ -1169,9 +1169,10 @@
 <!-- for numbers -->
 <script src="{{ URL::asset('build/js/pages/form-input-spin.init.js') }}"></script>
 
+<script src='{{ URL::asset('build/libs/choices.js/public/assets/scripts/choices.min.js') }}'></script>
+<script src="{{ URL::asset('build/js/app.js') }}"></script>
+
 <script src="{{ URL::asset('admin-js/admin.js') }}"></script>
 @include('baseline-monitoring._includes.script')
 @include('baseline-monitoring._includes.logic')
-<script src='{{ URL::asset('build/libs/choices.js/public/assets/scripts/choices.min.js') }}'></script>
-<script src="{{ URL::asset('build/js/app.js') }}"></script>
 @endsection

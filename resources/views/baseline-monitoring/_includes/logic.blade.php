@@ -1,5 +1,4 @@
 <script>
-
     $(document).ready(function () {
         $('input[name="method_crop_establishment"]').on('change', function () {
             const method = $('input[name="method_crop_establishment"]:checked').val();
@@ -172,401 +171,401 @@
     });
 
     $(document).ready(function () {
-        // Choices.js might block native change event, so we handle DOM mutation
-        const observer = new MutationObserver(() => {
-            $('#variety-selector').trigger('choices-updated');
-        });
+        const $varietyContainer = $('#variety-container');
+        let otherCounter = 0;
 
+        // MutationObserver for Choices.js dropdown changes
         const selectorNode = document.getElementById('variety-selector');
         if (selectorNode) {
-            observer.observe(selectorNode, { attributes: true, childList: true, subtree: true });
-        }
-
-        // Handle custom 'choices-updated' event
-
-        $(document).ready(function () {
-            const selectorNode = document.getElementById('variety-selector');
-
-            // Choices.js compatibility
             const observer = new MutationObserver(() => {
                 $('#variety-selector').trigger('choices-updated');
             });
-
-            if (selectorNode) {
-                observer.observe(selectorNode, { attributes: true, childList: true, subtree: true });
-            }
-
-            $(document).on('choices-updated', '#variety-selector', function () {
-                const $container = $('#variety-container');
-                $container.empty();
-
-                $('#variety-selector option:selected').each(function (index) {
-                    const varietyId = $(this).val();
-                    const varietyName = $(this).data('name') || $(this).text();
-                    const indexLabel = `${index + 1}${['st','nd','rd'][index] || 'th'}`;
-
-                    const block = `
-                        <div class="border rounded p-3 mb-3 variety-block" data-variety-id="${varietyId}">
-                            <h6>${indexLabel} Variety: ${varietyName}</h6>
-                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio"
-                                    name="soaking_type_${varietyId}"
-                                    id="soaking_free_${varietyId}"
-                                    value="free">
-                                <label class="form-check-label" for="soaking_free_${varietyId}">Free</label>
-                            </div>
-
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio"
-                                    name="soaking_type_${varietyId}"
-                                    id="soaking_purchase_${varietyId}"
-                                    value="purchase" checked>
-                                <label class="form-check-label" for="soaking_purchase_${varietyId}">Purchase</label>
-                            </div>
-
-                            <div class="row mt-2 bg-light p-3 rounded">
-                                <div class="col-4">
-                                    <label class="form-label text-muted">Qty</label>
-                                    <div class="input-step step-primary full-width d-flex">
-                                        <button type="button" class="minus">–</button>
-                                        <input type="number" class="product-quantity form-control text-center soaking-qty quantity" value="0" min="0" step="1">
-                                        <button type="button" class="plus">+</button>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <label class="form-label text-muted">Unit Cost</label>
-                                    <input type="number" name="unit_cost_${varietyId}" class="form-control unit-cost" placeholder="Unit Cost">
-                                </div>
-                                <div class="col-4">
-                                    <label class="form-label text-muted">Total Cost</label>
-                                    <input type="number" name="total_cost_${varietyId}" class="form-control total-cost" placeholder="0.00" readonly>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-
-                    $container.append(block);
-
-                });
-
-                bindEvents();
-            });
-
-            $('#variety-selector').trigger('choices-updated');
-
-            function bindEvents() {
-                $('.minus').off('click').on('click', function () {
-                    const $input = $(this).siblings('input.quantity');
-                    const currentVal = parseInt($input.val()) || 0;
-                    if (currentVal > 0) $input.val(currentVal - 1).trigger('input');
-                });
-
-                $('.plus').off('click').on('click', function () {
-                    const $input = $(this).siblings('input.quantity');
-                    const currentVal = parseInt($input.val()) || 0;
-                    $input.val(currentVal + 1).trigger('input');
-                });
-
-                $('.quantity, .unit-cost').off('input').on('input', function () {
-                    const $row = $(this).closest('.row');
-                    const quantity = parseFloat($row.find('.quantity').val()) || 0;
-                    const unitCost = parseFloat($row.find('.unit-cost').val()) || 0;
-                    const total = (quantity * unitCost).toFixed(2);
-                    $row.find('.total-cost').val(total);
-                });
-
-                // NEW: Handle Free/Purchase toggle
-                $('input[type=radio][name^=soaking_type_]').off('change').on('change', function () {
-                    const $block = $(this).closest('.variety-block');
-                    const isFree = $(this).val() === 'free';
-
-                    const $qtyInput = $block.find('.quantity');
-                    const $unitCost = $block.find('.unit-cost');
-                    const $totalCost = $block.find('.total-cost');
-                    const $minus = $block.find('.minus');
-                    const $plus = $block.find('.plus');
-
-                    if (isFree) {
-                        $qtyInput.val(0).prop('disabled', true);
-                        $unitCost.val('').prop('disabled', true);
-                        $totalCost.val('').prop('disabled', true);
-                        $minus.prop('disabled', true);
-                        $plus.prop('disabled', true);
-                    } else {
-                        $qtyInput.prop('disabled', false);
-                        $unitCost.prop('disabled', false);
-                        $totalCost.prop('disabled', false);
-                        $minus.prop('disabled', false);
-                        $plus.prop('disabled', false);
-                    }
-                });
-            }
-        });
-    });
-
-    $(document).ready(function () {
-        // Choices.js might block native change event, so we handle DOM mutation
-        const observer = new MutationObserver(() => {
-            $('#fertilizer-selector').trigger('choices-updated');
-        });
-
-        const selectorNode = document.getElementById('fertilizer-selector');
-        if (selectorNode) {
             observer.observe(selectorNode, { attributes: true, childList: true, subtree: true });
         }
 
-        // Handle custom 'choices-updated' event
+        // Remove "Others" block when item is removed from Choices
+        document.addEventListener('removeItem', function (event) {
+            if (event.detail && event.detail.value && event.target.id === 'others') {
+                const removedValue = event.detail.value.trim().toLowerCase();
+                $varietyContainer.find('.variety-block').filter(function () {
+                    const id = $(this).data('variety-id');
+                    const blockName = $(this).data('variety-name')?.toString().toLowerCase();
+                    return id && id.toString().startsWith('other_') && blockName === removedValue;
+                }).remove();
 
-        $(document).ready(function () {
-            const selectorNode = document.getElementById('fertilizer-selector');
+                reindexVarietyBlocks();
+            }
+        });
 
-            // Choices.js compatibility
+        // Handle changes in selected dropdown
+        $(document).on('choices-updated', '#variety-selector', function () {
+            // Remove blocks added from dropdown (not "others")
+            $varietyContainer.find('.variety-block').filter(function () {
+                return !$(this).data('variety-id')?.toString().startsWith('other_');
+            }).remove();
+
+            $('#variety-selector option:selected').each(function () {
+                const varietyId = $(this).val();
+                const varietyName = $(this).data('name') || $(this).text();
+
+                createVarietyBlock(varietyId, varietyName, false);
+            });
+
+            reindexVarietyBlocks();
+        });
+
+        // Add from Others input
+        $('#others').on('change', function () {
+            const inputVal = $(this).val().trim();
+            if (!inputVal) return;
+
+            const varietyId = `other_${++otherCounter}`;
+            const varietyName = inputVal;
+
+            createVarietyBlock(varietyId, varietyName, true);
+            $(this).val('');
+            reindexVarietyBlocks();
+        });
+
+        // Function to create a new variety block
+        function createVarietyBlock(varietyId, varietyName, isOther) {
+            const block = `
+                <div class="border rounded p-3 mb-3 variety-block" data-variety-id="${varietyId}" data-variety-name="${varietyName}">
+                    <h6 class="variety-label"></h6>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio"
+                            name="soaking_type_${varietyId}" id="soaking_free_${varietyId}"
+                            value="free">
+                        <label class="form-check-label" for="soaking_free_${varietyId}">Free</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio"
+                            name="soaking_type_${varietyId}" id="soaking_purchase_${varietyId}"
+                            value="purchase" checked>
+                        <label class="form-check-label" for="soaking_purchase_${varietyId}">Purchase</label>
+                    </div>
+                    <div class="row mt-2 bg-light p-3 rounded">
+                        <div class="col-4">
+                            <label class="form-label text-muted">Qty</label>
+                            <div class="input-step step-primary full-width d-flex">
+                                <button type="button" class="minus">–</button>
+                                <input type="number" class="product-quantity form-control text-center soaking-qty quantity" value="0" min="0" step="1">
+                                <button type="button" class="plus">+</button>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <label class="form-label text-muted">Unit Cost</label>
+                            <input type="number" name="unit_cost_${varietyId}" class="form-control unit-cost" placeholder="Unit Cost">
+                        </div>
+                        <div class="col-4">
+                            <label class="form-label text-muted">Total Cost</label>
+                            <input type="number" name="total_cost_${varietyId}" class="form-control total-cost" placeholder="0.00" readonly>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            $varietyContainer.append(block);
+            bindEvents();
+        }
+
+        // Renumber the variety blocks: 1st, 2nd, 3rd...
+        function reindexVarietyBlocks() {
+            const suffixes = ['st', 'nd', 'rd'];
+            $varietyContainer.find('.variety-block').each(function (index) {
+                const label = `${index + 1}${suffixes[index] || 'th'} Variety: ${$(this).data('variety-name')}`;
+                $(this).find('.variety-label').text(label);
+            });
+        }
+
+        // Bind all input/button events
+        function bindEvents() {
+            $('.minus').off('click').on('click', function () {
+                const $input = $(this).siblings('input.quantity');
+                let current = parseInt($input.val()) || 0;
+                if (current > 0) $input.val(current - 1).trigger('input');
+            });
+
+            $('.plus').off('click').on('click', function () {
+                const $input = $(this).siblings('input.quantity');
+                let current = parseInt($input.val()) || 0;
+                $input.val(current + 1).trigger('input');
+            });
+
+            $('.quantity, .unit-cost').off('input').on('input', function () {
+                const $row = $(this).closest('.row');
+                const qty = parseFloat($row.find('.quantity').val()) || 0;
+                const unit = parseFloat($row.find('.unit-cost').val()) || 0;
+                $row.find('.total-cost').val((qty * unit).toFixed(2));
+            });
+
+            $('input[type=radio][name^=soaking_type_]').off('change').on('change', function () {
+                const $block = $(this).closest('.variety-block');
+                const isFree = $(this).val() === 'free';
+
+                const $qty = $block.find('.quantity');
+                const $unit = $block.find('.unit-cost');
+                const $total = $block.find('.total-cost');
+                const $minus = $block.find('.minus');
+                const $plus = $block.find('.plus');
+
+                if (isFree) {
+                    $qty.val(0).prop('disabled', true);
+                    $unit.val('').prop('disabled', true);
+                    $total.val('').prop('disabled', true);
+                    $minus.prop('disabled', true);
+                    $plus.prop('disabled', true);
+                } else {
+                    $qty.prop('disabled', false);
+                    $unit.prop('disabled', false);
+                    $total.prop('disabled', false);
+                    $minus.prop('disabled', false);
+                    $plus.prop('disabled', false);
+                }
+            });
+        }
+
+        // Initial trigger to build selected varieties
+        $('#variety-selector').trigger('choices-updated');
+    });
+
+    // Seedbed Fertilizations
+    $(document).ready(function () {
+        const $fertilizerContainer = $('#fertilizer-container');
+        let otherFertilizerCounter = 0;
+
+        // MutationObserver for fertilizer dropdown
+        const fertilizerSelectorNode = document.getElementById('fertilizer-selector');
+        if (fertilizerSelectorNode) {
             const observer = new MutationObserver(() => {
                 $('#fertilizer-selector').trigger('choices-updated');
             });
+            observer.observe(fertilizerSelectorNode, { attributes: true, childList: true, subtree: true });
+        }
 
-            if (selectorNode) {
-                observer.observe(selectorNode, { attributes: true, childList: true, subtree: true });
-            }
+        // Handle removal from "Others"
+        document.addEventListener('removeItem', function (event) {
+            if (event.detail && event.detail.value && event.target.id === 'others-fertilizer') {
+                const removedValue = event.detail.value.trim().toLowerCase();
+                $fertilizerContainer.find('.fertilizer-block').filter(function () {
+                    const id = $(this).data('fertilizer-id');
+                    const blockName = $(this).data('fertilizer-name')?.toString().toLowerCase();
+                    return id && id.toString().startsWith('other_') && blockName === removedValue;
+                }).remove();
 
-            $(document).on('choices-updated', '#fertilizer-selector', function () {
-                const $container = $('#fertilizer-container');
-                $container.empty();
-
-                $('#fertilizer-selector option:selected').each(function (index) {
-                    const fertilizerId = $(this).val();
-                    const fertilizerName = $(this).data('name') || $(this).text();
-                    const indexLabel = `${index + 1}${['st','nd','rd'][index] || 'th'}`;
-
-                    const block = `
-                        <div class="border rounded p-3 mb-3 fertilizer-block" data-fertilizer-id="${fertilizerId}">
-                            <h6>${indexLabel} Fertilizer: ${fertilizerName}</h6>
-                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio"
-                                    name="fertilizer_${fertilizerId}"
-                                    id="soaking_free_${fertilizerId}"
-                                    value="free">
-                                <label class="form-check-label" for="soaking_free_${fertilizerId}">Free</label>
-                            </div>
-
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio"
-                                    name="fertilizer_${fertilizerId}"
-                                    id="soaking_purchase_${fertilizerId}"
-                                    value="purchase" checked>
-                                <label class="form-check-label" for="soaking_purchase_${fertilizerId}">Purchase</label>
-                            </div>
-
-                            <div class="row mt-2 bg-light p-3 rounded">
-                                <div class="col-4">
-                                    <label class="form-label text-muted">Qty</label>
-                                    <div class="input-step step-primary full-width d-flex">
-                                        <button type="button" class="minus">–</button>
-                                        <input type="number" class="product-quantity form-control text-center soaking-qty quantity" value="0" min="0" step="1">
-                                        <button type="button" class="plus">+</button>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <label class="form-label text-muted">Unit Cost</label>
-                                    <input type="number" name="unit_cost_${fertilizerId}" class="form-control unit-cost" placeholder="Unit Cost">
-                                </div>
-                                <div class="col-4">
-                                    <label class="form-label text-muted">Total Cost</label>
-                                    <input type="number" name="total_cost_${fertilizerId}" class="form-control total-cost" placeholder="0.00" readonly>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-
-                    $container.append(block);
-                });
-
-                bindEvents();
-            });
-
-            $('#fertilizer-selector').trigger('choices-updated');
-
-            function bindEvents() {
-                $('.minus').off('click').on('click', function () {
-                    const $input = $(this).siblings('input.quantity');
-                    const currentVal = parseInt($input.val()) || 0;
-                    if (currentVal > 0) $input.val(currentVal - 1).trigger('input');
-                });
-
-                $('.plus').off('click').on('click', function () {
-                    const $input = $(this).siblings('input.quantity');
-                    const currentVal = parseInt($input.val()) || 0;
-                    $input.val(currentVal + 1).trigger('input');
-                });
-
-                $('.quantity, .unit-cost').off('input').on('input', function () {
-                    const $row = $(this).closest('.row');
-                    const quantity = parseFloat($row.find('.quantity').val()) || 0;
-                    const unitCost = parseFloat($row.find('.unit-cost').val()) || 0;
-                    const total = (quantity * unitCost).toFixed(2);
-                    $row.find('.total-cost').val(total);
-                });
-
-                // NEW: Handle Free/Purchase toggle
-                $('input[type=radio][name^=fertilizer_]').off('change').on('change', function () {
-                    const $block = $(this).closest('.fertilizer-block');
-                    const isFree = $(this).val() === 'free';
-
-                    const $qtyInput = $block.find('.quantity');
-                    const $unitCost = $block.find('.unit-cost');
-                    const $totalCost = $block.find('.total-cost');
-                    const $minus = $block.find('.minus');
-                    const $plus = $block.find('.plus');
-
-                    if (isFree) {
-                        $qtyInput.val(0).prop('disabled', true);
-                        $unitCost.val('').prop('disabled', true);
-                        $totalCost.val('').prop('disabled', true);
-                        $minus.prop('disabled', true);
-                        $plus.prop('disabled', true);
-                    } else {
-                        $qtyInput.prop('disabled', false);
-                        $unitCost.prop('disabled', false);
-                        $totalCost.prop('disabled', false);
-                        $minus.prop('disabled', false);
-                        $plus.prop('disabled', false);
-                    }
-                });
+                reindexFertilizerBlocks();
             }
         });
+
+        // Handle select dropdown changes
+        $(document).on('choices-updated', '#fertilizer-selector', function () {
+            $fertilizerContainer.find('.fertilizer-block').filter(function () {
+                return !$(this).data('fertilizer-id')?.toString().startsWith('other_');
+            }).remove();
+
+            $('#fertilizer-selector option:selected').each(function () {
+                const fertilizerId = $(this).val();
+                const fertilizerName = $(this).text();
+                createFertilizerBlock(fertilizerId, fertilizerName, false);
+            });
+
+            reindexFertilizerBlocks();
+        });
+
+        // Handle "Others" input
+        $('#others-fertilizer').on('change', function () {
+            const inputVal = $(this).val().trim();
+            if (!inputVal) return;
+
+            const fertilizerId = `other_${++otherFertilizerCounter}`;
+            const fertilizerName = inputVal;
+
+            createFertilizerBlock(fertilizerId, fertilizerName, true);
+            $(this).val('');
+            reindexFertilizerBlocks();
+        });
+
+        // Create a fertilizer block
+        function createFertilizerBlock(fertilizerId, fertilizerName, isOther) {
+            const block = `
+                <div class="border rounded p-3 mb-3 fertilizer-block" data-fertilizer-id="${fertilizerId}" data-fertilizer-name="${fertilizerName}">
+                    <h6 class="fertilizer-label"></h6>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio"
+                            name="fertilizer_type_${fertilizerId}" id="fertilizer_free_${fertilizerId}"
+                            value="free">
+                        <label class="form-check-label" for="fertilizer_free_${fertilizerId}">Free</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio"
+                            name="fertilizer_type_${fertilizerId}" id="fertilizer_purchase_${fertilizerId}"
+                            value="purchase" checked>
+                        <label class="form-check-label" for="fertilizer_purchase_${fertilizerId}">Purchase</label>
+                    </div>
+                    <div class="row mt-2 bg-light p-3 rounded">
+                        <div class="col-4">
+                            <label class="form-label text-muted">Qty</label>
+                            <div class="input-step step-primary full-width d-flex">
+                                <button type="button" class="minus">–</button>
+                                <input type="number" class="form-control text-center quantity" value="0" min="0" step="1">
+                                <button type="button" class="plus">+</button>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <label class="form-label text-muted">Unit Cost</label>
+                            <input type="number" name="unit_cost_${fertilizerId}" class="form-control unit-cost" placeholder="Unit Cost">
+                        </div>
+                        <div class="col-4">
+                            <label class="form-label text-muted">Total Cost</label>
+                            <input type="number" name="total_cost_${fertilizerId}" class="form-control total-cost" placeholder="0.00" readonly>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            $fertilizerContainer.append(block);
+            bindFertilizerEvents();
+        }
+
+        // Reindex fertilizer blocks
+        function reindexFertilizerBlocks() {
+            const suffixes = ['st', 'nd', 'rd'];
+            $fertilizerContainer.find('.fertilizer-block').each(function (index) {
+                const label = `${index + 1}${suffixes[index] || 'th'} Fertilizer: ${$(this).data('fertilizer-name')}`;
+                $(this).find('.fertilizer-label').text(label);
+            });
+        }
+
+        // Bind quantity, cost, and toggle logic
+        function bindFertilizerEvents() {
+            $('.minus').off('click').on('click', function () {
+                const $input = $(this).siblings('input.quantity');
+                let current = parseInt($input.val()) || 0;
+                if (current > 0) $input.val(current - 1).trigger('input');
+            });
+
+            $('.plus').off('click').on('click', function () {
+                const $input = $(this).siblings('input.quantity');
+                let current = parseInt($input.val()) || 0;
+                $input.val(current + 1).trigger('input');
+            });
+
+            $('.quantity, .unit-cost').off('input').on('input', function () {
+                const $row = $(this).closest('.row');
+                const qty = parseFloat($row.find('.quantity').val()) || 0;
+                const unit = parseFloat($row.find('.unit-cost').val()) || 0;
+                $row.find('.total-cost').val((qty * unit).toFixed(2));
+            });
+
+            $('input[type=radio][name^=fertilizer_type_]').off('change').on('change', function () {
+                const $block = $(this).closest('.fertilizer-block');
+                const isFree = $(this).val() === 'free';
+
+                const $qty = $block.find('.quantity');
+                const $unit = $block.find('.unit-cost');
+                const $total = $block.find('.total-cost');
+                const $minus = $block.find('.minus');
+                const $plus = $block.find('.plus');
+
+                if (isFree) {
+                    $qty.val(0).prop('disabled', true);
+                    $unit.val('').prop('disabled', true);
+                    $total.val('').prop('disabled', true);
+                    $minus.prop('disabled', true);
+                    $plus.prop('disabled', true);
+                } else {
+                    $qty.prop('disabled', false);
+                    $unit.prop('disabled', false);
+                    $total.prop('disabled', false);
+                    $minus.prop('disabled', false);
+                    $plus.prop('disabled', false);
+                }
+            });
+        }
+
+        // Initial trigger
+        $('#fertilizer-selector').trigger('choices-updated');
     });
 
     $(document).ready(function () {
-        // Choices.js might block native change event, so we handle DOM mutation
-        const observer = new MutationObserver(() => {
-            $('#fertilizer-application-selector').trigger('choices-updated');
+        initFertilizerSelector({
+            selectorId: 'fertilizer-application-selector',
+            othersInputId: 'others-fertilizer-application',
+            containerId: 'fertilizer-application-container',
+            blockPrefix: 'fertilizer'
         });
 
-        const selectorNode = document.getElementById('fertilizer-application-selector');
-        if (selectorNode) {
-            observer.observe(selectorNode, { attributes: true, childList: true, subtree: true });
-        }
+    });
 
-        // Handle custom 'choices-updated' event
+    let appCounter = 1;
 
-        $(document).ready(function () {
-            const selectorNode = document.getElementById('fertilizer-application-selector');
+    $(document).ready(function () {
+        // Initialize Choices and selectors for the first block
+        new Choices(document.getElementById('fertilizer-application-selector-1'), {
+            removeItemButton: true
+        });
 
-            // Choices.js compatibility
-            const observer = new MutationObserver(() => {
-                $('#fertilizer-application-selector').trigger('choices-updated');
+        new Choices(document.getElementById('others-fertilizer-application-1'), {
+            removeItemButton: true
+        });
+
+        initFertilizerSelector({
+            selectorId: 'fertilizer-application-selector-1',
+            othersInputId: 'others-fertilizer-application-1',
+            containerId: 'fertilizer-application-container-1',
+            blockPrefix: 'fertilizer'
+        });
+
+        // Add new application
+        $('#add-application-btn').on('click', function () {
+            appCounter++;
+            const template = $('#fertilizer-application-template').html();
+            const newHtml = template.replace(/{index}/g, appCounter);
+            $('#fertilizer-applications-wrapper').append(newHtml);
+
+            const suffixes = ['st', 'nd', 'rd'];
+            const suffix = suffixes[appCounter - 1] || 'th';
+            $(`.fertilizer-application-block`).last().find('.application-label')
+                .text(`${appCounter}${suffix} Application`);
+
+            // Init Choices
+            new Choices(document.getElementById(`fertilizer-application-selector-${appCounter}`), {
+                removeItemButton: true
             });
 
-            if (selectorNode) {
-                observer.observe(selectorNode, { attributes: true, childList: true, subtree: true });
-            }
-
-            $(document).on('choices-updated', '#fertilizer-application-selector', function () {
-                const $container = $('#fertilizer-application-container');
-                $container.empty();
-
-                $('#fertilizer-application-selector option:selected').each(function (index) {
-                    const fertilizerId = $(this).val();
-                    const fertilizerName = $(this).data('name') || $(this).text();
-                    const indexLabel = `${index + 1}${['st','nd','rd'][index] || 'th'}`;
-
-                    const block = `
-                        <div class="border rounded p-3 mb-3 fertilizer-application-block" data-fertilizer-id="${fertilizerId}">
-                            <h6>${indexLabel} Fertilizer: ${fertilizerName}</h6>
-                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio"
-                                    name="fertilizer_application_${fertilizerId}"
-                                    id="fertilizer_application__free_${fertilizerId}"
-                                    value="free">
-                                <label class="form-check-label" for="fertilizer_application__free_${fertilizerId}">Free</label>
-                            </div>
-
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio"
-                                    name="fertilizer_application_${fertilizerId}"
-                                    id="fertilizer_application_purchase_${fertilizerId}"
-                                    value="purchase" checked>
-                                <label class="form-check-label" for="fertilizer_application_purchase_${fertilizerId}">Purchase</label>
-                            </div>
-
-                            <div class="row mt-2 bg-light p-3 rounded">
-                                <div class="col-4">
-                                    <label class="form-label text-muted">Qty</label>
-                                    <div class="input-step step-primary full-width d-flex">
-                                        <button type="button" class="minus">–</button>
-                                        <input type="number" class="product-quantity form-control text-center soaking-qty quantity" value="0" min="0" step="1">
-                                        <button type="button" class="plus">+</button>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <label class="form-label text-muted">Unit Cost</label>
-                                    <input type="number" name="unit_cost_${fertilizerId}" class="form-control unit-cost" placeholder="Unit Cost">
-                                </div>
-                                <div class="col-4">
-                                    <label class="form-label text-muted">Total Cost</label>
-                                    <input type="number" name="total_cost_${fertilizerId}" class="form-control total-cost" placeholder="0.00" readonly>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-
-                    $container.append(block);
-                });
-
-                bindEvents();
+            new Choices(document.getElementById(`others-fertilizer-application-${appCounter}`), {
+                removeItemButton: true
             });
 
-            $('#fertilizer-application-selector').trigger('choices-updated');
+            // Init selector logic
+            initFertilizerSelector({
+                selectorId: `fertilizer-application-selector-${appCounter}`,
+                othersInputId: `others-fertilizer-application-${appCounter}`,
+                containerId: `fertilizer-application-container-${appCounter}`,
+                blockPrefix: 'fertilizer'
+            });
+        });
 
-            function bindEvents() {
-                $('.minus').off('click').on('click', function () {
-                    const $input = $(this).siblings('input.quantity');
-                    const currentVal = parseInt($input.val()) || 0;
-                    if (currentVal > 0) $input.val(currentVal - 1).trigger('input');
-                });
-
-                $('.plus').off('click').on('click', function () {
-                    const $input = $(this).siblings('input.quantity');
-                    const currentVal = parseInt($input.val()) || 0;
-                    $input.val(currentVal + 1).trigger('input');
-                });
-
-                $('.quantity, .unit-cost').off('input').on('input', function () {
-                    const $row = $(this).closest('.row');
-                    const quantity = parseFloat($row.find('.quantity').val()) || 0;
-                    const unitCost = parseFloat($row.find('.unit-cost').val()) || 0;
-                    const total = (quantity * unitCost).toFixed(2);
-                    $row.find('.total-cost').val(total);
-                });
-
-                // NEW: Handle Free/Purchase toggle
-                $('input[type=radio][name^=fertilizer_application_]').off('change').on('change', function () {
-                    const $block = $(this).closest('.fertilizer-application-block');
-                    const isFree = $(this).val() === 'free';
-
-                    const $qtyInput = $block.find('.quantity');
-                    const $unitCost = $block.find('.unit-cost');
-                    const $totalCost = $block.find('.total-cost');
-                    const $minus = $block.find('.minus');
-                    const $plus = $block.find('.plus');
-
-                    if (isFree) {
-                        $qtyInput.val(0).prop('disabled', true);
-                        $unitCost.val('').prop('disabled', true);
-                        $totalCost.val('').prop('disabled', true);
-                        $minus.prop('disabled', true);
-                        $plus.prop('disabled', true);
-                    } else {
-                        $qtyInput.prop('disabled', false);
-                        $unitCost.prop('disabled', false);
-                        $totalCost.prop('disabled', false);
-                        $minus.prop('disabled', false);
-                        $plus.prop('disabled', false);
-                    }
-                });
+        // Remove application block
+        $(document).on('click', '.remove-application-btn', function () {
+            if ($('.fertilizer-application-block').length === 1) {
+                alert("At least one application is required.");
+                return;
             }
+
+            $(this).closest('.fertilizer-application-block').remove();
+            reindexApplicationLabels();
         });
     });
+
+    // Helper to reindex application block labels
+    function reindexApplicationLabels() {
+        const suffixes = ['st', 'nd', 'rd'];
+        $('.fertilizer-application-block').each(function (index) {
+            const suffix = suffixes[index] || 'th';
+            $(this).find('.application-label').text(`${index + 1}${suffix} Application`);
+        });
+    }
 
     $(document).ready(function () {
         function toggleCropEstablishmentSection() {
@@ -603,377 +602,5 @@
             toggleTPRFields(value);
         });
     });
-
-    $(document).ready(function () {
-        function initializeChoices(element) {
-            const choiceData = {};
-            const attrs = element.attributes;
-
-            if (attrs["data-choices-groups"]) choiceData.placeholderValue = "This is a placeholder set in the config";
-            if (attrs["data-choices-search-false"]) choiceData.searchEnabled = false;
-            if (attrs["data-choices-search-true"]) choiceData.searchEnabled = true;
-            if (attrs["data-choices-removeitem"]) choiceData.removeItemButton = true;
-            if (attrs["data-choices-sorting-false"]) choiceData.shouldSort = false;
-            if (attrs["data-choices-sorting-true"]) choiceData.shouldSort = true;
-            if (attrs["data-choices-multiple-remove"]) choiceData.removeItemButton = true;
-            if (attrs["data-choices-limit"]) choiceData.maxItemCount = attrs["data-choices-limit"].value.toString();
-            if (attrs["data-choices-edititem-true"]) choiceData.editItems = true;
-            if (attrs["data-choices-edititem-false"]) choiceData.editItems = false;
-            if (attrs["data-choices-text-unique-true"]) choiceData.duplicateItemsAllowed = false;
-            if (attrs["data-choices-text-disabled-true"]) choiceData.addItems = false;
-
-            const instance = new Choices(element, choiceData);
-            if (attrs["data-choices-text-disabled-true"]) instance.disable();
-
-            return instance;
-        }
-
-        let applicationIndex = 1;
-
-        function ordinal(n) {
-            return n + (['st','nd','rd'][((n + 90) % 100 - 10) % 10 - 1] || 'th');
-        }
-
-        function bindEvents($container) {
-            $container.find('.minus').off('click').on('click', function () {
-                const $input = $(this).siblings('input.quantity');
-                const currentVal = parseInt($input.val()) || 0;
-                if (currentVal > 0) $input.val(currentVal - 1).trigger('input');
-            });
-
-            $container.find('.plus').off('click').on('click', function () {
-                const $input = $(this).siblings('input.quantity');
-                const currentVal = parseInt($input.val()) || 0;
-                $input.val(currentVal + 1).trigger('input');
-            });
-
-            $container.find('.quantity, .unit-cost').off('input').on('input', function () {
-                const $row = $(this).closest('.row');
-                const quantity = parseFloat($row.find('.quantity').val()) || 0;
-                const unitCost = parseFloat($row.find('.unit-cost').val()) || 0;
-                const total = (quantity * unitCost).toFixed(2);
-                $row.find('.total-cost').val(total);
-            });
-
-            $container.find('input[type=radio]').off('change').on('change', function () {
-                const $block = $(this).closest('.fertilizer-application-block');
-                const isFree = $(this).val() === 'free';
-
-                const $qtyInput = $block.find('.quantity');
-                const $unitCost = $block.find('.unit-cost');
-                const $totalCost = $block.find('.total-cost');
-                const $minus = $block.find('.minus');
-                const $plus = $block.find('.plus');
-
-                if (isFree) {
-                    $qtyInput.val(0).prop('disabled', true);
-                    $unitCost.val('').prop('disabled', true);
-                    $totalCost.val('').prop('disabled', true);
-                    $minus.prop('disabled', true);
-                    $plus.prop('disabled', true);
-                } else {
-                    $qtyInput.prop('disabled', false);
-                    $unitCost.prop('disabled', false);
-                    $totalCost.prop('disabled', false);
-                    $minus.prop('disabled', false);
-                    $plus.prop('disabled', false);
-                }
-            });
-        }
-
-        function getLaborAndSnacksHTML(appIndex) {
-            return `
-                <div class="labor-snacks-block mt-3">
-                    <div class="block">
-                        <label class="form-label">Labor: Fertilizer application</label>
-                        <div class="row p-3 mb-3 rounded bg-light">
-                            <div class="col-4">
-                                <label class="form-label text-muted">Qty</label>
-                                <div class="input-step step-primary full-width d-flex">
-                                    <button type="button" class="minus">–</button>
-                                    <input type="number" class="quantity product-quantity form-control text-center" value="0" min="0" step="1">
-                                    <button type="button" class="plus">+</button>
-                                </div>
-                            </div>
-                            <div class="col-4">
-                                <label class="form-label text-muted">Unit Cost</label>
-                                <input type="number" class="form-control unit-cost" placeholder="Unit Cost" />
-                            </div>
-                            <div class="col-4">
-                                <label class="form-label text-muted">Total Cost</label>
-                                <input type="number" class="form-control total-cost" placeholder="Total Cost" disabled/>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="block">
-                        <label class="form-label">Meals and Snacks</label>
-                        <div class="row p-3 mb-3 rounded bg-light">
-                            <div class="col-4">
-                                <label class="form-label text-muted">Qty</label>
-                                <div class="input-step step-primary full-width d-flex">
-                                    <button type="button" class="minus">–</button>
-                                    <input type="number" class="quantity product-quantity form-control text-center" value="0" min="0" step="1">
-                                    <button type="button" class="plus">+</button>
-                                </div>
-                            </div>
-                            <div class="col-4">
-                                <label class="form-label text-muted">Unit Cost</label>
-                                <input type="number" class="form-control unit-cost" placeholder="Unit Cost" />
-                            </div>
-                            <div class="col-4">
-                                <label class="form-label text-muted">Total Cost</label>
-                                <input type="number" class="form-control total-cost" placeholder="Total Cost" disabled/>
-                            </div>
-                        </div>
-                    </div>
-                    <hr class="text-muted">
-                </div>
-            `;
-        }
-
-        function observeAndBind($select, $container, appIndex) {
-            const observer = new MutationObserver(() => {
-                $select.trigger('choices-updated');
-            });
-
-            const selectorNode = $select.get(0);
-            if (selectorNode) {
-                observer.observe(selectorNode, { attributes: true, childList: true, subtree: true });
-            }
-
-            $select.on('choices-updated', function () {
-                $container.empty();
-
-                $select.find('option:selected').each(function (index) {
-                    const fertilizerId = $(this).val();
-                    const fertilizerName = $(this).text();
-                    const indexLabel = `${index + 1}${['st','nd','rd'][index] || 'th'}`;
-                    const uniqueId = `${appIndex}_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
-
-                    const radioName = `fertilizer_application_${appIndex}_${index}_${uniqueId}`;
-                    const freeId = `${radioName}_free`;
-                    const purchaseId = `${radioName}_purchase`;
-
-                    const block = `
-                        <div class="border rounded p-3 mb-3 fertilizer-application-block" data-fertilizer-id="${fertilizerId}">
-                            <h6>${indexLabel} Fertilizer: ${fertilizerName}</h6>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio"
-                                    id="${freeId}"
-                                    name="${radioName}"
-                                    value="free">
-                                <label class="form-check-label" for="${freeId}">Free</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio"
-                                    id="${purchaseId}"
-                                    name="${radioName}"
-                                    value="purchase" checked>
-                                <label class="form-check-label" for="${purchaseId}">Purchase</label>
-                            </div>
-                            <div class="row mt-2 bg-light p-3 rounded">
-                                <div class="col-4">
-                                    <label class="form-label text-muted">Qty</label>
-                                    <div class="input-step step-primary full-width d-flex">
-                                        <button type="button" class="minus">–</button>
-                                        <input type="number" class="product-quantity form-control text-center soaking-qty quantity" value="0" min="0" step="1">
-                                        <button type="button" class="plus">+</button>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <label class="form-label text-muted">Unit Cost</label>
-                                    <input type="number" class="form-control unit-cost" placeholder="Unit Cost">
-                                </div>
-                                <div class="col-4">
-                                    <label class="form-label text-muted">Total Cost</label>
-                                    <input type="number" class="form-control total-cost" placeholder="0.00" readonly>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    $container.append(block);
-                });
-
-                bindEvents($container);
-            });
-
-            $select.trigger('choices-updated');
-        }
-
-        // Initial setup
-        const $initialSelect = $('#fertilizer-application-selector');
-        const $initialContainer = $('#fertilizer-application-container');
-        observeAndBind($initialSelect, $initialContainer, applicationIndex);
-
-        $('#add-application-btn').on('click', function () {
-            applicationIndex++;
-
-            const newSelectId = `fertilizer-application-selector-${applicationIndex}`;
-            const newContainerId = `fertilizer-application-container-${applicationIndex}`;
-            const fertilizerOptions = [
-                "Complete (14-14-14-24S)",
-                "Ammonium Phosphate (16-20-0)",
-                "Ammonium Sulphate (21-0-0-24S)",
-                "Muriate of Potash (0-0-60)",
-                "Urea (46-0-0)"
-            ];
-
-            const $newGroup = $(`
-                <div class="fertilizer-application-group mt-4" data-app-index="${applicationIndex}">
-                   <div class="d-flex justify-content-between align-items-center mb-2">
-                        <label class="form-label mb-0">${ordinal(applicationIndex)} Application</label>
-                        <button type="button" class="btn btn-sm btn-danger remove-application-btn">
-                            <i class="ri-delete-bin-line"></i> Remove
-                        </button>
-                    </div>
-                    <div class="row g-3">
-                        <div class="col-sm-12">
-                            <label class="form-label">Select Fertilizer</label>
-                            <select id="${newSelectId}" name="fertilizer-application-${applicationIndex}[]" class="form-control fertilizer-application-selector" multiple
-                                data-choices data-choices-removeitem>
-                                ${fertilizerOptions.map(f => `<option value="${f}">${f}</option>`).join('')}
-                            </select>
-                        </div>
-                    </div>
-                    <div id="${newContainerId}" class="mt-3 fertilizer-application-container"></div>
-                    ${getLaborAndSnacksHTML(applicationIndex)}
-                </div>
-            `);
-
-            $('#fertilizer-applications-wrapper').append($newGroup);
-
-            const $newSelect = $(`#${newSelectId}`);
-            const $newContainer = $(`#${newContainerId}`);
-
-            initializeChoices($newSelect[0]);
-            observeAndBind($newSelect, $newContainer, applicationIndex);
-            bindEvents($newGroup);
-        });
-
-        $(document).on('click', '.remove-application-btn', function () {
-            $(this).closest('.fertilizer-application-group').remove();
-        });
-
-    });
-
-    // $(document).ready(function () {
-    //     let fertilizerIndex = 0;
-
-    //     function generateFertilizerBlock(index) {
-    //         return `
-    //         <div class="block fertilizer-block" data-index="${index}">
-    //             <div class="row g-3 align-items-center">
-    //                 <div class="col-12 mb-2">
-    //                     <label class="form-label mb-0">Type of Fertilizer</label>
-    //                     <select class="form-control select2 mt-2">
-    //                         <option selected disabled hidden>-- SELECT TYPE OF FERTILIZER --</option>
-    //                         <option value="Complete (14-14-14-24S)">Complete (14-14-14-24S)</option>
-    //                         <option value="Ammonium Phosphate (16-20-0)">Ammonium Phosphate (16-20-0)</option>
-    //                         <option value="Ammonium Sulphate (21-0-0-24S)">Ammonium Sulphate (21-0-0-24S)</option>
-    //                         <option value="Muriate of Potash (0-0-60)">Muriate of Potash (0-0-60)</option>
-    //                         <option value="Urea (46-0-0)">Urea (46-0-0)</option>
-    //                     </select>
-    //                 </div>
-    //             </div>
-    //             <div class="row g-3">
-    //                 <div class="col-12 d-flex align-items-center gap-3">
-    //                     <div class="form-check form-check-inline">
-    //                         <input class="form-check-input labor-type" type="radio" name="soaking-type-${index}" value="free" id="free-${index}">
-    //                         <label class="form-check-label" for="free-${index}">Free</label>
-    //                     </div>
-    //                     <div class="form-check form-check-inline">
-    //                         <input class="form-check-input labor-type" type="radio" name="soaking-type-${index}" value="purchase" id="purchase-${index}" checked>
-    //                         <label class="form-check-label" for="purchase-${index}">Purchase</label>
-    //                     </div>
-    //                 </div>
-    //             </div>
-
-    //             <div class="row p-3 mt-2 mb-3 rounded bg-light">
-    //                 <div class="col-4">
-    //                     <label class="form-label text-muted">Qty</label>
-    //                     <div class="input-step step-primary full-width d-flex">
-    //                         <button type="button" class="minus">–</button>
-    //                         <input type="number" class="product-quantity form-control text-center qty" value="0" min="0" step="1">
-    //                         <button type="button" class="plus">+</button>
-    //                     </div>
-    //                 </div>
-    //                 <div class="col-4">
-    //                     <label class="form-label text-muted">Unit Cost</label>
-    //                     <input type="number" class="form-control unit-cost" placeholder="Unit Cost" />
-    //                 </div>
-    //                 <div class="col-4">
-    //                     <label class="form-label text-muted">Total Cost</label>
-    //                     <input type="number" class="form-control total-cost" placeholder="Total Cost" disabled />
-    //                 </div>
-    //             </div>
-    //             <div class="row g-3">
-    //                 <div class="col-12 d-flex justify-content-end">
-    //                     <button type="button" class="btn btn-danger remove-fertilizer">
-    //                         <i class="ri ri-delete-bin-fill"></i> Remove
-    //                     </button>
-    //                 </div>
-    //             </div>
-    //             <hr class="text-muted">
-    //         </div>`;
-    //     }
-
-    //     function bindEvents($context) {
-    //         $context.find('.minus').click(function () {
-    //             const $input = $(this).siblings('input');
-    //             let val = parseInt($input.val()) || 0;
-    //             if (val > 0) $input.val(val - 1).trigger('input');
-    //         });
-
-    //         $context.find('.plus').click(function () {
-    //             const $input = $(this).siblings('input');
-    //             let val = parseInt($input.val()) || 0;
-    //             $input.val(val + 1).trigger('input');
-    //         });
-
-    //         $context.find('.qty, .unit-cost').on('input', function () {
-    //             const $block = $(this).closest('.block');
-    //             const qty = parseFloat($block.find('.qty').val()) || 0;
-    //             const cost = parseFloat($block.find('.unit-cost').val()) || 0;
-    //             $block.find('.total-cost').val((qty * cost).toFixed(2));
-    //         });
-
-    //         $context.find('input[type=radio][name^="soaking-type-"]').change(function () {
-    //             const $block = $(this).closest('.block');
-    //             const isFree = $(this).val() === 'free';
-
-    //             $block.find('.qty, .unit-cost, .total-cost').prop('disabled', isFree);
-    //             $block.find('.minus, .plus').prop('disabled', isFree);
-
-    //             if (isFree) {
-    //                 $block.find('.qty').val(0);
-    //                 $block.find('.unit-cost').val('');
-    //                 $block.find('.total-cost').val('');
-    //             }
-    //         });
-
-    //         $context.find('.remove-fertilizer').click(function () {
-    //             $(this).closest('.fertilizer-block').remove();
-    //         });
-    //     }
-
-    //     // Add initial event for add button
-    //     $('button:contains("Type of Fertilizer")').click(function (e) {
-    //         e.preventDefault();
-    //         const $newBlock = $(generateFertilizerBlock(fertilizerIndex++));
-    //         $('#seedbed-fertilization-regular-fields').append($newBlock);
-    //         bindEvents($newBlock);
-
-    //         // Reinitialize select2
-    //         $newBlock.find('select.select2').select2();
-    //     });
-
-    //     // Initial binding (if there's already a block)
-    //     $('#seedbed-fertilization-regular-fields .fertilizer-block').each(function () {
-    //         bindEvents($(this));
-    //     });
-
-    //     $('#add-fertilizer-btn').trigger('click');
-
-    // });
 
 </script>
