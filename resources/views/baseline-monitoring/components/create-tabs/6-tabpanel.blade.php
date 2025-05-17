@@ -27,7 +27,7 @@
                 <label class="form-label text-muted">Qty</label>
                 <div class="input-step step-primary full-width d-flex">
                     <button type="button" class="minus">–</button>
-                    <input type="number" class="product-quantity form-control text-center quantity" value="0" min="0" step="1">
+                    <input type="number" class="quantity form-control text-center quantity" value="0" min="0" step="1">
                     <button type="button" class="plus">+</button>
                 </div>
             </div>
@@ -89,7 +89,7 @@
                             <label class="form-label text-muted">Qty</label>
                             <div class="input-step step-primary full-width d-flex">
                                 <button type="button" class="minus">–</button>
-                                <input type="number" class="product-quantity form-control text-center soaking-qty" value="0" min="0" step="1">
+                                <input type="number" class="form-control text-center quantity" value="0" min="0" step="1">
                                 <button type="button" class="plus">+</button>
                             </div>
                         </div>
@@ -117,7 +117,7 @@
                             <label class="form-label text-muted">Qty</label>
                             <div class="input-step step-primary full-width d-flex">
                                 <button type="button" class="minus">–</button>
-                                <input type="number" class="product-quantity form-control text-center" value="0" min="0" step="1">
+                                <input type="number" class="quantity form-control text-center" value="0" min="0" step="1">
                                 <button type="button" class="plus">+</button>
                             </div>
                         </div>
@@ -145,7 +145,7 @@
                             <label class="form-label text-muted">Qty</label>
                             <div class="input-step step-primary full-width d-flex">
                                 <button type="button" class="minus">–</button>
-                                <input type="number" class="product-quantity form-control text-center" value="0" min="0" step="1">
+                                <input type="number" class="quantity form-control text-center" value="0" min="0" step="1">
                                 <button type="button" class="plus">+</button>
                             </div>
                         </div>
@@ -173,7 +173,7 @@
                             <label class="form-label text-muted">Qty</label>
                             <div class="input-step step-primary full-width d-flex">
                                 <button type="button" class="minus">–</button>
-                                <input type="number" class="product-quantity form-control text-center" value="0" min="0" step="1">
+                                <input type="number" class="quantity form-control text-center" value="0" min="0" step="1">
                                 <button type="button" class="plus">+</button>
                             </div>
                         </div>
@@ -201,7 +201,7 @@
                             <label class="form-label text-muted">Qty</label>
                             <div class="input-step step-primary full-width d-flex">
                                 <button type="button" class="minus">–</button>
-                                <input type="number" class="product-quantity form-control text-center" value="0" min="0" step="1">
+                                <input type="number" class="quantity form-control text-center" value="0" min="0" step="1">
                                 <button type="button" class="plus">+</button>
                             </div>
                         </div>
@@ -229,7 +229,7 @@
                             <label class="form-label text-muted">Qty</label>
                             <div class="input-step step-primary full-width d-flex">
                                 <button type="button" class="minus">–</button>
-                                <input type="number" class="product-quantity form-control text-center" value="0" min="0" step="1">
+                                <input type="number" class="quantity form-control text-center" value="0" min="0" step="1">
                                 <button type="button" class="plus">+</button>
                             </div>
                         </div>
@@ -257,7 +257,7 @@
                             <label class="form-label text-muted">Qty</label>
                             <div class="input-step step-primary full-width d-flex">
                                 <button type="button" class="minus">–</button>
-                                <input type="number" class="product-quantity form-control text-center" value="0" min="0" step="1">
+                                <input type="number" class="quantity form-control text-center" value="0" min="0" step="1">
                                 <button type="button" class="plus">+</button>
                             </div>
                         </div>

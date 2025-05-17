@@ -40,7 +40,31 @@
             }
         });
 
+        function bindComputationEvents(context = document) {
+            $(context).find('.plus').off('click').on('click', function () {
+                const $input = $(this).siblings('input.quantity');
+                let current = parseInt($input.val()) || 0;
+                $input.val(current + 1).trigger('input');
+            });
+
+            $(context).find('.minus').off('click').on('click', function () {
+                const $input = $(this).siblings('input.quantity');
+                let current = parseInt($input.val()) || 0;
+                if (current > 0) {
+                    $input.val(current - 1).trigger('input');
+                }
+            });
+
+            $(context).find('.quantity, .unit-cost').off('input').on('input', function () {
+                const $row = $(this).closest('.row');
+                const qty = parseFloat($row.find('.quantity').val()) || 0;
+                const unit = parseFloat($row.find('.unit-cost').val()) || 0;
+                const total = qty * unit;
+                $row.find('.total-cost').val(total.toFixed(2));
+            });
+        }
     });
+
     $(document).ready(function () {
         // Show/hide based on "Package" checkbox
         $('#land-prep-pakyaw').on('change', function () {
@@ -71,8 +95,7 @@
                 $('#seedbed-prep-pakyaw-total-cost').hide();
                 $('#seedbed-prep-regular-fields').show();
             }
-        });
-
+        })
         // Show/hide based on "Package" checkbox in Seeds Preparation
         $('#crop-establishment-pakyaw').on('change', function () {
             if ($(this).is(':checked')) {
@@ -84,91 +107,40 @@
             }
         });
 
-        // Calculate total cost per block when quantity or unit cost changes
-        $('#land-prep-regular-fields').on('input', '.product-quantity, .unit-cost', function () {
-            const $row = $(this).closest('.row.bg-light');
-            const qty = parseFloat($row.find('.product-quantity').val()) || 0;
-            const unitCost = parseFloat($row.find('.unit-cost').val()) || 0;
-            const totalCost = qty * unitCost;
-            $row.find('.total-cost').val(totalCost.toFixed(2));
-        });
-
-        $('#seedbed-prep-regular-fields').on('input', '.product-quantity, .unit-cost', function () {
-            const $row = $(this).closest('.row.bg-light');
-            const qty = parseFloat($row.find('.product-quantity').val()) || 0;
-            const unitCost = parseFloat($row.find('.unit-cost').val()) || 0;
-            const totalCost = qty * unitCost;
-            $row.find('.total-cost').val(totalCost.toFixed(2));
-        });
-
-        // Optional: Add click handlers for plus and minus buttons
-        $('#seed-prep-regular-fields').on('click', '.plus, .minus', function () {
-            const $input = $(this).siblings('input.product-quantity');
-            let currentVal = parseInt($input.val()) || 0;
-            if ($(this).hasClass('plus')) {
-                currentVal++;
-            } else if ($(this).hasClass('minus') && currentVal > 0) {
-                currentVal--;
-            }
-            $input.val(currentVal).trigger('input');
-        });
-
-        $('#seedbed-fertilization-regular-fields').on('input', '.product-quantity, .unit-cost', function () {
-            const $row = $(this).closest('.row.bg-light');
-            const qty = parseFloat($row.find('.product-quantity').val()) || 0;
-            const unitCost = parseFloat($row.find('.unit-cost').val()) || 0;
-            const totalCost = qty * unitCost;
-            $row.find('.total-cost').val(totalCost.toFixed(2));
-        });
     });
 
     $(document).ready(function () {
-        function calculateTotalCost($block) {
-            const $qtyInput = $block.find('.quantity');
-            const $unitCostInput = $block.find('.unit-cost');
-            const $totalCostInput = $block.find('.total-cost');
+        function initializeComputations() {
+            // Delegated event for plus button
+            $(document).on('click', '.block .plus', function () {
+                const $input = $(this).siblings('input.quantity');
+                const current = parseFloat($input.val()) || 0;
+                const step = parseFloat($input.attr('step')) || 1;
+                $input.val(current + step).trigger('input');
+            });
 
-            const qty = parseFloat($qtyInput.val()) || 0;
-            const unitCost = parseFloat($unitCostInput.val()) || 0;
-            const total = qty * unitCost;
+            // Delegated event for minus button
+            $(document).on('click', '.block .minus', function () {
+                const $input = $(this).siblings('input.quantity');
+                const current = parseFloat($input.val()) || 0;
+                const step = parseFloat($input.attr('step')) || 1;
+                const min = parseFloat($input.attr('min')) || 0;
+                $input.val(Math.max(current - step, min)).trigger('input');
+            });
 
-            $totalCostInput.val(total.toFixed(2));
+            // Delegated event for input changes
+            $(document).on('input', '.block .quantity, .block .unit-cost', function () {
+                const $block = $(this).closest('.block');
+                const qty = parseFloat($block.find('.quantity').val()) || 0;
+                const unitCost = parseFloat($block.find('.unit-cost').val()) || 0;
+                const total = qty * unitCost;
+                $block.find('.total-cost').val(total.toFixed(2));
+            });
         }
 
-        $('.block').each(function () {
-            const $block = $(this);
-            const $qtyInput = $block.find('.quantity');
-            const $unitCostInput = $block.find('.unit-cost');
-
-            function attachAndTriggerCalc($input) {
-                $input.on('input change', function () {
-                    calculateTotalCost($block);
-                });
-            }
-
-            // Attach event handlers
-            attachAndTriggerCalc($qtyInput);
-            attachAndTriggerCalc($unitCostInput);
-
-            // Plus button
-            $block.find('.plus').on('click', function () {
-                const $input = $(this).siblings('input.quantity');
-                const currentVal = parseInt($input.val()) || 0;
-                $input.val(currentVal + 1).trigger('input');
-            });
-
-            // Minus button
-            $block.find('.minus').on('click', function () {
-                const $input = $(this).siblings('input.quantity');
-                const currentVal = parseInt($input.val()) || 0;
-                const min = parseInt($input.attr('min')) || 0;
-                $input.val(Math.max(min, currentVal - 1)).trigger('input');
-            });
-
-            // Initial calculation
-            calculateTotalCost($block);
-        });
+        initializeComputations();
     });
+
 
     $(document).ready(function () {
         const $varietyContainer = $('#variety-container');
@@ -249,7 +221,7 @@
                             <label class="form-label text-muted">Qty</label>
                             <div class="input-step step-primary full-width d-flex">
                                 <button type="button" class="minus">–</button>
-                                <input type="number" class="product-quantity form-control text-center soaking-qty quantity" value="0" min="0" step="1">
+                                <input type="number" class="quantity form-control text-center soaking-qty quantity" value="0" min="0" step="1">
                                 <button type="button" class="plus">+</button>
                             </div>
                         </div>
@@ -670,7 +642,7 @@
             $newBlock.find('input[type="number"]').each(function () {
                 const isDisabled = $(this).prop('disabled');
                 if (!isDisabled) {
-                    if ($(this).hasClass('product-quantity')) {
+                    if ($(this).hasClass('quantity')) {
                         $(this).val(0);
                     } else {
                         $(this).val('');
@@ -818,28 +790,6 @@
             }
         });
 
-        // Quantity adjustments
-        $(document).on('click', '.plus', function () {
-            const $input = $(this).siblings('input[type="number"]');
-            $input.val(parseInt($input.val() || 0) + 1).trigger('input');
-        });
-
-        $(document).on('click', '.minus', function () {
-            const $input = $(this).siblings('input[type="number"]');
-            const val = parseInt($input.val() || 0);
-            if (val > 0) {
-                $input.val(val - 1).trigger('input');
-            }
-        });
-
-        // Auto total cost
-        $(document).on('input', '.product-quantity, .unit-cost', function () {
-            const $row = $(this).closest('.row');
-            const qty = parseFloat($row.find('.product-quantity').val()) || 0;
-            const unit = parseFloat($row.find('.unit-cost').val()) || 0;
-            $row.find('.total-cost').val((qty * unit).toFixed(2));
-        });
-
         function updateHarvestView() {
             const type = $('input[name="harvesting-type"]:checked').val();
 
@@ -856,6 +806,77 @@
             }
         }
     });
+
+    $(document).ready(function () {
+        function computeMechanicalHarvestCost() {
+            const $block = $('#mechanical-block');
+            const bags = parseFloat($block.find('.bags').val()) || 0;
+            const avgWeight = parseFloat($block.find('.avg-bag-weight').val()) || 0;
+            const pricePerKilo = parseFloat($block.find('.price-per-kg').val()) || 0;
+
+            const total = bags * avgWeight * pricePerKilo;
+            $block.find('.total-mechanical-cost').val(total.toFixed(2));
+        }
+
+        // Manual logic for + / - buttons
+        $('#mechanical-block').on('click', '.plus', function () {
+            const $input = $(this).siblings('.bags');
+            const current = parseFloat($input.val()) || 0;
+            const step = parseFloat($input.attr('step')) || 1;
+            $input.val(current + step).trigger('input');
+        });
+
+        $('#mechanical-block').on('click', '.minus', function () {
+            const $input = $(this).siblings('.bags');
+            const current = parseFloat($input.val()) || 0;
+            const step = parseFloat($input.attr('step')) || 1;
+            const min = parseFloat($input.attr('min')) || 0;
+            $input.val(Math.max(current - step, min)).trigger('input');
+        });
+
+        // Trigger calculation on input
+        $('#mechanical-block').on('input', '.bags, .avg-bag-weight, .price-per-kg', computeMechanicalHarvestCost);
+
+        computeMechanicalHarvestCost(); // Initial run
+    });
+
+    $(document).ready(function () {
+        function computePermanentLaborCost() {
+            const $block = $('#permanent-block:has(.percent-share)');
+            const bags = parseFloat($block.find('.bags').val()) || 0;
+            const avgWeight = parseFloat($block.find('.avg-bag-weight').val()) || 0;
+            const pricePerKilo = parseFloat($block.find('.price-per-kg').val()) || 0;
+            const percent = parseFloat($block.find('.percent-share').val()) || 0;
+
+            const shareFraction = percent / 100;
+            const total = bags * shareFraction * avgWeight * pricePerKilo;
+
+            $block.find('.total-permanent-cost').val(total.toFixed(2));
+        }
+
+        // Input triggers
+        $('#permanent-block').on('input', '.bags, .avg-bag-weight, .price-per-kg, .percent-share', computePermanentLaborCost);
+
+        // Handle plus / minus buttons for "bags"
+        $('#permanent-block').on('click', '.plus', function () {
+            const $input = $(this).siblings('.bags');
+            const val = parseFloat($input.val()) || 0;
+            const step = parseFloat($input.attr('step')) || 1;
+            $input.val(val + step).trigger('input');
+        });
+
+        $('#permanent-block').on('click', '.minus', function () {
+            const $input = $(this).siblings('.bags');
+            const val = parseFloat($input.val()) || 0;
+            const step = parseFloat($input.attr('step')) || 1;
+            const min = parseFloat($input.attr('min')) || 0;
+            $input.val(Math.max(val - step, min)).trigger('input');
+        });
+
+        // Initial calculation on load
+        computePermanentLaborCost();
+    });
+
 
 // $(document).ready(function () {
 //     updateHarvestView(); // initial
