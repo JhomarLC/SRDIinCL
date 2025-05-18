@@ -9,7 +9,7 @@
         <div class="row g-3">
             <div class="col-12 d-flex justify-content-between align-items-center">
                 <label class="form-label mb-0">Pesticide Details</label>
-                <button id="add-pesticide-application-btn" class="btn btn-secondary">
+                <button type="button" id="add-pesticide-application-btn" class="btn btn-secondary">
                     <i class="ri-file-add-fill"></i> Add Application
                 </button>
             </div>

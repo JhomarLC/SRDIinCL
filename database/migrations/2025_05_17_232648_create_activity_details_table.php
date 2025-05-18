@@ -14,13 +14,14 @@ return new class extends Migration
         Schema::create('activity_details', function (Blueprint $table) {
             $table->id();
             $table->foreignId('farming_activity_id')->constrained()->onDelete('cascade');
-            $table->integer('round_number')->nullable()->comment('For recurring activities like 1st/2nd Application');
-            $table->string('activity'); // e.g. Plowing, Herbicide
+            $table->integer('round_number')->nullable()->comment('e.g., 1st/2nd application');
+            $table->string('activity'); // e.g., Plowing, Urea App, Meals
             $table->decimal('qty', 12, 2);
             $table->decimal('unit_cost', 12, 2);
             $table->decimal('total_cost', 12, 2);
             $table->timestamps();
         });
+
     }
 
     /**

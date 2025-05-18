@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('sacks', function (Blueprint $table) {
             $table->id();
             $table->foreignId('activity_detail_id')->constrained()->onDelete('cascade');
-            $table->string('type'); // Ordinary, Laminated
+            $table->string('type'); // ordinary, laminated, twine, thread
             $table->decimal('qty', 12, 2);
             $table->decimal('unit_cost', 12, 2);
             $table->decimal('total_cost', 12, 2);

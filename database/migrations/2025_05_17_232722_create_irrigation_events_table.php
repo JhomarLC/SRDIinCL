@@ -15,11 +15,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId('farming_activity_id')->constrained()->onDelete('cascade');
             $table->integer('round_number');
-            $table->string('irrigation_type'); // NIA, Supplementary
-            $table->boolean('is_pakyaw');
-            $table->decimal('total_cost', 12, 2);
+            $table->enum('irrigation_type', ['NIA', 'Supplementary']);
+            $table->boolean('is_pakyaw')->default(false);
+            $table->decimal('total_cost', 12, 2)->nullable();
             $table->timestamps();
         });
+
     }
 
     /**

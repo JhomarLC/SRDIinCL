@@ -22,7 +22,7 @@ class FarmingActivity extends Model
         return $this->belongsTo(FarmingData::class);
     }
 
-    public function activityDetails()
+    public function details()
     {
         return $this->hasMany(ActivityDetail::class);
     }

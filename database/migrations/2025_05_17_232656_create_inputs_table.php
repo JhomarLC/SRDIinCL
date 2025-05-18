@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('inputs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('activity_detail_id')->constrained()->onDelete('cascade');
-            $table->string('input_type'); // Fertilizer, Herbicide, etc.
+            $table->string('input_type'); // Fertilizer, Pesticide, etc.
             $table->string('brand_name');
-            $table->boolean('is_free');
+            $table->boolean('is_free')->default(false);
             $table->timestamps();
         });
     }

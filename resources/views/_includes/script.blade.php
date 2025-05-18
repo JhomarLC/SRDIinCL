@@ -1,4 +1,26 @@
 <script>
+    $(document).ready(function() {
+        $('.select2').select2();
+
+        function toggleMunicipality() {
+            const provinceVal = $('#province').val();
+
+            if (provinceVal === 'all' || provinceVal === '') {
+                $('#municipality').prop('disabled', true).val('all').trigger('change.select2');
+            } else {
+                $('#municipality').prop('disabled', false).trigger('change.select2');
+            }
+        }
+
+        // Trigger toggle on page load
+        toggleMunicipality();
+
+        // Update when province changes
+        $('#province').on('change', function () {
+            toggleMunicipality();
+        });
+    });
+
     const openrouterApiKey = "{{ $openrouterApiKey }}";
     /**
      * Generates a subtitle for any chart given labels, counts, and a target element ID.
@@ -333,17 +355,6 @@
         chart.render();
     }
 
-    function getGreenShade(percent) {
-        // percent: 0 to 1
-        if (percent > 0.9) return '#00441b';     // darkest green
-        if (percent > 0.75) return '#006d2c';
-        if (percent > 0.5) return '#238b45';
-        if (percent > 0.25) return '#41ab5d';
-        if (percent > 0.1) return '#74c476';
-        if (percent > 0) return '#a1d99b';
-        return '#e5f5e0';                        // very light green / no data
-    }
-
     const philippinesBounds = L.latLngBounds(
         [4.5, 116.8],
         [21.5, 126.6]
@@ -388,14 +399,13 @@
         provinceCounts[normalize(p.name)] = p.count;
     });
 
-    function getColor(count) {
-        return count > 500 ? '#084081' :
-               count > 200 ? '#0868ac' :
-               count > 100 ? '#2b8cbe' :
-               count > 50  ? '#4eb3d3' :
-               count > 1  ? '#7bccc4' :
-               count > 0   ? '#bae4bc' :
-                             '#f0f0f0';
+   function getColor(count) {
+        return count > 20 ? '#00441b' :     // dark green
+            count > 10 ? '#006d2c' :     // medium-dark green
+            count > 5 ? '#238b45' :     // mid green
+            count > 3  ? '#41ab5d' :     // light green
+            count > 0   ? '#74c476' :     // very pale green
+                            '#bae4b3';      // default grey for 0
     }
 
     fetch('/geojson/philippines-provinces.json')
@@ -432,49 +442,93 @@
             }).addTo(map);
         });
 
+    var provinceLabelsChart = {!! json_encode(collect($provinceData)->pluck('name')) !!};
+    var provinceCountsChart = {!! json_encode(collect($provinceData)->pluck('count')) !!};
 
+    var chartProvinceBarColors = provinceCountsChart.map(getColor);
 
-    // var map = L.map('map').setView([12.8797, 121.7740], 6);
+    if(chartProvinceBarColors){
+        var dataLabelColors = provinceCountsChart.map(function (val) {
+            return val === 0 ? '#000' : '#fff';
+        });
 
-    // L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+        var chartColors = provinceCountsChart.map(getColor); // 🔁 map-based matching colors
 
-    // var regionData = {
-    //     "Ilocos Region": 5000000,
-    //     "Cagayan Valley": 3500000,
-    //     "Central Luzon": 12000000
-    //     // Continue for all regions
-    // };
+        var options = {
+            series: [{
+                data: provinceCountsChart
+            }],
+            chart: {
+                type: 'bar',
+                height: 500,
+                toolbar: {
+                    show: true,
+                    tools: {
+                        download: true,
+                        selection: false,
+                        zoom: false,
+                        zoomin: false,
+                        zoomout: false,
+                        pan: false,
+                        reset: false
+                    }
+                }
+            },
+            plotOptions: {
+                bar: {
+                    barHeight: '100%',
+                    distributed: true,
+                    horizontal: true,
+                    dataLabels: {
+                        position: 'bottom'
+                    }
+                }
+            },
+            colors: chartColors, // ✅ use map-matched colors
+            dataLabels: {
+                enabled: true,
+                textAnchor: 'start',
+                style: {
+                    colors: dataLabelColors
+                },
+                formatter: function (val, opt) {
+                    return opt.w.globals.labels[opt.dataPointIndex] + ": " + val;
+                },
+                offsetX: 0,
+                dropShadow: {
+                    enabled: false
+                }
+            },
+            stroke: {
+                width: 1,
+                colors: ['#fff']
+            },
+            xaxis: {
+                categories: provinceLabelsChart
+            },
+            yaxis: {
+                labels: {
+                    show: false
+                }
+            },
+            tooltip: {
+                theme: 'dark',
+                x: {
+                    show: false
+                },
+                y: {
+                    title: {
+                        formatter: function () {
+                            return ''
+                        }
+                    }
+                }
+            }
+        };
 
-    // function getColor(d) {
-    //     return d > 10000000 ? '#800026' :
-    //         d > 7000000  ? '#BD0026' :
-    //         d > 5000000  ? '#E31A1C' :
-    //         d > 3000000  ? '#FC4E2A' :
-    //         d > 1000000  ? '#FD8D3C' :
-    //                         '#FEB24C';
-    // }
+        var chart = new ApexCharts(document.querySelector("#province_datalabels_bar"), options);
+        chart.render();
 
-    // function style(feature) {
-    //     var value = regionData[feature.properties.NAME_1] || 0;  // Adjust property key if needed
-    //     return {
-    //         fillColor: getColor(value),
-    //         weight: 2,
-    //         opacity: 1,
-    //         color: 'white',
-    //         dashArray: '3',
-    //         fillOpacity: 0.7
-    //     };
-    // }
-
-    // function onEachFeature(feature, layer) {
-    //     var value = regionData[feature.properties.NAME_1] || "No data";
-    //     layer.bindPopup(feature.properties.NAME_1 + "<br>Value: " + value);
-    // }
-
-    // var geojsonLayer = new L.GeoJSON.AJAX("ph_regions.geojson", {
-    //     style: style,
-    //     onEachFeature: onEachFeature
-    // }).addTo(map);
-
+    }
 
 </script>

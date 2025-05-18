@@ -13,13 +13,11 @@ return new class extends Migration
     {
         Schema::create('farming_activities', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('farming_data_id')
-                ->constrained('farming_data') // <-- explicitly state the correct table
-                ->onDelete('cascade');
-            $table->string('category'); // Land Preparation, etc.
-            $table->string('method')->nullable(); // Manual, Mechanical (optional)
-            $table->boolean('is_pakyaw')->comment('True if activity is a pakyaw/all-in contract.');
-            $table->decimal('total_cost', 12, 2)->comment('Total cost if pakyaw, or sum of details otherwise');
+            $table->foreignId('farming_data_id')->constrained('farming_data')->onDelete('cascade');
+            $table->string('category'); // e.g., Land Prep, Fertilizer App, Pest Management
+            $table->string('method')->nullable();
+            $table->boolean('is_pakyaw')->default(false);
+            $table->decimal('total_cost', 12, 2)->nullable()->comment('Only filled when pakyaw');
             $table->timestamps();
         });
     }

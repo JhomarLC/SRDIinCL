@@ -51,11 +51,11 @@
                 <label class="form-label mb-0">Type of Establishment</label>
                 <div class="col-12 d-flex align-items-center gap-3">
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input labor-type" type="radio" name="soaking-type" id="soaking-free" value="free" checked>
+                        <input class="form-check-input labor-type" type="radio" name="soaking-type" id="soaking-free" value="Manual" checked>
                         <label class="form-check-label" for="soaking-free">Manual</label>
                     </div>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input labor-type" type="radio" name="soaking-type" id="soaking-purchase" value="purchase">
+                        <input class="form-check-input labor-type" type="radio" name="soaking-type" id="soaking-purchase" value="Mechanical">
                         <label class="form-check-label" for="soaking-purchase">Mechanical</label>
                     </div>
                 </div>

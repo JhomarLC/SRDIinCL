@@ -24,7 +24,7 @@
             function calculateTotalYield() {
             const numberOfBags = parseFloat($('#number_of_bags').val()) || 0;
             const avgWeightPerBag = parseFloat($('#avg_weight_per_bag').val()) || 0;
-            const totalYield = numberOfBags * avgWeightPerBag;
+            const totalYield = (numberOfBags * avgWeightPerBag) / 1000 ;
 
             $('#yield_tons_per_ha').val(totalYield.toFixed(2));
         }
@@ -206,13 +206,13 @@
                     <h6 class="variety-label"></h6>
                     <div class="form-check form-check-inline">
                         <input class="form-check-input" type="radio"
-                            name="soaking_type_${varietyId}" id="soaking_free_${varietyId}"
+                            name="purchase_status_${varietyId}" id="soaking_free_${varietyId}"
                             value="free">
                         <label class="form-check-label" for="soaking_free_${varietyId}">Free</label>
                     </div>
                     <div class="form-check form-check-inline">
                         <input class="form-check-input" type="radio"
-                            name="soaking_type_${varietyId}" id="soaking_purchase_${varietyId}"
+                            name="purchase_status_${varietyId}" id="soaking_purchase_${varietyId}"
                             value="purchase" checked>
                         <label class="form-check-label" for="soaking_purchase_${varietyId}">Purchase</label>
                     </div>
@@ -271,7 +271,7 @@
                 $row.find('.total-cost').val((qty * unit).toFixed(2));
             });
 
-            $('input[type=radio][name^=soaking_type_]').off('change').on('change', function () {
+            $('input[type=radio][name^=purchase_status_]').off('change').on('change', function () {
                 const $block = $(this).closest('.variety-block');
                 const isFree = $(this).val() === 'free';
 
@@ -489,7 +489,8 @@
         });
 
         // Add new application
-        $('#add-application-btn').on('click', function () {
+        $('#add-application-btn').on('click', function (e) {
+            e.preventDefault();
             appCounter++;
             const template = $('#fertilizer-application-template').html();
             const newHtml = template.replace(/{index}/g, appCounter);
@@ -625,7 +626,8 @@
             $(this).closest('.irrigation-block').remove();
         });
 
-        $('.add-irrigation').on('click', function () {
+        $('.add-irrigation').on('click', function (e) {
+            e.preventDefault();
             irrigationCount++;
 
             const $firstBlock = $('.irrigation-block').first();
@@ -719,7 +721,8 @@
         });
 
         // Add Application
-        $('#add-pesticide-application-btn').on('click', function () {
+        $('#add-pesticide-application-btn').on('click', function (e) {
+            e.preventDefault();
             pestAppCounter++;
             const suffixes = ['st', 'nd', 'rd'];
             const suffix = suffixes[pestAppCounter - 1] || 'th';

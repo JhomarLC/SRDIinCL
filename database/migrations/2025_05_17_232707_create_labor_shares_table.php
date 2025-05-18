@@ -17,10 +17,11 @@ return new class extends Migration
             $table->decimal('bags', 12, 2);
             $table->decimal('avg_bag_weight', 12, 2);
             $table->decimal('price_per_kilo', 12, 2);
-            $table->decimal('share_percent', 5, 2)->comment('e.g. 5 for 5%');
+            $table->decimal('share_percent', 5, 2);
             $table->decimal('computed_total', 12, 2);
             $table->timestamps();
         });
+
     }
 
     /**

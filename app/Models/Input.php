@@ -16,7 +16,7 @@ class Input extends Model
         'is_free',
     ];
 
-    public function activityDetail()
+    public function detail()
     {
         return $this->belongsTo(ActivityDetail::class);
     }

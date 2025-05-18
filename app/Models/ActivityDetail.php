@@ -18,7 +18,7 @@ class ActivityDetail extends Model
         'total_cost',
     ];
 
-    public function farmingActivity()
+    public function activity()
     {
         return $this->belongsTo(FarmingActivity::class);
     }
@@ -28,7 +28,7 @@ class ActivityDetail extends Model
         return $this->hasMany(Input::class);
     }
 
-    public function laborShares()
+    public function laborShare()
     {
         return $this->hasMany(LaborShare::class);
     }

@@ -52,7 +52,7 @@
         </div>
     </form>
 </div>
-
+{{-- Or raw output if you want unescaped HTML (be cautious!) --}}
 <div class="row mt-3">
     <div class="col-lg-12">
         <div class="card">

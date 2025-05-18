@@ -3,17 +3,36 @@
 namespace App\Http\Controllers;
 
 use App\Models\FarmingData;
+use App\Models\Municipality;
 use App\Models\Participant;
+use App\Models\Province;
 use App\Models\TrainingResults;
 use DB;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // Exclude archived participants
+        $provinceName = $request->input('province');
+        $municipalityName = $request->input('municipality');
+
         $participantsQuery = Participant::where('status', '!=', 'archived');
+
+        if ($provinceName && $provinceName !== 'all') {
+            $participantsQuery->whereHas('province', function ($query) use ($provinceName) {
+                $query->where('name', $provinceName);
+            });
+        }
+
+        if ($municipalityName && $municipalityName !== 'all') {
+            $participantsQuery->whereHas('municipality', function ($query) use ($municipalityName) {
+                $query->where('name', $municipalityName);
+            });
+        }
+
+        $provinces = Province::all();
+        $municipalities = Municipality::all(); // You can filter this by province later in the view
 
         $genderDistribution = (clone $participantsQuery)
             ->select(
@@ -119,20 +138,6 @@ class DashboardController extends Controller
             ];
         }
 
-        $regionData = (clone $participantsQuery)
-            ->whereNotNull('region_code')
-            ->select('region_code', DB::raw('COUNT(*) as total'))
-            ->groupBy('region_code')
-            ->with('region') // to get region name
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'code' => $item->region_code,
-                    'name' => optional($item->region)->name,
-                    'count' => $item->total,
-                ];
-            });
-
         $provinceData = (clone $participantsQuery)
             ->whereNotNull('province_code')
             ->with('province')
@@ -146,23 +151,10 @@ class DashboardController extends Controller
                 ];
             });
 
-        $provinceChartData = (clone $participantsQuery)
-            ->whereNotNull('province_code')
-            ->with('province')
-            ->select('province_code', DB::raw('COUNT(*) as total'))
-            ->groupBy('province_code')
-            ->get()
-            ->map(function ($item) {
-                return (object)[
-                    'label' => optional($item->province)->name ?? 'Unknown',
-                    'value' => $item->total,
-                ];
-            })
-            ->sortByDesc('value')
-            ->values(); // Reindex for clean JSON
-
         $openrouterApiKey = config('services.openrouter.api_key');
         return view('index', compact(
+            'provinces',
+            'municipalities',
             'genderDistribution',
             'ageGroupDistribution',
             'openrouterApiKey',
@@ -172,11 +164,9 @@ class DashboardController extends Controller
             'farmingExperienceDistribution',
             'farmOwnershipDistribution',
             'disabilityCount',
-            'regionData',
-            'provinceData',          // for the map
-            'provinceChartData',     // for the bar chart
+            'provinceData',
+
         ));
     }
-
 
 }

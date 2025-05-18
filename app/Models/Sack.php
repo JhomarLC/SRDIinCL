@@ -17,7 +17,7 @@ class Sack extends Model
         'total_cost',
     ];
 
-    public function activityDetail()
+    public function detail()
     {
         return $this->belongsTo(ActivityDetail::class);
     }

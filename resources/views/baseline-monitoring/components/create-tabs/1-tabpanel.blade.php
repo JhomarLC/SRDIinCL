@@ -55,37 +55,37 @@
 
             <div class="col-sm-4">
                 <label for="number_of_bags" class="form-label">Number of Bags</label>
-                <input type="text" class="form-control" id="number_of_bags" name="number_of_bags"
+                <input type="text" class="form-control" id="number_of_bags" name="number_of_bags" value="50"
                     placeholder="Number of Bags" required>
                 <div class="invalid-feedback">Please enter number of bags</div>
             </div>
             <div class="col-sm-4">
                 <label for="avg_weight_per_bag" class="form-label">Average Weight per Bag</label>
-                <input type="text" class="form-control" id="avg_weight_per_bag" name="avg_weight_per_bag"
+                <input type="text" class="form-control" id="avg_weight_per_bag" name="avg_weight_per_bag" value="45"
                     placeholder="Average Weight per Bag" required>
                 <div class="invalid-feedback">Please enter average weight per bag</div>
             </div>
             <div class="col-sm-4">
                 <label for="yield_tons_per_ha" class="form-label">Total Yield (tons/ha)</label>
-                <input type="text" class="form-control" id="yield_tons_per_ha" name="yield_tons_per_ha"
+                <input type="text" class="form-control" id="yield_tons_per_ha" name="yield_tons_per_ha" value="2.5"
                     placeholder="0.00" required disabled>
                 <div class="invalid-feedback">Please enter farm size</div>
             </div>
             <div class="col-sm-4">
                 <label for="price_per_kg_fresh" class="form-label">Fresh Price per kg</label>
-                <input type="text" class="form-control" id="price_per_kg_fresh" name="price_per_kg_fresh"
+                <input type="text" class="form-control" id="price_per_kg_fresh" name="price_per_kg_fresh" value="25"
                     placeholder="Fresh price per kg" required>
                 <div class="invalid-feedback">Please enter fresh price per kg</div>
             </div>
             <div class="col-sm-4">
                 <label for="price_per_kg_dry" class="form-label">Dry Price per kg</label>
-                <input type="text" class="form-control" id="price_per_kg_dry" name="price_per_kg_dry"
+                <input type="text" class="form-control" id="price_per_kg_dry" name="price_per_kg_dry" value="20"
                     placeholder="Dry price per kg" required>
                 <div class="invalid-feedback">Please enter dry price per kg</div>
             </div>
             <div class="col-sm-4">
                 <label for="drying_cost_per_bag" class="form-label">Price of Drying per Bag</label>
-                <input type="text" class="form-control" id="drying_cost_per_bag" name="drying_cost_per_bag"
+                <input type="text" class="form-control" id="drying_cost_per_bag" name="drying_cost_per_bag" value="10"
                     placeholder="Price of Drying per Bag" required>
                 <div class="invalid-feedback">Please enter price of dying per bag</div>
             </div>

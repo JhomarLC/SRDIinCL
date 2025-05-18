@@ -12,7 +12,7 @@
                 <div id="farmers_by_sex"
                     data-colors='["#2986cc", "#c90076"]'
                     class="apex-charts" dir="ltr"></div>
-                    <div id="gender-subtitle" class="mt-1"></div>
+                <div id="gender-subtitle" class="mt-1"></div>
             </div><!-- end card-body -->
         </div><!-- end card -->
     </div>
@@ -103,54 +103,23 @@
             </div>
         </div>
     </div>
-     <div class="col-xl-6">
-        <div class="card">
-            <div class="card-header">
-                <h4 class="card-title mb-0">Farmers by Province</h4>
-            </div>
-            <div class="card-body">
-                <div id="provinceMap" style="height: 550px;"></div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-xl-6">
+     <div class="col-xl-12">
         <div class="card">
             <div class="card-header d-flex">
                 <h4 class="card-title mb-0 flex-grow-1">Farmers by Province</h4>
-                <button class="btn btn-sm bg-success text-white"
-                        onclick='generateChartSubtitle(provinceLabels, provinceCounts, "Farmers by Province", "province-subtitle")'>
+                <button class="btn btn-sm bg-success text-white" onclick='generateChartSubtitle(ageGroupLabels, ageGroupCounts, "Farmers by age group", "subtitle")'>
                     <i class="ri-refresh-line"></i> Analyze Data with AI
                 </button>
             </div>
-            <div class="card-body">
-                <div id="province_bar_chart"
-                    data-colors='["#a1d99b", "#74c476", "#41ab5d", "#238b45", "#006d2c", "#00441b"]'
-                    class="apex-charts" dir="ltr">
-                </div>
-                <div id="province-subtitle" class="mt-1"></div>
+            <div class="card-body d-flex">
+                 <div class="col-xl-6">
+                     <div id="provinceMap" style="height: 550px;"></div>
+                 </div>
+                 <div class="col-xl-6" id="provinceBarChart">
+                    <div id="province_datalabels_bar" class="apex-charts" dir="ltr"></div>
+                    <div id="subtitle" class="mt-1"></div>
+                 </div>
             </div>
         </div>
     </div>
-
-    {{-- <div class="col-xl-3">
-        <div class="card card-animate">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <p class="fw-medium text-muted mb-0">With Disability</p>
-                        <h2 class="mt-4 ff-secondary fw-semibold"><span class="counter-value"
-                                data-target="{{ number_format($disabilityCount) }}">0</span></h2>
-                    </div>
-                    <div>
-                        <div class="avatar-sm flex-shrink-0">
-                            <span class="avatar-title bg-success-subtle rounded-circle fs-2">
-                                <i data-feather="target" class="text-success"></i>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div><!-- end card body -->
-        </div> <!-- end card-->
-    </div> --}}
 </div>

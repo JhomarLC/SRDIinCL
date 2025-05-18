@@ -30,7 +30,7 @@ class FarmingData extends Model
         'other_crops',
     ];
 
-    public function farmingActivities()
+    public function activities()
     {
         return $this->hasMany(FarmingActivity::class);
     }

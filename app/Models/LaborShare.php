@@ -18,7 +18,7 @@ class LaborShare extends Model
         'computed_total',
     ];
 
-    public function activityDetail()
+    public function detail()
     {
         return $this->belongsTo(ActivityDetail::class);
     }

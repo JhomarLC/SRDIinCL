@@ -54,29 +54,14 @@
             </div>
         </div>
         <!--end col-->
-        {{-- <div class="col-12 col-lg-auto order-last order-lg-0">
-            <div class="row text text-white-50 text-center">
-                <div class="col-6 p-2">
-                    <h4 class="text-white mb-1">{{ $participant->trainings->count() }}</h4>
-                    <p class="fs-14 mb-0">Total No. of Trainings</p>
-                </div>
-
-                <div class="col-6 p-2">
-                    <h4 class="text-white mb-1">{{ $participant->recent_gik ?? 'N/A' }}%</h4>
-                    <p class="fs-14 mb-0">Recent GIK</p>
-                </div>
-            </div>
-        </div> --}}
-        <!--end col-->
-
     </div>
     <!--end row-->
 </div>
-
 <div class="row">
     <div class="col-lg-12">
         <div>
             <div class="d-flex profile-wrapper">
+
                 <!-- Nav tabs -->
                 <ul class="nav nav-pills animation-nav profile-nav gap-2 gap-lg-3 flex-grow-1" role="tablist">
                     <li class="nav-item">
@@ -108,12 +93,7 @@
                                     <i class="ri-add-fill"></i> Dry Season Baseline Monitoring
                                 </a>
                             </div>
-
-                            <div class="col-12">
-                                <div class="d-flex justify-content-center align-items-center" style="height: 150px;">
-                                    <p class="text-muted mb-0">No Baseline Data Available</p>
-                                </div>
-                            </div>
+                            <pre>{!! json_encode($drySeasonData, JSON_PRETTY_PRINT) !!}</pre>
                         </div>
                         <!-- end card body -->
                     </div>
@@ -129,13 +109,9 @@
                                 <a href="{{ route('baseline-monitoring.create', [$participant->id, 'wet-season'])}}" class="btn btn-secondary">
                                     <i class="ri-add-fill"></i> Wet Season Baseline Monitoring
                                 </a>
-                            </div>
 
-                            <div class="col-12">
-                                <div class="d-flex justify-content-center align-items-center" style="height: 150px;">
-                                    <p class="text-muted mb-0">No Baseline Data Available</p>
-                                </div>
                             </div>
+                            <pre>{!! json_encode($wetSeasonData, JSON_PRETTY_PRINT) !!}</pre>
                         </div>
                     </div>
                 </div>

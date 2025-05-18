@@ -5,6 +5,8 @@
 <link href="{{ URL::asset('build/libs/swiper/swiper-bundle.min.css')}}" rel="stylesheet" type="text/css" />
 <!-- In <head> -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<!-- select2  -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" type="text/css" />
 <style>
     #map { height: 600px; }
 </style>
@@ -127,6 +129,36 @@
     <div class="col-xxl-12">
          <div class="card">
             <div class="card-body">
+                <form method="GET" action="{{ route('dashboard') }}" class="d-flex flex-wrap gap-3 align-items-end mb-5">
+                    <div class="flex-grow-1"></div>
+                    <div class="d-flex flex-column" style="min-width: 250px;">
+                        <label for="province" class="form-label">Filter Province</label>
+                        <select name="province" id="province" class="form-control select2">
+                            <option value="all" {{ request('province') == 'all' ? 'selected' : '' }}>-- ALL PROVINCE --</option>
+                            @foreach($provinces as $province)
+                                <option value="{{ $province->name }}" {{ request('province') == $province->name ? 'selected' : '' }}>
+                                    {{ $province->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="d-flex flex-column" style="min-width: 250px;">
+                        <label for="municipality" class="form-label">Filter Municipality</label>
+                         <select name="municipality" id="municipality" class="form-control select2">
+                            <option value="all" {{ request('municipality') == 'all' ? 'selected' : '' }}>-- ALL MUNICIPALITY --</option>
+                            @foreach($municipalities as $municipality)
+                                @if(request('province') == 'all' || request('province') == null || ($municipality->province && $municipality->province->name == request('province')))
+                                    <option value="{{ $municipality->name }}" {{ request('municipality') == $municipality->name ? 'selected' : '' }}>
+                                        {{ $municipality->name }}
+                                    </option>
+                                @endif
+                            @endforeach
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-success">
+                        <i class="ri-filter-fill"></i> Filter
+                    </button>
+                </form>
                 <ul class="nav nav-pills arrow-navtabs nav-success bg-light mb-3" role="tablist">
                     <li class="nav-item">
                         <a class="nav-link active p-4" data-bs-toggle="tab" href="#farmers-profile" role="tab">
@@ -188,6 +220,8 @@
 
 @section('script')
 <!-- apexcharts -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="{{ URL::asset('build/libs/apexcharts/apexcharts.min.js') }}"></script>
 <script src="{{ URL::asset('build/libs/jsvectormap/js/jsvectormap.min.js') }}"></script>
 <script src="{{ URL::asset('build/libs/jsvectormap/maps/world-merc.js') }}"></script>
