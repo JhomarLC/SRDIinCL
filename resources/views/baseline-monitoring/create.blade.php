@@ -281,4 +281,5 @@
 <script src="{{ URL::asset('admin-js/admin.js') }}"></script>
 @include('baseline-monitoring._includes.script')
 @include('baseline-monitoring._includes.logic')
+@include('baseline-monitoring._includes.submit')
 @endsection
