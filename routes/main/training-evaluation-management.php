@@ -17,6 +17,12 @@ Route::prefix('training-evaluation-management')->group(function () {
     Route::post('/validate-step', [TrainingEvaluationController::class, 'validateStep'])->name('training-evaluation-management.validateStep');
     Route::post('/validate-all', [TrainingEvaluationController::class, 'validateAllSteps'])->name('training-evaluation-management.validateAll');
 
+    Route::get('/export/full', [TrainingEvaluationController::class, 'exportFullTrainingEvaluations'])
+        ->name('training-evaluation-management.export.full');
+
+    Route::get('/{eventId}/export', [TrainingEvaluationController::class, 'exportTrainingEventEvaluations'])
+        ->name('training-evaluation-management.export.single');
+
     // Nested topics under a specific speaker
     Route::prefix('{event}/evaluations')->group(function () {
         Route::get('/', [TrainingEvaluationController::class, 'index'])->name('training-evaluation-management.index');

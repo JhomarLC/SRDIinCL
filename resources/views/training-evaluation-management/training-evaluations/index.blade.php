@@ -90,8 +90,8 @@
                 </div>
 
                 <div class="d-flex gap-2 align-items-start">
-                    <a href="{{ route('admin-management.export') }}" class="btn btn-success">
-                        <i class="ri-file-excel-2-fill"></i> Export
+                    <a href="{{ route('training-evaluation-management.export.single', $training_event->id) }}" class="btn btn-success">
+                        <i class="ri-file-excel-2-fill"></i> Export This Event’s Evaluations
                     </a>
                     <a href="{{ route('training-evaluation-management.create', $training_event->id) }}" class="btn btn-secondary">
                         <i class="ri-file-add-fill"></i> New Evaluation

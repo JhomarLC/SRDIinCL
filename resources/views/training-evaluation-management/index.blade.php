@@ -35,8 +35,8 @@
         <div class="card">
             <div class="card-header d-flex align-items-center">
                 <h5 class="card-title mb-0 flex-grow-1">Pests and Nutrient Management for Intermediaries and Farmers</h5>
-                <a style="margin-right: 10px" href="{{ route('admin-management.export') }}">
-                    <button class="btn btn-success"><i class="ri-file-excel-2-fill"></i> Export</button>
+                <a style="margin-right: 10px" href="{{ route('training-evaluation-management.export.full') }}">
+                    <button class="btn btn-success"><i class="ri-file-excel-2-fill"></i> Export Full Evaluation Report</button>
                 </a>
                 <button  class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#addnewtrainingeventsmodal">
                     <i class="ri-file-add-fill"></i> New Training Event

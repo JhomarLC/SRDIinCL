@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Main;
 
+use App\Exports\TrainingEvaluationFullExport;
+use App\Exports\TrainingEvaluationSingleExport;
 use App\Helpers\TrainingValidationRules;
 use App\Http\Controllers\Controller;
 use App\Models\NotableEmployee;
@@ -12,10 +14,30 @@ use App\Models\UsefulTopics;
 use DB;
 use Exception;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\DataTables;
 
 class TrainingEvaluationController extends Controller
 {
+    public function exportFullTrainingEvaluations(Request $request)
+    {
+        $province = $request->input('province');
+        $date_from = $request->input('date_from');
+        $date_to = $request->input('date_to');
+
+        $filename = 'TrainingEvaluationReport_' . now()->format('Ymd_His') . '.xlsx';
+
+        return Excel::download(new TrainingEvaluationFullExport($province, $date_from, $date_to), $filename);
+    }
+
+    public function exportTrainingEventEvaluations(string $eventId)
+    {
+        $event = TrainingEvent::findOrFail($eventId);
+
+        $filename = 'TrainingEvent_' . $event->id . '_Evaluations_' . now()->format('Ymd_His') . '.xlsx';
+
+        return Excel::download(new TrainingEvaluationSingleExport($event->id), $filename);
+    }
     public function validateStep(Request $request)
     {
         $step = $request->input('step');
