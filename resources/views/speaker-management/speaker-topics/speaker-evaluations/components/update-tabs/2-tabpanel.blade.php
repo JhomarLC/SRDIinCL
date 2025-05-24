@@ -9,7 +9,7 @@ aria-labelledby="pills-evaluation-personal-info-tab">
 <div class="mt-3">
     <div class="row g-3">
         <div class="col-sm-3">
-            <label for="first_name" class="form-label">First name <span class="text-danger">*</span></label>
+            <label for="first_name" class="form-label">First name</label>
             <input type="text" class="form-control" id="first_name" name="first_name"
                 value="{{ old('first_name', $evaluation->speaker_evaluation_info->first_name) }}"
                 placeholder="Enter first name" required>
@@ -25,7 +25,7 @@ aria-labelledby="pills-evaluation-personal-info-tab">
         </div>
 
         <div class="col-sm-3">
-            <label for="last_name" class="form-label">Last name <span class="text-danger">*</span></label>
+            <label for="last_name" class="form-label">Last name</label>
             <input type="text" class="form-control" id="last_name" name="last_name"
                 value="{{ old('first_name', $evaluation->speaker_evaluation_info->first_name) }}"
                 placeholder="Enter last name" required>

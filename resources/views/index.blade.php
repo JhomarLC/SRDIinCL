@@ -144,7 +144,7 @@
                     </div>
                     <div class="d-flex flex-column" style="min-width: 250px;">
                         <label for="municipality" class="form-label">Filter Municipality</label>
-                         <select name="municipality" id="municipality" class="form-control select2">
+                            <select name="municipality" id="municipality" class="form-control select2">
                             <option value="all" {{ request('municipality') == 'all' ? 'selected' : '' }}>-- ALL MUNICIPALITY --</option>
                             @foreach($municipalities as $municipality)
                                 @if(request('province') == 'all' || request('province') == null || ($municipality->province && $municipality->province->name == request('province')))
@@ -199,12 +199,10 @@
                         @include('dashboard-tab.farmers-profile-tab')
                     </div>
                     <div class="tab-pane" id="speaker-evaluations" role="tabpanel">
-                        <h6>Speaker Evaluations</h6>
-
+                        @include('dashboard-tab.speaker-evaluations-tab')
                     </div>
                     <div class="tab-pane" id="training-evaluations" role="tabpanel">
-                        <h6>Training Evaluations</h6>
-
+                         @include('dashboard-tab.training-evaluations-tab')
                     </div>
                     <div class="tab-pane" id="baseline-monitoring" role="tabpanel">
                         <h6>Baseline Monitoring</h6>

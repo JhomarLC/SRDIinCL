@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CourseManagementEvaluation;
 use App\Models\FarmingData;
 use App\Models\Municipality;
+use App\Models\OverallTrainingAssessment;
 use App\Models\Participant;
 use App\Models\Province;
+use App\Models\SpeakerTopic;
+use App\Models\TrainingContentEvaluation;
+use App\Models\TrainingEvent;
 use App\Models\TrainingResults;
 use DB;
 use Illuminate\Http\Request;
@@ -18,6 +23,8 @@ class DashboardController extends Controller
         $municipalityName = $request->input('municipality');
 
         $participantsQuery = Participant::where('status', '!=', 'archived');
+        $speakerTopicQuery = SpeakerTopic::where('status', '!=', 'archived');
+        $trainingEventQuery = TrainingEvent::where('status', '!=', 'archived');
 
         if ($provinceName && $provinceName !== 'all') {
             $participantsQuery->whereHas('province', function ($query) use ($provinceName) {
@@ -151,7 +158,100 @@ class DashboardController extends Controller
                 ];
             });
 
+
+        $speakerTopics = (clone $speakerTopicQuery)
+            ->with('speaker_evaluation') // eager load to avoid N+1
+            ->get()
+            ->groupBy('topic_discussed')
+            ->map(function ($group) {
+                $allEvaluations = $group->flatMap->speaker_evaluation; // merge all evaluations for this topic
+                $averageScore = $allEvaluations->isNotEmpty()
+                    ? round($allEvaluations->avg('overall_score'), 2)
+                    : null;
+
+                return [
+                    'topic' => SpeakerTopic::getTopicLabel($group->first()->topic_discussed),
+                    'average_score' => $averageScore,
+                ];
+            })->values();
+
+        $topicScores = collect();
+
+        foreach (SpeakerTopic::topicOptions() as $topicKey => $topicLabel) {
+            $query = SpeakerTopic::where('topic_discussed', $topicKey)
+                ->where('status', '!=', 'archived')
+                ->with('speaker_evaluation');
+
+            // Apply location filters if needed
+            if ($provinceName && $provinceName !== 'all') {
+                $query->whereHas('province', function ($q) use ($provinceName) {
+                    $q->where('name', $provinceName);
+                });
+            }
+
+            if ($municipalityName && $municipalityName !== 'all') {
+                $query->whereHas('municipality', function ($q) use ($municipalityName) {
+                    $q->where('name', $municipalityName);
+                });
+            }
+
+            $speakerTopics = $query->get();
+
+            $allEvaluations = $speakerTopics->flatMap->speaker_evaluation;
+            $average = $allEvaluations->isNotEmpty() ? round($allEvaluations->avg('overall_score'), 2) : null;
+
+            $topicScores->push([
+                'label' => $topicLabel,
+                'topic_key' => $topicKey,
+                'average_score' => $average,
+            ]);
+        }
+
+        $questionFields = [
+            'knowledge_score',
+            'teaching_method_score',
+            'audiovisual_score',
+            'clarity_score',
+            'question_handling_score',
+            'audience_connection_score',
+            'content_relevance_score',
+            'goal_achievement_score',
+        ];
+
+        $topicQuestionAverages = collect();
+
+        foreach (SpeakerTopic::topicOptions() as $topicKey => $topicLabel) {
+            $query = SpeakerTopic::where('topic_discussed', $topicKey)
+                ->where('status', '!=', 'archived')
+                ->with('speaker_evaluation');
+
+            if ($provinceName && $provinceName !== 'all') {
+                $query->whereHas('province', fn($q) => $q->where('name', $provinceName));
+            }
+
+            if ($municipalityName && $municipalityName !== 'all') {
+                $query->whereHas('municipality', fn($q) => $q->where('name', $municipalityName));
+            }
+
+            $speakerTopics = $query->get();
+            $evaluations = $speakerTopics->flatMap->speaker_evaluation;
+
+            $questionAverages = [];
+
+            foreach ($questionFields as $field) {
+                $questionAverages[$field] = $evaluations->isNotEmpty()
+                    ? round($evaluations->avg($field), 2)
+                    : null;
+            }
+
+            $topicQuestionAverages->push([
+                'topic' => $topicLabel,
+                'scores' => $questionAverages,
+            ]);
+        }
+
         $openrouterApiKey = config('services.openrouter.api_key');
+
         return view('index', compact(
             'provinces',
             'municipalities',
@@ -165,6 +265,13 @@ class DashboardController extends Controller
             'farmOwnershipDistribution',
             'disabilityCount',
             'provinceData',
+
+            // Speaker Evaluations
+            'speakerTopics',
+            'topicScores',
+            'topicQuestionAverages',
+
+            // Training Evaluations
 
         ));
     }

@@ -67,15 +67,22 @@
 
             document.getElementById('gain_in_knowledge_display').value = gik.toFixed(2) + ' %';
             document.getElementById('gain_in_knowledge').value = gik.toFixed(2);
+
             if (!isNaN(total) && total > 0 && !isNaN(attended)) {
                 var percentage = (attended / total) * 100;
                 $('#percentage_meetings_attended').val(percentage.toFixed(2));
 
-                if ((percentage >= 70 && gik >= 45) || (percentage <=70 && gik >= 40)) {
-                    $('#certificate_type').val('Completion');
-                } else {
-                    $('#certificate_type').val('Participation');
+                let certificateType = 'Participation'; // default
+
+                if (gik >= 45) {
+                    certificateType = 'Completion';
+                } else if (gik >= 40 && gik < 45) {
+                    if (percentage >= 70) {
+                        certificateType = 'Completion';
+                    }
                 }
+
+                $('#certificate_type').val(certificateType);
             } else {
                 $('#percentage_meetings_attended').val('');
                 $('#certificate_type').val('Participation');
@@ -87,6 +94,7 @@
 
         // Trigger on page load if values are already filled
         updateCertificateInfo();
+
 
         // document.addEventListener('input', function () {
         //     const pre = parseFloat(document.getElementById('pre_test_score').value) || 0;

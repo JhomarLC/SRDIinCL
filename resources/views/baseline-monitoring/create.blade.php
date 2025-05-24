@@ -167,7 +167,7 @@
                             </div>
                             <!-- end nav -->
                         </div> <!-- end col-->
-                        <div class="col-lg-7">
+                        <div class="col-lg-6">
                             <div class="px-lg-4">
                                 <div class="tab-content">
                                     @include('baseline-monitoring.components.create-tabs.1-tabpanel')
@@ -189,7 +189,7 @@
                         </div>
                         <!-- end col -->
 
-                        <div class="col-lg-2">
+                        <div class="col-lg-3">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <h5 class="fs-14 text-primary mb-0"><i
                                         class="las la-money-check align-middle me-2"></i> Total Expenses</h5>

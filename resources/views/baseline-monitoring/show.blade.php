@@ -90,10 +90,100 @@
                             <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3">
                                 <h5 class="card-title mb-2 mb-md-0">Dry Season</h5>
                                 <a href="{{ route('baseline-monitoring.create', [$participant->id, 'dry-season'])}}" class="btn btn-secondary">
-                                    <i class="ri-add-fill"></i> Dry Season Baseline Monitoring
+                                    <i class="ri-add-fill"></i>
+                                    @if (empty($drySeasonData['activities']))
+                                        Dry Season Baseline Monitoring
+                                    @else
+                                        Update Data
+                                    @endif
                                 </a>
                             </div>
-                            <pre>{!! json_encode($drySeasonData, JSON_PRETTY_PRINT) !!}</pre>
+                            <div class="table-responsive">
+                                <table class="table table-bordered align-middle">
+                                    <thead class="table-light text-center">
+                                        <tr>
+                                            <th rowspan="2">ACTIVITIES</th>
+                                            <th rowspan="2">PARTICULARS</th>
+                                            <th colspan="3">EXPENSES</th>
+                                        </tr>
+                                        <tr>
+                                            <th>QTY</th>
+                                            <th>UNIT COST</th>
+                                            <th>TOTAL COST</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (!empty($drySeasonData['activities']))
+                                            @foreach ($drySeasonData['activities'] as $activity)
+                                                @php
+                                                    $category = strtoupper($activity['category']);
+                                                    $isIrrigation = strtolower($category) === 'water management';
+                                                    $isPakyaw = $activity['is_pakyaw'];
+                                                    $details = $activity['details'] ?? [];
+                                                    $irrigationEvents = $activity['irrigation_events'] ?? [];
+                                                @endphp
+
+                                                {{-- Irrigation Events --}}
+                                                @if ($isIrrigation && is_array($irrigationEvents) && count($irrigationEvents) > 0)
+                                                    <tr>
+                                                        <td rowspan="{{ count($irrigationEvents) }}">
+                                                            <strong>{{ $category }}</strong>
+                                                        </td>
+                                                        @php $first = true; @endphp
+                                                        @foreach ($irrigationEvents as $event)
+                                                            @if (!$first) <tr> @endif
+                                                                <td>{{ $event['description'] ?? 'Irrigation Event' }}</td>
+                                                                <td class="text-end">{{ $event['qty'] ?? '—' }}</td>
+                                                                <td class="text-end">₱{{ number_format($event['unit_cost'] ?? 0, 2) }}</td>
+                                                                <td class="text-end">₱{{ number_format($event['total_cost'] ?? 0, 2) }}</td>
+                                                            </tr>
+                                                            @php $first = false; @endphp
+                                                        @endforeach
+
+                                                {{-- Pakyaw Summary --}}
+                                                @elseif ($isPakyaw)
+                                                    <tr>
+                                                        <td><strong>{{ $category }}</strong></td>
+                                                        <td class="text-muted">Pakyaw labor cost</td>
+                                                        <td class="text-end">—</td>
+                                                        <td class="text-end">—</td>
+                                                        <td class="text-end">₱{{ number_format($activity['total_cost'], 2) }}</td>
+                                                    </tr>
+
+                                                {{-- Details List --}}
+                                                @elseif (is_array($details) && count($details) > 0)
+                                                    <tr>
+                                                        <td rowspan="{{ count($details) }}">
+                                                            <strong>{{ $category }}</strong>
+                                                        </td>
+                                                        @php $first = true; @endphp
+                                                        @foreach ($details as $detail)
+                                                            @if (!$first) <tr> @endif
+                                                                <td>{{ $detail['activity'] }}</td>
+                                                                <td class="text-end">{{ $detail['qty'] }}</td>
+                                                                <td class="text-end">₱{{ number_format($detail['unit_cost'], 2) }}</td>
+                                                                <td class="text-end">₱{{ number_format($detail['total_cost'], 2) }}</td>
+                                                            </tr>
+                                                            @php $first = false; @endphp
+                                                        @endforeach
+
+                                                {{-- Fallback --}}
+                                                @else
+                                                    <tr>
+                                                        <td><strong>{{ $category }}</strong></td>
+                                                        <td colspan="4" class="text-muted">No breakdown available</td>
+                                                    </tr>
+                                                @endif
+                                            @endforeach
+                                        @else
+                                            <tr>
+                                                <td colspan="5" class="text-center text-muted">No records found for this season.</td>
+                                            </tr>
+                                        @endif
+                                    </tbody>
+                                </table>
+                            </div>
+
                         </div>
                         <!-- end card body -->
                     </div>
@@ -107,11 +197,101 @@
                             <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3">
                                 <h5 class="card-title mb-2 mb-md-0">Wet Season</h5>
                                 <a href="{{ route('baseline-monitoring.create', [$participant->id, 'wet-season'])}}" class="btn btn-secondary">
-                                    <i class="ri-add-fill"></i> Wet Season Baseline Monitoring
+                                    <i class="ri-add-fill"></i>
+                                    @if (empty($drySeasonData['activities']))
+                                        Wet Season Baseline Monitoring
+                                    @else
+                                        Update Data
+                                    @endif
                                 </a>
 
                             </div>
-                            <pre>{!! json_encode($wetSeasonData, JSON_PRETTY_PRINT) !!}</pre>
+                            <div class="table-responsive">
+                                <table class="table table-bordered align-middle">
+                                    <thead class="table-light text-center">
+                                        <tr>
+                                            <th rowspan="2">ACTIVITIES</th>
+                                            <th rowspan="2">PARTICULARS</th>
+                                            <th colspan="3">EXPENSES</th>
+                                        </tr>
+                                        <tr>
+                                            <th>QTY</th>
+                                            <th>UNIT COST</th>
+                                            <th>TOTAL COST</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (!empty($wetSeasonData['activities']) && is_array($wetSeasonData['activities']) && count($wetSeasonData['activities']) > 0)
+                                            @foreach ($wetSeasonData['activities'] as $activity)
+                                                @php
+                                                    $category = strtoupper($activity['category']);
+                                                    $isIrrigation = strtolower($category) === 'water management';
+                                                    $isPakyaw = $activity['is_pakyaw'];
+                                                    $details = $activity['details'] ?? [];
+                                                    $irrigationEvents = $activity['irrigation_events'] ?? [];
+                                                @endphp
+
+                                                {{-- Irrigation Events --}}
+                                                @if ($isIrrigation && is_array($irrigationEvents) && count($irrigationEvents) > 0)
+                                                    <tr>
+                                                        <td rowspan="{{ count($irrigationEvents) }}">
+                                                            <strong>{{ $category }}</strong>
+                                                        </td>
+                                                        @php $first = true; @endphp
+                                                        @foreach ($irrigationEvents as $event)
+                                                            @if (!$first) <tr> @endif
+                                                                <td>{{ $event['description'] ?? 'Irrigation Event' }}</td>
+                                                                <td class="text-end">{{ $event['qty'] ?? '—' }}</td>
+                                                                <td class="text-end">₱{{ number_format($event['unit_cost'] ?? 0, 2) }}</td>
+                                                                <td class="text-end">₱{{ number_format($event['total_cost'] ?? 0, 2) }}</td>
+                                                            </tr>
+                                                            @php $first = false; @endphp
+                                                        @endforeach
+
+                                                {{-- Pakyaw Summary --}}
+                                                @elseif ($isPakyaw)
+                                                    <tr>
+                                                        <td><strong>{{ $category }}</strong></td>
+                                                        <td class="text-muted">Pakyaw labor cost</td>
+                                                        <td class="text-end">—</td>
+                                                        <td class="text-end">—</td>
+                                                        <td class="text-end">₱{{ number_format($activity['total_cost'], 2) }}</td>
+                                                    </tr>
+
+                                                {{-- Details List --}}
+                                                @elseif (is_array($details) && count($details) > 0)
+                                                    <tr>
+                                                        <td rowspan="{{ count($details) }}">
+                                                            <strong>{{ $category }}</strong>
+                                                        </td>
+                                                        @php $first = true; @endphp
+                                                        @foreach ($details as $detail)
+                                                            @if (!$first) <tr> @endif
+                                                                <td>{{ $detail['activity'] }}</td>
+                                                                <td class="text-end">{{ $detail['qty'] }}</td>
+                                                                <td class="text-end">₱{{ number_format($detail['unit_cost'], 2) }}</td>
+                                                                <td class="text-end">₱{{ number_format($detail['total_cost'], 2) }}</td>
+                                                            </tr>
+                                                            @php $first = false; @endphp
+                                                        @endforeach
+
+                                                {{-- Fallback --}}
+                                                @else
+                                                    <tr>
+                                                        <td><strong>{{ $category }}</strong></td>
+                                                        <td colspan="4" class="text-muted">No breakdown available</td>
+                                                    </tr>
+                                                @endif
+                                            @endforeach
+                                        @else
+                                            <tr>
+                                                <td colspan="5" class="text-center text-muted">No records found for this season.</td>
+                                            </tr>
+                                        @endif
+                                    </tbody>
+                                </table>
+                            </div>
+
                         </div>
                     </div>
                 </div>

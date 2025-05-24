@@ -531,4 +531,223 @@
 
     }
 
+var topicLabels = {!! json_encode($topicScores->pluck('label')) !!};
+var topicAverages = {!! json_encode($topicScores->pluck('average_score')->map(fn($v) => $v ?? 0)) !!};
+
+var chartColors = getChartColorsArray("speaker_topic_scores");
+
+if (chartColors) {
+    var options = {
+        series: [{
+            name: "Average Score",
+            data: topicAverages
+        }],
+        chart: {
+            type: 'bar',
+            height: 500,
+            toolbar: {
+                show: true,
+                tools: {
+                    download: true,
+                    selection: false,
+                    zoom: false,
+                    zoomin: false,
+                    zoomout: false,
+                    pan: false,
+                    reset: false
+                }
+            }
+        },
+        plotOptions: {
+            bar: {
+                horizontal: true,
+                distributed: true,
+                barHeight: '70%',
+            }
+        },
+        dataLabels: {
+            enabled: true,
+            style: {
+                colors: ['#fff']
+            }
+        },
+        xaxis: {
+            categories: topicLabels,
+            max: 5,
+            title: {
+                text: "Score (0 - 5)"
+            }
+        },
+        yaxis: {
+            labels: {
+                style: {
+                    fontSize: '12px'
+                }
+            }
+        },
+        colors: chartColors,
+        tooltip: {
+            enabled: true
+        },
+        legend: {
+            show: false
+        }
+    };
+
+    var chart = new ApexCharts(document.querySelector("#speaker_topic_scores"), options);
+    chart.render();
+}
+
+
+var topicLabels1 = {!! json_encode($topicScores->pluck('label')) !!};
+var topicAverages1 = {!! json_encode($topicScores->pluck('average_score')->map(fn($v) => $v ?? 0)) !!};
+
+var chartColors1 = getChartColorsArray("speaker_topic_scores_1");
+
+if (chartColors1) {
+    var options = {
+        series: [{
+            name: "Average Score",
+            data: topicAverages
+        }],
+        chart: {
+            type: 'bar',
+            height: 500,
+            toolbar: {
+                show: true,
+                tools: {
+                    download: true,
+                    selection: false,
+                    zoom: false,
+                    zoomin: false,
+                    zoomout: false,
+                    pan: false,
+                    reset: false
+                }
+            }
+        },
+        plotOptions: {
+            bar: {
+                horizontal: true,
+                distributed: true,
+                barHeight: '70%',
+            }
+        },
+        dataLabels: {
+            enabled: true,
+            style: {
+                colors: ['#fff']
+            }
+        },
+        xaxis: {
+            categories: topicLabels1,
+            max: 5,
+            title: {
+                text: "Score (0 - 5)"
+            }
+        },
+        yaxis: {
+            labels: {
+                style: {
+                    fontSize: '12px'
+                }
+            }
+        },
+        colors: chartColors1,
+        tooltip: {
+            enabled: true
+        },
+        legend: {
+            show: false
+        }
+    };
+
+    var chart = new ApexCharts(document.querySelector("#speaker_topic_scores_1"), options);
+    chart.render();
+}
+    var topicLabels = {!! json_encode($topicQuestionAverages->pluck('topic')) !!};
+
+    var seriesData = [
+        {
+            name: "Knowledge",
+            data: {!! json_encode($topicQuestionAverages->pluck('scores.knowledge_score')->map(fn($v) => $v ?? 0)) !!}
+        },
+        {
+            name: "Teaching Method",
+            data: {!! json_encode($topicQuestionAverages->pluck('scores.teaching_method_score')->map(fn($v) => $v ?? 0)) !!}
+        },
+        {
+            name: "Audio/Visual",
+            data: {!! json_encode($topicQuestionAverages->pluck('scores.audiovisual_score')->map(fn($v) => $v ?? 0)) !!}
+        },
+        {
+            name: "Clarity",
+            data: {!! json_encode($topicQuestionAverages->pluck('scores.clarity_score')->map(fn($v) => $v ?? 0)) !!}
+        },
+        {
+            name: "Q&A",
+            data: {!! json_encode($topicQuestionAverages->pluck('scores.question_handling_score')->map(fn($v) => $v ?? 0)) !!}
+        },
+        {
+            name: "Audience Connection",
+            data: {!! json_encode($topicQuestionAverages->pluck('scores.audience_connection_score')->map(fn($v) => $v ?? 0)) !!}
+        },
+        {
+            name: "Relevance",
+            data: {!! json_encode($topicQuestionAverages->pluck('scores.content_relevance_score')->map(fn($v) => $v ?? 0)) !!}
+        },
+        {
+            name: "Goal Achievement",
+            data: {!! json_encode($topicQuestionAverages->pluck('scores.goal_achievement_score')->map(fn($v) => $v ?? 0)) !!}
+        }
+    ];
+
+    var chartColors = getChartColorsArray("speaker_question_scores");
+
+    if (chartColors) {
+        var options = {
+            series: seriesData,
+            chart: {
+                type: 'bar',
+                height: topicLabels.length * 45 + 200,
+                stacked: false,
+                toolbar: {
+                    show: true
+                }
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: true,
+                    barHeight: '70%',
+                    distributed: false // 👈 Required for multi-series
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                style: {
+                    fontSize: '11px',
+                    colors: ['#fff']
+                }
+            },
+            xaxis: {
+                categories: topicLabels,
+                max: 5,
+                title: {
+                    text: "Score (0 - 5)"
+                }
+            },
+            legend: {
+                position: 'top',
+                horizontalAlign: 'center'
+            },
+            colors: chartColors, // 👈 This maps colors to each series
+            tooltip: {
+                shared: true,
+                intersect: false
+            }
+        };
+
+        var chart = new ApexCharts(document.querySelector("#speaker_question_scores"), options);
+        chart.render();
+    }
 </script>
