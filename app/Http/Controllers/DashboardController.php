@@ -159,6 +159,19 @@ class DashboardController extends Controller
             });
 
 
+        $trainingProvinceData = (clone $trainingEventQuery)
+            ->whereNotNull('province_code')
+            ->with('province')
+            ->select('province_code', DB::raw('COUNT(*) as total'))
+            ->groupBy('province_code')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'name' => optional($item->province)->name, // Match with NAME_1 in GeoJSON
+                    'count' => $item->total,
+                ];
+            });
+
         $speakerTopics = (clone $speakerTopicQuery)
             ->with('speaker_evaluation') // eager load to avoid N+1
             ->get()
@@ -250,6 +263,99 @@ class DashboardController extends Controller
             ]);
         }
 
+        // ─── Training Evaluation Data ─────────────────────────────────────────────
+        // Filter training events based on province and municipality
+        $filteredTrainingEvents = TrainingEvent::query()
+            ->where('status', 'active');
+
+        if ($provinceName && $provinceName !== 'all') {
+            $filteredTrainingEvents->whereHas('province', fn($q) => $q->where('name', $provinceName));
+        }
+
+        if ($municipalityName && $municipalityName !== 'all') {
+            $filteredTrainingEvents->whereHas('municipality', fn($q) => $q->where('name', $municipalityName));
+        }
+
+        $filteredTrainingEventIds = $filteredTrainingEvents->pluck('id');
+
+        $trainingEventEvalStats = TrainingEvent::with(['evaluations.overall_training_assessment'])
+            ->whereIn('id', $filteredTrainingEventIds)
+            ->get()
+            ->map(function ($event) {
+                return [
+                    'title' => $event->formatted_training_date . ' - ' . $event->full_address,
+                    'date' => $event->formatted_training_date,
+                    'avg_content_score' => $event->avg_content_score,
+                    'avg_course_score' => $event->avg_course_score,
+                    'goal_achievement' => $event->most_common_goal_achievement,
+                    'overall_quality' => $event->most_common_overall_quality,
+                ];
+            });
+
+        // Overall goal achievement distribution (across events)
+        $goalAchievementChart = OverallTrainingAssessment::whereHas('training_evaluation', function ($q) use ($filteredTrainingEventIds) {
+            $q->whereIn('training_event_id', $filteredTrainingEventIds);
+            })
+            ->select('goal_achievement', DB::raw('COUNT(*) as total'))
+            ->groupBy('goal_achievement')
+            ->get();
+
+        $overallQualityChart = OverallTrainingAssessment::whereHas('training_evaluation', function ($q) use ($filteredTrainingEventIds) {
+                $q->whereIn('training_event_id', $filteredTrainingEventIds);
+            })
+            ->select('overall_quality', DB::raw('COUNT(*) as total'))
+            ->groupBy('overall_quality')
+            ->get();
+
+        $contentFields = [
+            'objective_score',
+            'relevance_score',
+            'content_completeness_score',
+            'lecture_hands_on_score',
+            'sequence_score',
+            'duration_score',
+            'assessment_method_score'
+        ];
+
+        $contentQuestionAverages = [];
+
+        foreach ($contentFields as $field) {
+            $avg = TrainingContentEvaluation::whereHas('training_evaluation', function ($q) use ($filteredTrainingEventIds) {
+                    $q->whereIn('training_event_id', $filteredTrainingEventIds);
+                })
+                ->whereNotNull($field)
+                ->avg($field);
+
+            $contentQuestionAverages[$field] = round($avg, 2);
+        }
+
+        $courseFields = [
+            'coordination_score',
+            'time_management_score',
+            'speaker_quality_score',
+            'facilitators_score',
+            'support_staff_score',
+            'materials_score',
+            'facility_score',
+            'accommodation_score',
+            'food_quality_score',
+            'transportation_score',
+            'overall_management_score'
+        ];
+
+        $courseQuestionAverages = [];
+
+        foreach ($courseFields as $field) {
+            $avg = CourseManagementEvaluation::whereHas('training_evaluation', function ($q) use ($filteredTrainingEventIds) {
+                    $q->whereIn('training_event_id', $filteredTrainingEventIds);
+                })
+                ->whereNotNull($field)
+                ->avg($field);
+
+            $courseQuestionAverages[$field] = round($avg, 2);
+        }
+
+
         $openrouterApiKey = config('services.openrouter.api_key');
 
         return view('index', compact(
@@ -272,7 +378,13 @@ class DashboardController extends Controller
             'topicQuestionAverages',
 
             // Training Evaluations
+            'trainingEventEvalStats',
+            'goalAchievementChart',
+            'overallQualityChart',
 
+            'contentQuestionAverages',
+            'courseQuestionAverages',
+            'trainingProvinceData'
         ));
     }
 

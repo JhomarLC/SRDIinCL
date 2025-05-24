@@ -19,6 +19,7 @@
         $('#province').on('change', function () {
             toggleMunicipality();
         });
+
     });
 
     const openrouterApiKey = "{{ $openrouterApiKey }}";
@@ -442,6 +443,67 @@
             }).addTo(map);
         });
 
+    // 🧮 Load training data
+    const trainingStats = @json($trainingProvinceData);
+    const trainingCounts = {};
+    trainingStats.forEach(p => {
+        trainingCounts[normalize(p.name)] = p.count;
+    });
+
+    // 🗺️ Init Map
+    const mapTrainings = L.map('trainingMap', {
+        zoomControl: true,
+        scrollWheelZoom: false,
+        doubleClickZoom: false,
+        dragging: true,
+        boxZoom: false,
+        maxBounds: philippinesBounds,
+        maxBoundsViscosity: 1.0
+    });
+
+    // 🗺️ Add tile layer
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
+        attribution: ''
+    }).addTo(mapTrainings);
+
+    // 🧭 Load and style GeoJSON
+    fetch('/geojson/philippines-provinces.json')
+        .then(res => res.json())
+        .then(geojson => {
+            L.geoJson(geojson, {
+                style: function (feature) {
+                    const name = feature.properties.NAME_1;
+                    const key = normalize(name);
+                    const count = trainingCounts[key] || 0;
+
+                    return count > 0 ? {
+                        fillColor: getColor(count),
+                        weight: 1.5,
+                        color: '#000',
+                        opacity: 1,
+                        fillOpacity: 0.8
+                    } : {
+                        fillColor: 'transparent',
+                        weight: 0,
+                        color: 'transparent',
+                        fillOpacity: 0
+                    };
+                },
+                onEachFeature: function (feature, layer) {
+                    const name = feature.properties.NAME_1;
+                    const count = trainingCounts[normalize(name)] || 0;
+                    layer.bindPopup(`<strong>${name}</strong><br>Trainings: ${count}`);
+                }
+            }).addTo(mapTrainings);
+
+            // Fix potential size bug if map is in hidden tab initially
+            setTimeout(() => mapTrainings.invalidateSize(), 500);
+        });
+
+    $('a[data-bs-toggle="tab"][href="#training-evaluations"]').on('shown.bs.tab', function () {
+        mapTrainings.invalidateSize();
+        mapTrainings.fitBounds(centralLuzonBounds); // ⬅️ zoom to Central Luzon
+    });
     var provinceLabelsChart = {!! json_encode(collect($provinceData)->pluck('name')) !!};
     var provinceCountsChart = {!! json_encode(collect($provinceData)->pluck('count')) !!};
 
@@ -750,4 +812,247 @@ if (chartColors1) {
         var chart = new ApexCharts(document.querySelector("#speaker_question_scores"), options);
         chart.render();
     }
+
+    var goalLabels = {!! json_encode($goalAchievementChart->pluck('goal_achievement')) !!};
+    var goalCounts = {!! json_encode($goalAchievementChart->pluck('total')) !!};
+    var goalColors = getChartColorsArray("training_goal_achievement");
+
+    if (goalColors) {
+        var options = {
+            series: goalCounts,
+            chart: {
+                type: 'pie',
+                height: 300,
+                toolbar: { show: true }
+            },
+            labels: goalLabels,
+            legend: { position: 'bottom' },
+            dataLabels: {
+                enabled: true
+            },
+            colors: goalColors,
+        };
+
+        var chart = new ApexCharts(document.querySelector("#training_goal_achievement"), options);
+        chart.render();
+    }
+
+    var qualityLabels = {!! json_encode($overallQualityChart->pluck('overall_quality')) !!};
+    var qualityCounts = {!! json_encode($overallQualityChart->pluck('total')) !!};
+    var qualityColors = getChartColorsArray("training_overall_quality");
+
+    if (qualityColors) {
+        var options = {
+            series: qualityCounts,
+            chart: {
+                type: 'pie',
+                height: 300,
+                toolbar: { show: true }
+            },
+            labels: qualityLabels,
+            legend: { position: 'bottom' },
+            dataLabels: {
+                enabled: true
+            },
+            colors: qualityColors,
+        };
+
+        var chart = new ApexCharts(document.querySelector("#training_overall_quality"), options);
+        chart.render();
+    }
+
+    var eventLabels = {!! json_encode($trainingEventEvalStats->pluck('title')) !!};
+    var avgContentScores = {!! json_encode($trainingEventEvalStats->pluck('avg_content_score')->map(fn($v) => $v ?? 0)) !!};
+    var avgCourseScores = {!! json_encode($trainingEventEvalStats->pluck('avg_course_score')->map(fn($v) => $v ?? 0)) !!};
+
+    var barColors = getChartColorsArray("training_scores_bar");
+
+    if (barColors) {
+        var options = {
+            series: [
+                { name: 'Content Score', data: avgContentScores },
+                { name: 'Course Management Score', data: avgCourseScores }
+            ],
+            chart: {
+                type: 'bar',
+                height: 500,
+                stacked: false,
+                toolbar: { show: true }
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: true,
+                    barHeight: '60%',
+                }
+            },
+            colors: barColors,
+            dataLabels: {
+                enabled: true
+            },
+            xaxis: {
+                categories: eventLabels,
+                max: 5
+            },
+            legend: { position: 'top' }
+        };
+
+        var chart = new ApexCharts(document.querySelector("#training_scores_bar"), options);
+        chart.render();
+    }
+
+    // --- Content Evaluation Chart ---
+    var contentLabels = {!! json_encode(array_keys($contentQuestionAverages)) !!};
+    var contentValues = {!! json_encode(array_values($contentQuestionAverages)) !!};
+    var contentColors = getChartColorsArray("content_question_scores");
+
+    if (contentColors) {
+        var options = {
+            series: [{
+                name: "Average Score",
+                data: contentValues
+            }],
+            chart: {
+                type: 'bar',
+                height: 400,
+                toolbar: { show: true }
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: true,
+                    distributed: true,
+                    barHeight: '70%',
+                }
+            },
+            xaxis: {
+                categories: contentLabels,
+                max: 5,
+                title: { text: "Score (0-5)" }
+            },
+            colors: contentColors,
+            dataLabels: {
+                enabled: true,
+                style: {
+                    colors: ['#fff']
+                }
+            },
+            legend: { show: false }
+        };
+
+        var chart = new ApexCharts(document.querySelector("#content_question_scores"), options);
+        chart.render();
+    }
+
+    // --- Course Management Chart ---
+    var courseLabels = {!! json_encode(array_keys($courseQuestionAverages)) !!};
+    var courseValues = {!! json_encode(array_values($courseQuestionAverages)) !!};
+    var courseColors = getChartColorsArray("course_question_scores");
+
+    if (courseColors) {
+        var options = {
+            series: [{
+                name: "Average Score",
+                data: courseValues
+            }],
+            chart: {
+                type: 'bar',
+                height: 400,
+                toolbar: { show: true }
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: true,
+                    distributed: true,
+                    barHeight: '70%',
+                }
+            },
+            xaxis: {
+                categories: courseLabels,
+                max: 5,
+                title: { text: "Score (0-5)" }
+            },
+            colors: courseColors,
+            dataLabels: {
+                enabled: true,
+                style: {
+                    colors: ['#fff']
+                }
+            },
+            legend: { show: false }
+        };
+
+        var chart = new ApexCharts(document.querySelector("#course_question_scores"), options);
+        chart.render();
+    }
+
+    var trainingLabels = {!! json_encode(collect($trainingProvinceData)->pluck('name')) !!};
+    var trainingCounts1 = {!! json_encode(collect($trainingProvinceData)->pluck('count')) !!};
+    var trainingColors = trainingCounts1.map(getColor);
+    var trainingDataLabelColors = trainingCounts1.map(val => val === 0 ? '#000' : '#fff');
+
+    var options = {
+        series: [{ data: trainingCounts1 }],
+        chart: {
+            type: 'bar',
+            height: 500,
+            toolbar: {
+                show: true,
+                tools: {
+                    download: true,
+                    selection: false,
+                    zoom: false,
+                    zoomin: false,
+                    zoomout: false,
+                    pan: false,
+                    reset: false
+                }
+            }
+        },
+        plotOptions: {
+            bar: {
+                barHeight: '100%',
+                distributed: true,
+                horizontal: true,
+                dataLabels: { position: 'bottom' }
+            }
+        },
+        colors: trainingColors,
+        dataLabels: {
+            enabled: true,
+            textAnchor: 'start',
+            style: { colors: trainingDataLabelColors },
+            formatter: function (val, opt) {
+                return opt.w.globals.labels[opt.dataPointIndex] + ": " + val;
+            },
+            offsetX: 0,
+            dropShadow: {
+                enabled: false
+            }
+        },
+        stroke: {
+            width: 1,
+            colors: ['#fff']
+        },
+        xaxis: {
+            categories: trainingLabels
+        },
+        yaxis: {
+            labels: { show: false }
+        },
+        tooltip: {
+            theme: 'dark',
+            x: { show: false },
+            y: {
+                title: {
+                    formatter: function () {
+                        return '';
+                    }
+                }
+            }
+        }
+    };
+
+
+    var chart = new ApexCharts(document.querySelector("#training_datalabels_bar"), options);
+    chart.render();
+
 </script>
