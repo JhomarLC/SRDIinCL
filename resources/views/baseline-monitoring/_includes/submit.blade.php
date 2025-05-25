@@ -1,257 +1,217 @@
 <script>
-
-
 $(function () {
-    $('#submit-form-btn').on('click', function () {
-        const payload = collectFarmingFormData();
-        console.log("🧾 Final Collected Payload:", payload);
+    const submitFinalForm = () => {
+        const fullFormData = new FormData();
 
+        // Land Preparation Data Only
+        const isPakyaw = $("#land-prep-pakyaw").is(":checked") ? 1 : 0;
+        fullFormData.append("land_prep_is_pakyaw", isPakyaw);
+
+        if (isPakyaw) {
+            const packageCost = $("#package_cost").val() || 0;
+            fullFormData.append("land_prep_package_cost", packageCost);
+        } else {
+            $("#land-prep-regular-fields .block").each(function (index) {
+                const activity = $(this).find('input[name^="land_prep["][name$="[activity]"]').val();
+                const qty = $(this).find('input[name^="land_prep["][name$="[qty]"]').val() || 0;
+                const unitCost = $(this).find('input[name^="land_prep["][name$="[unit_cost]"]').val() || 0;
+                const totalCost = parseFloat(qty) * parseFloat(unitCost);
+
+                fullFormData.append(`land_prep[${index}][activity]`, activity);
+                fullFormData.append(`land_prep[${index}][qty]`, qty);
+                fullFormData.append(`land_prep[${index}][unit_cost]`, unitCost);
+                fullFormData.append(`land_prep[${index}][total_cost]`, totalCost || 0);
+            });
+        }
+
+          // SEEDS PREPARATION
+        const isSeedsPakyaw = $("#seeds-prep-pakyaw").is(":checked") ? 1 : 0;
+        fullFormData.append("seeds_prep_is_pakyaw", isSeedsPakyaw);
+
+        if (isSeedsPakyaw) {
+            const seedsPackageCost = $("#seedsPrepPakyawTotalCost").val() || 0;
+            fullFormData.append("seeds_prep_package_cost", seedsPackageCost);
+        } else {
+            $("#seeds-prep-regular-fields .block").each(function (index) {
+                const activity = $(this).find('input[name$="[activity]"]').val();
+                const qty = $(this).find('input[name$="[qty]"]').val() || 0;
+                const unitCost = $(this).find('input[name$="[unit_cost]"]').val() || 0;
+                const totalCost = parseFloat(qty) * parseFloat(unitCost);
+
+                fullFormData.append(`seed_prep[${index}][activity]`, activity);
+                fullFormData.append(`seed_prep[${index}][qty]`, qty);
+                fullFormData.append(`seed_prep[${index}][unit_cost]`, unitCost);
+                fullFormData.append(`seed_prep[${index}][total_cost]`, totalCost || 0);
+            });
+        }
+
+        // SEEDS PREPARATION → VARIETIES
+        fullFormData.append("seeds_prep_others", $("#others").val() || '');
+
+        $("#variety-container .variety-block").each(function (index) {
+            const varietyId = $(this).data("variety-id");
+            const varietyName = $(this).data("variety-name");
+            const purchaseType = $(this).find(`input[name="purchase_status_${varietyId}"]:checked`).val();
+
+            const qty = $(this).find(".quantity").val() || 0;
+            const unitCost = $(this).find(".unit-cost").val() || 0;
+            const totalCost = $(this).find(".total-cost").val() || 0;
+
+            fullFormData.append(`seed_varieties[${index}][seed_variety_id]`, varietyId.toString().startsWith("other_") ? "" : varietyId);
+            fullFormData.append(`seed_varieties[${index}][variety_name]`, varietyName);
+            fullFormData.append(`seed_varieties[${index}][purchase_type]`, purchaseType);
+            fullFormData.append(`seed_varieties[${index}][qty]`, qty);
+            fullFormData.append(`seed_varieties[${index}][unit_cost]`, unitCost);
+            fullFormData.append(`seed_varieties[${index}][total_cost]`, totalCost);
+        });
+
+        // 🔍 Log the contents of the FormData
+        console.group("📦 Submitted Form Data");
+        for (let [key, value] of fullFormData.entries()) {
+            console.log(`${key}:`, value);
+        }
+        console.groupEnd();
+        @php
+            $farmingData = $participant->farming_data->where('season', $normalizedSeason)->first();
+        @endphp
+        // // Submit
         $.ajax({
-            url: "{{ route('baseline-monitoring.store', ['id' => $participant->id, 'season' => $season]) }}",
-            type: 'POST',
-            data: JSON.stringify(payload),
-            contentType: 'application/json',
+            url: "{{ route('baseline-monitoring.store', [$farmingData->id, $farmingData->season]) }}",
+            type: "POST",
             headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
             },
-            success: function(response) {
-                console.log("✅ Saved successfully:", response);
-                alert("Data saved successfully!");
+            data: fullFormData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                showAlertModal("success", response.message);
+                setTimeout(() => window.location.href = "/baseline-monitoring/" + {{ $participant->id }}, 1500);
             },
-            error: function(xhr) {
-                console.error("❌ Error saving data:", xhr.responseJSON || xhr);
-                alert("An error occurred while saving.");
+            error: function (xhr) {
+                hideLoader();
+                console.error("❌ Submission Error", xhr);
+                showAlertModal("error", "Something went wrong during submission.");
+            },
+            complete: function () {
+                hideLoader();
             }
         });
+    };
+
+    $("#submitBaseline").on("click", function (e) {
+        e.preventDefault();
+        showLoader("Validating...");
+
+        const steps = ["land-preparation", "seeds-prep"];
+        const formData1 = new FormData();
+
+        const stepForms = {
+            "land-preparation": () => {
+                const isPakyaw = $("#land-prep-pakyaw").is(":checked") ? 1 : 0;
+                formData1.append("land_prep_is_pakyaw", isPakyaw);
+
+                if (isPakyaw) {
+                    const packageCost = $("#package_cost").val() || 0;
+                    formData1.append("land_prep_package_cost", packageCost);
+                } else {
+                    $("#land-prep-regular-fields .block").each(function (index) {
+                        const activity = $(this).find('input[name^="land_prep["][name$="[activity]"]').val();
+                        const qty = $(this).find('input[name^="land_prep["][name$="[qty]"]').val() || 0;
+                        const unitCost = $(this).find('input[name^="land_prep["][name$="[unit_cost]"]').val() || 0;
+                        const totalCost = parseFloat(qty) * parseFloat(unitCost);
+
+                        formData1.append(`land_prep[${index}][activity]`, activity);
+                        formData1.append(`land_prep[${index}][qty]`, qty);
+                        formData1.append(`land_prep[${index}][unit_cost]`, unitCost);
+                        formData1.append(`land_prep[${index}][total_cost]`, totalCost || 0);
+                    });
+                }
+            },
+            "seeds-prep": () => {
+                const isPakyaw = $("#seeds-prep-pakyaw").is(":checked") ? 1 : 0;
+                formData1.append("seeds_prep_is_pakyaw", isPakyaw);
+
+                if (isPakyaw) {
+                    const packageCost = $("#seedsPrepPakyawTotalCost").val() || 0;
+                    formData1.append("seeds_prep_package_cost", packageCost);
+                } else {
+                    $("#seeds-prep-regular-fields .block").each(function (index) {
+                        const activity = $(this).find('input[name^="seed_prep["][name$="[activity]"]').val();
+                        const qty = $(this).find('input[name^="seed_prep["][name$="[qty]"]').val() || 0;
+                        const unitCost = $(this).find('input[name^="seed_prep["][name$="[unit_cost]"]').val() || 0;
+                        const totalCost = parseFloat(qty) * parseFloat(unitCost);
+
+                        formData1.append(`seed_prep[${index}][activity]`, activity);
+                        formData1.append(`seed_prep[${index}][qty]`, qty);
+                        formData1.append(`seed_prep[${index}][unit_cost]`, unitCost);
+                        formData1.append(`seed_prep[${index}][total_cost]`, totalCost || 0);
+                    });
+                }
+
+                // Save 'others' input
+                const others = $("#others").val()?.trim();
+                if (others) {
+                    formData1.append("seeds_prep_others", others);
+                }
+
+                // Collect selected varieties (regular + "others")
+                $("#variety-container .variety-block").each(function (index) {
+                    const varietyId = $(this).data("variety-id");
+                    const varietyName = $(this).data("variety-name");
+                    const purchaseType = $(this).find(`input[name="purchase_status_${varietyId}"]:checked`).val();
+
+                    const qty = $(this).find(".quantity").val() || 0;
+                    const unitCost = $(this).find(".unit-cost").val() || 0;
+                    const totalCost = $(this).find(".total-cost").val() || 0;
+
+                    formData1.append(`seed_varieties[${index}][seed_variety_id]`, varietyId.toString().startsWith("other_") ? "" : varietyId);
+                    formData1.append(`seed_varieties[${index}][variety_name]`, varietyName);
+                    formData1.append(`seed_varieties[${index}][purchase_type]`, purchaseType);
+                    formData1.append(`seed_varieties[${index}][qty]`, qty);
+                    formData1.append(`seed_varieties[${index}][unit_cost]`, unitCost);
+                    formData1.append(`seed_varieties[${index}][total_cost]`, totalCost);
+                });
+            }
+        };
+
+        const validateSteps = async () => {
+            for (let i = 0; i < steps.length; i++) {
+                const step = steps[i];
+                formData1.set("step", step);
+                stepForms[step]();
+
+                try {
+                    const result = await $.ajax({
+                        url: "{{ route('baseline-monitoring.validateStep') }}",
+                        type: "POST",
+                        headers: {
+                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+                        },
+                        data: formData1,
+                        processData: false,
+                        contentType: false,
+                    });
+
+                    console.log(`✅ Step ${i + 1} valid:`, result);
+                } catch (xhr) {
+                    if (xhr.status === 422) {
+                        showAlertModal("error", `❌ Please review Step ${i + 1} before submitting.`);
+                    } else {
+                        showAlertModal("error", "Something went wrong during validation.");
+                    }
+                    hideLoader();
+                    return false;
+                }
+            }
+
+            // All steps validated → Submit
+            Object.values(stepForms).forEach(fn => fn());
+            submitFinalForm();
+        };
+
+        validateSteps();
     });
 
-    function collectFarmingFormData() {
-        const payload = {};
-
-        // 🔹 Season Info
-        payload.baseline = {
-            year: $('select[name="year_range"]').val(),
-            farm_size_hectares: $('#farmSize').val(),
-            method_crop_establishment: $('input[name="method_crop_establishment"]:checked').val(),
-            number_of_bags: $('#number_of_bags').val(),
-            avg_weight_per_bag: $('#avg_weight_per_bag').val(),
-            price_per_kg_fresh: $('#price_per_kg_fresh').val(),
-            price_per_kg_dry: $('#price_per_kg_dry').val(),
-            drying_cost_per_bag: $('#drying_cost_per_bag').val()
-        };
-
-        // 🔹 Land Preparation
-        payload.land_preparation = {
-            category: "Land Preparation",
-            is_pakyaw: $('#land-prep-pakyaw').is(':checked'),
-            total_cost: $('#package_cost').val(),
-            details: []
-        };
-
-        $('#land-prep-regular-fields .block').each(function () {
-            const activity = $(this).find('input[name$="[activity]"]').val();
-            const qty = parseFloat($(this).find('input.quantity').val());
-            const unit_cost = parseFloat($(this).find('input.unit-cost').val());
-            if (!isNaN(qty) && !isNaN(unit_cost)) {
-                payload.land_preparation.details.push({
-                    activity, qty, unit_cost, total_cost: (qty * unit_cost).toFixed(2)
-                });
-            }
-        });
-
-        // 🔹 Seeds Preparation
-        payload.seeds_preparation = {
-            category: "Seeds Preparation",
-            is_pakyaw: $('#seeds-prep-pakyaw').is(':checked'),
-            total_cost: $('#seedsPrepPakyawTotalCost').val(),
-            details: []
-        };
-
-        $('#seeds-prep-regular-fields .block').each(function () {
-            const activity = $(this).find('input[name$="[activity]"]').val();
-            const qty = parseFloat($(this).find('input.quantity').val());
-            const unit_cost = parseFloat($(this).find('input.unit-cost').val());
-            if (!isNaN(qty) && !isNaN(unit_cost)) {
-                payload.seeds_preparation.details.push({
-                    activity, qty, unit_cost, total_cost: (qty * unit_cost).toFixed(2)
-                });
-            }
-        });
-
-        // 🔹 Seedbed Preparation
-        payload.seedbed_preparation = {
-            category: "Seedbed Preparation",
-            is_pakyaw: $('#seedbed-prep-pakyaw').is(':checked'),
-            total_cost: $('#seedbedPrepPakyawTotalCost').val(),
-            details: []
-        };
-
-        $('#seedbed-prep-regular-fields .block').each(function () {
-            const activity = $(this).find('label.form-label').text().trim();
-            const qty = parseFloat($(this).find('input.quantity').val());
-            const unit_cost = parseFloat($(this).find('input.unit-cost').val());
-            if (!isNaN(qty) && !isNaN(unit_cost)) {
-                payload.seedbed_preparation.details.push({
-                    activity, qty, unit_cost, total_cost: (qty * unit_cost).toFixed(2)
-                });
-            }
-        });
-
-        // 🔹 Crop Establishment
-        const methodEst = $('input[name="soaking-type"]:checked').val();
-        const isPakyaw = $('#crop-establishment-pakyaw').is(':checked');
-        const pakyawTotalCost = $('#landPrepPakyawTotalCost').val();
-
-        payload.crop_establishment = {
-            category: "Crop Establishment",
-            method: methodEst,
-            is_pakyaw: isPakyaw,
-            total_cost: pakyawTotalCost,
-            details: []
-        };
-
-        if (!isPakyaw) {
-            $('#crop-establishment-regular-fields .block').each(function () {
-                const activity = $(this).find('label.form-label').first().text().trim();
-                const qty = parseFloat($(this).find('input.quantity').val());
-                const unit_cost = parseFloat($(this).find('input.unit-cost').val());
-                if (!isNaN(qty) && !isNaN(unit_cost)) {
-                    payload.crop_establishment.details.push({
-                        activity, qty, unit_cost, total_cost: (qty * unit_cost).toFixed(2)
-                    });
-                }
-            });
-        }
-
-        // 🔹 Fertilizer Applications (NEW!)
-        payload.fertilizer_applications = [];
-
-        $('#fertilizer-applications-wrapper .fertilizer-application-block').each(function (i) {
-            const application = {
-                round_number: i + 1,
-                details: []
-            };
-
-            $(this).find('.block').each(function () {
-                const activity = $(this).find('label.form-label').first().text().trim();
-                const qty = parseFloat($(this).find('input.quantity').val());
-                const unit_cost = parseFloat($(this).find('input.unit-cost').val());
-
-                if (!isNaN(qty) && !isNaN(unit_cost)) {
-                    application.details.push({
-                        activity,
-                        qty,
-                        unit_cost,
-                        total_cost: (qty * unit_cost).toFixed(2)
-                    });
-                }
-            });
-
-            if (application.details.length > 0) {
-                payload.fertilizer_applications.push(application);
-            }
-        });
-
-        // 🔹 Water Management
-        const isWaterPakyaw = $('#water-management-pakyaw').is(':checked');
-        const wmTotalCost = $('#water-management-pakyaw-total-cost input').val();
-
-        payload.water_management = {
-            category: "Water Management",
-            is_pakyaw: isWaterPakyaw,
-            total_cost: wmTotalCost,
-            events: []
-        };
-
-        $('#irrigation-blocks-container .irrigation-block').each(function (i) {
-            const round_number = i + 1;
-            const type = $(this).find('input[type="radio"]:checked').val() === 'is_nia_both' ? 'NIA' : 'Supplementary';
-            const event = {
-                round_number,
-                irrigation_type: type,
-                is_pakyaw: false,
-                total_cost: 0,
-                details: []
-            };
-
-            $(this).find('.supplementary-irrigation-details .block').each(function () {
-                const activity = $(this).find('label.form-label').first().text().trim();
-                const qty = parseFloat($(this).find('input.quantity').val());
-                const unit_cost = parseFloat($(this).find('input.unit-cost').val());
-                if (!isNaN(qty) && !isNaN(unit_cost)) {
-                    event.details.push({
-                        activity, qty, unit_cost, total_cost: (qty * unit_cost).toFixed(2)
-                    });
-                }
-            });
-
-            payload.water_management.events.push(event);
-        });
-
-        // 🔹 Pest Management
-        payload.pest_management = {
-            category: "Pest Management",
-            is_pakyaw: false,
-            details: []
-        };
-
-        $('#pesticide-applications-wrapper .pesticide-application-block').each(function (i) {
-            const round_number = i + 1;
-
-            $(this).find('.block').each(function () {
-                const activity = $(this).find('label.form-label').first().text().trim();
-                const qty = parseFloat($(this).find('input.quantity').val());
-                const unit_cost = parseFloat($(this).find('input.unit-cost').val());
-                if (!isNaN(qty) && !isNaN(unit_cost)) {
-                    payload.pest_management.details.push({
-                        round_number,
-                        activity, qty, unit_cost, total_cost: (qty * unit_cost).toFixed(2)
-                    });
-                }
-            });
-        });
-
-        // 🔹 Harvest Management
-        const harvestMethod = $('input[name="harvesting-type"]:checked').val();
-        const isManualPakyaw = $('#manual-package-checkbox').is(':checked');
-        const manualTotalCost = $('#manualPackageTotalCost').val();
-
-        payload.harvest = {
-            category: "Harvest",
-            method: harvestMethod,
-            is_pakyaw: isManualPakyaw,
-            total_cost: manualTotalCost,
-            details: []
-        };
-
-        if (harvestMethod === "Mechanical") {
-            const bags = parseFloat($('#mechanical-block .bags').val());
-            const avg_weight = parseFloat($('#mechanical-block .avg-bag-weight').val());
-            const price_kg = parseFloat($('#mechanical-block .price-per-kg').val());
-            if (!isNaN(bags) && !isNaN(avg_weight) && !isNaN(price_kg)) {
-                payload.harvest.details.push({
-                    activity: "Mechanical Harvesting",
-                    qty: bags,
-                    unit_cost: (avg_weight * price_kg).toFixed(2),
-                    total_cost: (bags * avg_weight * price_kg).toFixed(2)
-                });
-            }
-        } else {
-            $('#manual-fields .block').each(function () {
-                const activity = $(this).find('label.form-label').first().text().trim();
-                const qty = parseFloat($(this).find('input.quantity').val());
-                const unit_cost = parseFloat($(this).find('input.unit-cost').val());
-                if (!isNaN(qty) && !isNaN(unit_cost)) {
-                    payload.harvest.details.push({
-                        activity, qty, unit_cost, total_cost: (qty * unit_cost).toFixed(2)
-                    });
-                }
-            });
-        }
-
-        return payload;
-    }
-
 });
-
 </script>

@@ -3,6 +3,10 @@
 use App\Http\Controllers\Main\BaselineMonitoringController;
 use Illuminate\Support\Facades\Route;
 
+
+Route::post('/baseline-monitoring/validate-step', [BaselineMonitoringController::class, 'validateStep'])->name('baseline-monitoring.validateStep');
+Route::post('/baseline-monitoring/validate-all', [BaselineMonitoringController::class, 'validateAllSteps'])->name('baseline-monitoring.validateAll');
+
 Route::get('/baseline-monitoring/get-index', [BaselineMonitoringController::class, 'getIndex'])
         ->name('baseline-monitoring.get-index');
 

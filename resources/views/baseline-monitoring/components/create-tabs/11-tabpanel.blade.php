@@ -97,8 +97,7 @@
         </div>
 
         <div class="d-flex align-items-start gap-3 mt-4">
-
-            <button type="button" id="submit-form-btn" class="btn btn-success btn-label right ms-auto nexttab" data-nexttab="v-pills-seeds-prep-tab">
+            <button type="button" id="submitBaseline" class="btn btn-success btn-label right ms-auto nexttab" data-nexttab="v-pills-seeds-prep-tab">
                 <i class="ri-arrow-right-line label-icon align-middle fs-16 ms-2"></i>Done
             </button>
         </div>

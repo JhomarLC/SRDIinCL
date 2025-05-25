@@ -92,8 +92,8 @@
                                     </span>
                                 </button>
                                 <button class="nav-link" id="v-pills-land-prep-tab" data-bs-toggle="pill"
-                                    data-bs-target="#v-pills-land-prep" type="button" role="tab"
-                                    aria-controls="v-pills-land-prep" aria-selected="false">
+                                    data-bs-target="#v-pills-land-preparation" type="button" role="tab"
+                                    aria-controls="v-pills-land-preparation" aria-selected="false">
                                     <span class="step-title me-2">
                                         <i class="ri-close-circle-fill step-icon me-2"></i> Land Preparation
                                     </span>
@@ -188,7 +188,6 @@
                             </div>
                         </div>
                         <!-- end col -->
-
                         <div class="col-lg-3">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <h5 class="fs-14 text-primary mb-0"><i

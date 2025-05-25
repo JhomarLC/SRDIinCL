@@ -30,10 +30,6 @@ class FarmingData extends Model
         'other_crops',
     ];
 
-    public function activities()
-    {
-        return $this->hasMany(FarmingActivity::class);
-    }
     public function participant()
     {
         return $this->belongsTo(Participant::class, 'participant_id');

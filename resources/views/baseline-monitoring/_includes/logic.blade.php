@@ -282,11 +282,11 @@
                 const $plus = $block.find('.plus');
 
                 if (isFree) {
-                    $qty.val(0).prop('disabled', true);
+                    $qty.val(0).prop('disabled', false);
                     $unit.val('').prop('disabled', true);
                     $total.val('').prop('disabled', true);
-                    $minus.prop('disabled', true);
-                    $plus.prop('disabled', true);
+                    $minus.prop('disabled', false);
+                    $plus.prop('disabled', false);
                 } else {
                     $qty.prop('disabled', false);
                     $unit.prop('disabled', false);
@@ -440,11 +440,11 @@
                 const $plus = $block.find('.plus');
 
                 if (isFree) {
-                    $qty.val(0).prop('disabled', true);
+                    $qty.val(0).prop('disabled', false);
                     $unit.val('').prop('disabled', true);
                     $total.val('').prop('disabled', true);
-                    $minus.prop('disabled', true);
-                    $plus.prop('disabled', true);
+                    $minus.prop('disabled', false);
+                    $plus.prop('disabled', false);
                 } else {
                     $qty.prop('disabled', false);
                     $unit.prop('disabled', false);

@@ -117,7 +117,6 @@ class FarmersProfileController extends Controller
         return view('farmers-profile.index');
     }
 
-
     public function getIndex(Request $request)
     {
         $query = Participant::query()->latest();

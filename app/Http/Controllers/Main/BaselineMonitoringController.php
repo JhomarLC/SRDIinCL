@@ -2,25 +2,67 @@
 
 namespace App\Http\Controllers\Main;
 
+use App\Helpers\BaselineValidationRules;
 use App\Helpers\SeasonHelper;
 use App\Models\FarmingData;
+use App\Models\LandPreparation;
+use App\Models\LandPreparationParticulars;
 use App\Models\Participant;
+use App\Models\SeedsPreparation;
+use App\Models\SeedsPreparationParticulars;
 use App\Models\Variety;
 use DB;
+use Exception;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Yajra\DataTables\DataTables;
 
 class BaselineMonitoringController extends Controller
 {
+     public function validateStep(Request $request)
+    {
+        $step = $request->input('step');
+        $rules = BaselineValidationRules::rules($step);
+        $messages = BaselineValidationRules::messages();
+
+        $validated = $request->validate($rules, $messages);
+
+        return response()->json(['success' => true]);
+    }
+
+    public function validateAllSteps(Request $request)
+    {
+        $steps = ['land-prep'];
+        $messages = BaselineValidationRules::messages();
+
+        $allErrors = [];
+
+        foreach ($steps as $step) {
+            $rules = BaselineValidationRules::rules($step);
+            $validator = \Validator::make($request->all(), $rules, $messages);
+
+            if ($validator->fails()) {
+                $allErrors[$step] = $validator->errors()->messages();
+            }
+        }
+
+        if (!empty($allErrors)) {
+            return response()->json([
+                'success' => false,
+                'errors' => $allErrors,
+            ], 422);
+        }
+
+        return response()->json(['success' => true]);
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
         $participants = Participant::with([
-            'farming_data.activities.details',
-            'farming_data.activities.irrigationEvents'
+            'farming_data'
         ])->get();
 
         // return response()->json($participants);
@@ -67,38 +109,38 @@ class BaselineMonitoringController extends Controller
             //     })->join(', ');
             // })
             ->addColumn('wet_season', function ($participants) {
-                $wetRecord = $participants->farming_data
-                                ->where('season', 'Wet Season')
-                                ->first();
+                // $wetRecord = $participants->farming_data
+                //                 ->where('season', 'Wet Season')
+                //                 ->first();
 
-                if (
-                    $wetRecord &&
-                    (
-                        $wetRecord->activities->flatMap->details->isNotEmpty() ||
-                        $wetRecord->activities->flatMap->irrigationEvents->isNotEmpty()
-                    )
-                ) {
-                    return '<span class="badge bg-success">Baseline Complete</span>';
-                } else {
-                    return '<span class="badge bg-danger">No Baseline</span>';
-                }
+                // if (
+                //     $wetRecord &&
+                //     (
+                //         $wetRecord->activities->flatMap->details->isNotEmpty() ||
+                //         $wetRecord->activities->flatMap->irrigationEvents->isNotEmpty()
+                //     )
+                // ) {
+                //     return '<span class="badge bg-success">Baseline Complete</span>';
+                // } else {
+                // }
+                return '<span class="badge bg-danger">No Baseline</span>';
             })
             ->addColumn('dry_season', function ($participants) {
-                $dryRecord = $participants->farming_data
-                                ->where('season', 'Dry Season')
-                                ->first();
+                // $dryRecord = $participants->farming_data
+                //                 ->where('season', 'Dry Season')
+                //                 ->first();
 
-                if (
-                    $dryRecord &&
-                    (
-                        $dryRecord->activities->flatMap->details->isNotEmpty() ||
-                        $dryRecord->activities->flatMap->irrigationEvents->isNotEmpty()
-                    )
-                ) {
-                    return '<span class="badge bg-success">Baseline Complete</span>';
-                } else {
-                    return '<span class="badge bg-danger">No Baseline</span>';
-                }
+                // if (
+                //     $dryRecord &&
+                //     (
+                //         $dryRecord->activities->flatMap->details->isNotEmpty() ||
+                //         $dryRecord->activities->flatMap->irrigationEvents->isNotEmpty()
+                //     )
+                // ) {
+                //     return '<span class="badge bg-success">Baseline Complete</span>';
+                // } else {
+                // }
+                return '<span class="badge bg-danger">No Baseline</span>';
             })
 
             ->addColumn('actions', function ($participants) {
@@ -133,6 +175,7 @@ class BaselineMonitoringController extends Controller
         return view('baseline-monitoring.create', compact([
             'participant',
             'season',
+            'normalizedSeason',
             'yearOptions',
             'varieties',
             'filteredFarmingData',
@@ -142,51 +185,92 @@ class BaselineMonitoringController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, string $id, $season)
+
+    public function store(Request $request, $id, $season)
     {
+        $validated = $request->validate(
+            BaselineValidationRules::rules('all'),
+            BaselineValidationRules::messages()
+        );
+
         DB::beginTransaction();
 
         try {
-            $data = $request->all();
-            $normalizedSeason = ucwords(str_replace('-', ' ', $season));
+            /**
+             * 1. Save Land Preparation
+             */
+            $landPrep = LandPreparation::create([
+                'farming_data_id' => $id,
+                'is_pakyaw' => $validated['land_prep_is_pakyaw'],
+                'package_cost' => $validated['land_prep_package_cost'] ?? null,
+            ]);
 
-            // 1️⃣ Retrieve Participant and Farming Data
-            $participant = Participant::with('farming_data')->findOrFail($id);
-            $farmingData = $participant->farming_data
-                ->where('season', $normalizedSeason)
-                ->first();
-
-            if (!$farmingData) {
-                return response()->json(['error' => 'Farming data not found for this season.'], 404);
+            if (!$validated['land_prep_is_pakyaw']) {
+                foreach ($request->input('land_prep', []) as $activity) {
+                    LandPreparationParticulars::create([
+                        'land_preparation_id' => $landPrep->id,
+                        'activity' => $activity['activity'],
+                        'qty' => $activity['qty'] ?? 0,
+                        'unit_cost' => $activity['unit_cost'] ?? 0,
+                        'total_cost' => $activity['total_cost'] ?? 0,
+                    ]);
+                }
             }
 
-            // 2️⃣ Update Baseline Info
-            $this->updateBaselineInfo($farmingData, $data['baseline']);
+            /**
+             * 2. Save Seeds Preparation
+             */
+            $seedsPrep = SeedsPreparation::create([
+                'farming_data_id' => $id,
+                'is_pakyaw' => $validated['seeds_prep_is_pakyaw'] ?? 0,
+                'package_cost' => $validated['seeds_prep_package_cost'] ?? null,
+                'others' => $request->input('seeds_prep_others'),
+            ]);
 
-            // 3️⃣ Clear Existing Activities (details and irrigation_events are cascade deleted)
-            $farmingData->activities()->delete();
-
-            // 4️⃣ Store Regular Activities (Land Prep, Seeds Prep, etc.)
-            $this->storeMainActivities($farmingData, $data);
-
-            // 5️⃣ Store Water Management
-            if (isset($data['water_management']['events'])) {
-                $this->storeWaterManagement($farmingData, $data['water_management']);
+            if (!$validated['seeds_prep_is_pakyaw']) {
+                foreach ($request->input('seed_prep', []) as $activity) {
+                    SeedsPreparationParticulars::create([
+                        'seeds_preparation_id' => $seedsPrep->id,
+                        'activity' => $activity['activity'],
+                        'qty' => $activity['qty'] ?? 0,
+                        'unit_cost' => $activity['unit_cost'] ?? 0,
+                        'total_cost' => $activity['total_cost'] ?? 0,
+                    ]);
+                }
             }
 
-            // 6️⃣ Store Drying Cost (if available)
-            $this->storeDryingCostActivity($farmingData, $data['baseline']);
-
+            /**
+             * 3. Save Seed Varieties (if any)
+             */
+            foreach ($request->input('seed_varieties', []) as $variety) {
+                DB::table('seed_preparation_varieties')->insert([
+                    'seeds_preparation_id' => $seedsPrep->id,
+                    'seed_variety_id' => $variety['seed_variety_id'] ?? null,
+                    'variety_name' => $variety['variety_name'],
+                    'purchase_type' => $variety['purchase_type'],
+                    'qty' => $variety['qty'] ?? 0,
+                    'unit_cost' => $variety['unit_cost'] ?? 0,
+                    'total_cost' => $variety['total_cost'] ?? 0,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
             DB::commit();
-            return response()->json(['message' => 'Updated successfully']);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['error' => $e->getMessage()], 500);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Land preparation data saved successfully!',
+            ]);
+        } catch (Exception $e) {
+            DB::rollback();
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to save land preparation data.',
+                'error' => $e->getMessage(),
+            ], 500);
         }
     }
-
-
-
 
     /**
      * Display the specified resource.
@@ -194,40 +278,16 @@ class BaselineMonitoringController extends Controller
     public function show(string $id)
     {
         $participant = Participant::with([
-            'farming_data.activities.details',
-            'farming_data.activities.irrigationEvents'
+            'farming_data'
         ])->findOrFail($id);
 
         $drySeasonData = $participant->farming_data->firstWhere('season', 'Dry Season');
         $wetSeasonData = $participant->farming_data->firstWhere('season', 'Wet Season');
 
-        // Organize activities by category if needed
-        $drySeasonActivities = $drySeasonData ? $drySeasonData->activities->groupBy('category') : collect();
-        $wetSeasonActivities = $wetSeasonData ? $wetSeasonData->activities->groupBy('category') : collect();
-
-        // Example: Extracting Water Management from Dry Season
-        $dryWaterManagement = $drySeasonActivities->get('Water Management')?->first();
-        $dryIrrigationEvents = $dryWaterManagement?->irrigationEvents ?? collect();
-        $dryWaterDetails = $dryWaterManagement?->details ?? collect();
-
-         // Example: Extracting Water Management from Wet Season
-        $wetWaterManagement = $wetSeasonActivities->get('Water Management')?->first();
-        $wetIrrigationEvents = $wetWaterManagement?->irrigationEvents ?? collect();
-        $wetWaterDetails = $wetWaterManagement?->details ?? collect();
-
         return view('baseline-monitoring.show', compact([
             'participant',
             'drySeasonData',
             'wetSeasonData',
-            'drySeasonActivities',
-            'wetSeasonActivities',
-            'dryWaterManagement',
-            'dryIrrigationEvents',
-            'dryWaterDetails',
-
-            'wetWaterManagement',
-            'wetIrrigationEvents',
-            'wetWaterDetails'
         ]));
     }
 

@@ -1,4 +1,4 @@
-  <div class="tab-pane fade" id="v-pills-land-prep" role="tabpanel" aria-labelledby="v-pills-land-prep-tab">
+  <div class="tab-pane fade" id="v-pills-land-preparation" role="tabpanel" aria-labelledby="v-pills-land-preparation-tab">
     <div>
         <h5>Land Preparation</h5>
         <p class="text-muted">Fill all information below</p>
