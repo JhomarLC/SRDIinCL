@@ -1,5 +1,112 @@
 <script>
+    function updateActivityTotals() {
+        const activityTotals = {};
+        let grandTotal = 0;
+
+        $('[data-activity]').each(function () {
+            const $section = $(this);
+            const activityKey = $section.data('activity');
+            let activityTotal = 0;
+
+            // Check if this section uses package
+            const isPackage = $section.find('[id$="-pakyaw"]').is(':checked');
+
+            if (isPackage) {
+                // Only use pakyaw input
+                const pakyawInput = $section.find('[id$="-pakyaw-total-cost"] input[type="number"]');
+                if (pakyawInput.length) {
+                    const val = parseFloat(pakyawInput.val()) || 0;
+                    activityTotal = val;
+                }
+            } else {
+                // Sum regular total-cost inputs only
+                $section.find('.block .total-cost').filter(':not(:disabled)').each(function () {
+                    const val = parseFloat($(this).val()) || 0;
+                    activityTotal += val;
+                });
+
+            }
+            $section.find('.variety-block .total-cost').filter(':not(:disabled)').each(function () {
+                const val = parseFloat($(this).val()) || 0;
+                activityTotal += val;
+            });
+
+            activityTotals[activityKey] = activityTotal;
+
+            // Update the per-activity sidebar total
+            $(`#total-${activityKey}`).text(activityTotal.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }));
+
+            grandTotal += activityTotal;
+        });
+
+        // Update the grand total
+        $('#grand-total-expenses').text(grandTotal.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }));
+    }
+
     $(document).ready(function () {
+
+        updateActivityTotals();
+
+        $(document).on('input', '[id$="-pakyaw-total-cost"] input[type="number"]', function () {
+            updateActivityTotals();
+        });
+        $(document).off('click', '.minus').on('click', '.minus', function () {
+            const $input = $(this).siblings('input.quantity');
+            let current = parseInt($input.val()) || 0;
+            if (current > 0) $input.val(current - 1).trigger('input');
+
+            updateActivityTotals();
+        });
+
+        $(document).off('click', '.plus').on('click', '.plus', function () {
+            const $input = $(this).siblings('input.quantity');
+            let current = parseInt($input.val()) || 0;
+            $input.val(current + 1).trigger('input');
+
+            updateActivityTotals();
+        });
+
+        $(document).on('input', '.quantity, .unit-cost', function () {
+            const $row = $(this).closest('.row');
+            const qty = parseFloat($row.find('.quantity').val()) || 0;
+            const unit = parseFloat($row.find('.unit-cost').val()) || 0;
+            $row.find('.total-cost').val((qty * unit).toFixed(2));
+
+            updateActivityTotals();
+        });
+
+        // General radio change for Free vs Purchase
+        $(document).on('change', 'input[type=radio][name^="purchase_status_"], input[type=radio][name^="fertilizer_type_"], input[type=radio][name^="pesticide_type_"]', function () {
+            const $block = $(this).closest('.variety-block, .fertilizer-block, .pesticide-block');
+            const isFree = $(this).val() === 'free';
+
+            const $qty = $block.find('.quantity');
+            const $unit = $block.find('.unit-cost');
+            const $total = $block.find('.total-cost');
+            const $minus = $block.find('.minus');
+            const $plus = $block.find('.plus');
+
+            if (isFree) {
+                $qty.val(0).prop('disabled', false);
+                $unit.val('').prop('disabled', true);
+                $total.val('').prop('disabled', true);
+            } else {
+                $unit.prop('disabled', false);
+                $total.prop('disabled', false);
+            }
+
+            $minus.prop('disabled', false);
+            $plus.prop('disabled', false);
+
+            updateActivityTotals();
+        });
+
         $('input[name="method_crop_establishment"]').on('change', function () {
             const method = $('input[name="method_crop_establishment"]:checked').val();
 
@@ -40,29 +147,6 @@
             }
         });
 
-        function bindComputationEvents(context = document) {
-            $(context).find('.plus').off('click').on('click', function () {
-                const $input = $(this).siblings('input.quantity');
-                let current = parseInt($input.val()) || 0;
-                $input.val(current + 1).trigger('input');
-            });
-
-            $(context).find('.minus').off('click').on('click', function () {
-                const $input = $(this).siblings('input.quantity');
-                let current = parseInt($input.val()) || 0;
-                if (current > 0) {
-                    $input.val(current - 1).trigger('input');
-                }
-            });
-
-            $(context).find('.quantity, .unit-cost').off('input').on('input', function () {
-                const $row = $(this).closest('.row');
-                const qty = parseFloat($row.find('.quantity').val()) || 0;
-                const unit = parseFloat($row.find('.unit-cost').val()) || 0;
-                const total = qty * unit;
-                $row.find('.total-cost').val(total.toFixed(2));
-            });
-        }
     });
 
     $(document).ready(function () {
@@ -75,6 +159,9 @@
                 $('#land-prep-pakyaw-total-cost').hide();
                 $('#land-prep-regular-fields').show();
             }
+
+            // ✅ Update totals when toggling package mode
+            updateActivityTotals();
         });
         // Show/hide based on "Package" checkbox in Seeds Preparation
         $('#seeds-prep-pakyaw').on('change', function () {
@@ -85,6 +172,8 @@
                 $('#seeds-prep-pakyaw-total-cost').hide();
                 $('#seeds-prep-regular-fields').show();
             }
+
+            updateActivityTotals(); // ← important!
         });
         // Show/hide based on "Package" checkbox in Seeds Preparation
         $('#seedbed-prep-pakyaw').on('change', function () {
@@ -95,6 +184,8 @@
                 $('#seedbed-prep-pakyaw-total-cost').hide();
                 $('#seedbed-prep-regular-fields').show();
             }
+
+            updateActivityTotals(); // ← important!
         })
         // Show/hide based on "Package" checkbox in Seeds Preparation
         $('#crop-establishment-pakyaw').on('change', function () {
@@ -108,39 +199,6 @@
         });
 
     });
-
-    $(document).ready(function () {
-        function initializeComputations() {
-            // Delegated event for plus button
-            $(document).on('click', '.block .plus', function () {
-                const $input = $(this).siblings('input.quantity');
-                const current = parseFloat($input.val()) || 0;
-                const step = parseFloat($input.attr('step')) || 1;
-                $input.val(current + step).trigger('input');
-            });
-
-            // Delegated event for minus button
-            $(document).on('click', '.block .minus', function () {
-                const $input = $(this).siblings('input.quantity');
-                const current = parseFloat($input.val()) || 0;
-                const step = parseFloat($input.attr('step')) || 1;
-                const min = parseFloat($input.attr('min')) || 0;
-                $input.val(Math.max(current - step, min)).trigger('input');
-            });
-
-            // Delegated event for input changes
-            $(document).on('input', '.block .quantity, .block .unit-cost', function () {
-                const $block = $(this).closest('.block');
-                const qty = parseFloat($block.find('.quantity').val()) || 0;
-                const unitCost = parseFloat($block.find('.unit-cost').val()) || 0;
-                const total = qty * unitCost;
-                $block.find('.total-cost').val(total.toFixed(2));
-            });
-        }
-
-        initializeComputations();
-    });
-
 
     $(document).ready(function () {
         const $varietyContainer = $('#variety-container');
@@ -238,7 +296,7 @@
             `;
 
             $varietyContainer.append(block);
-            bindEvents();
+            updateActivityTotals(); // <- add this here
         }
 
         // Renumber the variety blocks: 1st, 2nd, 3rd...
@@ -247,53 +305,6 @@
             $varietyContainer.find('.variety-block').each(function (index) {
                 const label = `${index + 1}${suffixes[index] || 'th'} Variety: ${$(this).data('variety-name')}`;
                 $(this).find('.variety-label').text(label);
-            });
-        }
-
-        // Bind all input/button events
-        function bindEvents() {
-            $('.minus').off('click').on('click', function () {
-                const $input = $(this).siblings('input.quantity');
-                let current = parseInt($input.val()) || 0;
-                if (current > 0) $input.val(current - 1).trigger('input');
-            });
-
-            $('.plus').off('click').on('click', function () {
-                const $input = $(this).siblings('input.quantity');
-                let current = parseInt($input.val()) || 0;
-                $input.val(current + 1).trigger('input');
-            });
-
-            $('.quantity, .unit-cost').off('input').on('input', function () {
-                const $row = $(this).closest('.row');
-                const qty = parseFloat($row.find('.quantity').val()) || 0;
-                const unit = parseFloat($row.find('.unit-cost').val()) || 0;
-                $row.find('.total-cost').val((qty * unit).toFixed(2));
-            });
-
-            $('input[type=radio][name^=purchase_status_]').off('change').on('change', function () {
-                const $block = $(this).closest('.variety-block');
-                const isFree = $(this).val() === 'free';
-
-                const $qty = $block.find('.quantity');
-                const $unit = $block.find('.unit-cost');
-                const $total = $block.find('.total-cost');
-                const $minus = $block.find('.minus');
-                const $plus = $block.find('.plus');
-
-                if (isFree) {
-                    $qty.val(0).prop('disabled', false);
-                    $unit.val('').prop('disabled', true);
-                    $total.val('').prop('disabled', true);
-                    $minus.prop('disabled', false);
-                    $plus.prop('disabled', false);
-                } else {
-                    $qty.prop('disabled', false);
-                    $unit.prop('disabled', false);
-                    $total.prop('disabled', false);
-                    $minus.prop('disabled', false);
-                    $plus.prop('disabled', false);
-                }
             });
         }
 
@@ -363,13 +374,13 @@
                 <div class="border rounded p-3 mb-3 fertilizer-block" data-fertilizer-id="${fertilizerId}" data-fertilizer-name="${fertilizerName}">
                     <h6 class="fertilizer-label"></h6>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio"
+                        <input class="form-check-input purchase-toggle" type="radio"
                             name="fertilizer_type_${fertilizerId}" id="fertilizer_free_${fertilizerId}"
                             value="free">
                         <label class="form-check-label" for="fertilizer_free_${fertilizerId}">Free</label>
                     </div>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio"
+                        <input class="form-check-input purchase-toggle" type="radio"
                             name="fertilizer_type_${fertilizerId}" id="fertilizer_purchase_${fertilizerId}"
                             value="purchase" checked>
                         <label class="form-check-label" for="fertilizer_purchase_${fertilizerId}">Purchase</label>
@@ -410,25 +421,6 @@
 
         // Bind quantity, cost, and toggle logic
         function bindFertilizerEvents() {
-            $('.minus').off('click').on('click', function () {
-                const $input = $(this).siblings('input.quantity');
-                let current = parseInt($input.val()) || 0;
-                if (current > 0) $input.val(current - 1).trigger('input');
-            });
-
-            $('.plus').off('click').on('click', function () {
-                const $input = $(this).siblings('input.quantity');
-                let current = parseInt($input.val()) || 0;
-                $input.val(current + 1).trigger('input');
-            });
-
-            $('.quantity, .unit-cost').off('input').on('input', function () {
-                const $row = $(this).closest('.row');
-                const qty = parseFloat($row.find('.quantity').val()) || 0;
-                const unit = parseFloat($row.find('.unit-cost').val()) || 0;
-                $row.find('.total-cost').val((qty * unit).toFixed(2));
-            });
-
             $('input[type=radio][name^=fertilizer_type_]').off('change').on('change', function () {
                 const $block = $(this).closest('.fertilizer-block');
                 const isFree = $(this).val() === 'free';
@@ -820,23 +812,6 @@
             const total = bags * avgWeight * pricePerKilo;
             $block.find('.total-mechanical-cost').val(total.toFixed(2));
         }
-
-        // Manual logic for + / - buttons
-        $('#mechanical-block').on('click', '.plus', function () {
-            const $input = $(this).siblings('.bags');
-            const current = parseFloat($input.val()) || 0;
-            const step = parseFloat($input.attr('step')) || 1;
-            $input.val(current + step).trigger('input');
-        });
-
-        $('#mechanical-block').on('click', '.minus', function () {
-            const $input = $(this).siblings('.bags');
-            const current = parseFloat($input.val()) || 0;
-            const step = parseFloat($input.attr('step')) || 1;
-            const min = parseFloat($input.attr('min')) || 0;
-            $input.val(Math.max(current - step, min)).trigger('input');
-        });
-
         // Trigger calculation on input
         $('#mechanical-block').on('input', '.bags, .avg-bag-weight, .price-per-kg', computeMechanicalHarvestCost);
 
@@ -859,22 +834,6 @@
 
         // Input triggers
         $('#permanent-block').on('input', '.bags, .avg-bag-weight, .price-per-kg, .percent-share', computePermanentLaborCost);
-
-        // Handle plus / minus buttons for "bags"
-        $('#permanent-block').on('click', '.plus', function () {
-            const $input = $(this).siblings('.bags');
-            const val = parseFloat($input.val()) || 0;
-            const step = parseFloat($input.attr('step')) || 1;
-            $input.val(val + step).trigger('input');
-        });
-
-        $('#permanent-block').on('click', '.minus', function () {
-            const $input = $(this).siblings('.bags');
-            const val = parseFloat($input.val()) || 0;
-            const step = parseFloat($input.attr('step')) || 1;
-            const min = parseFloat($input.attr('min')) || 0;
-            $input.val(Math.max(val - step, min)).trigger('input');
-        });
 
         // Initial calculation on load
         computePermanentLaborCost();

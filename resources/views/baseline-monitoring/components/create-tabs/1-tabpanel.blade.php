@@ -91,7 +91,7 @@
             </div>
         </div>
     </div>
-    <div class="d-flex align-items-start gap-3 mt-4">
+    <div class="sticky-next-button d-flex align-items-start gap-3 mt-4">
         <button type="button"
             class="btn btn-success btn-label right ms-auto nexttab nexttab"
             data-nexttab="v-pills-land-prep"><i

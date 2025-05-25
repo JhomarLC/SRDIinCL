@@ -1,4 +1,4 @@
- <div class="tab-pane fade" id="v-pills-seedbed-prep" role="tabpanel" aria-labelledby="v-pills-seedbed-prep-tab">
+<div class="tab-pane fade" id="v-pills-seedbed-prep" role="tabpanel" aria-labelledby="v-pills-seedbed-prep-tab" data-activity="seedbed-prep">
     <div>
         <h5>Seedbed Preparation</h5>
         <p class="text-muted">Fill all information below</p>
@@ -10,13 +10,12 @@
             <label class="form-check-label" for="seedbed-prep-pakyaw">Package</label>
         </div>
 
-        <!-- Single Total Cost for Pakyaw -->
+        <!-- Pakyaw Cost -->
         <div class="row g-3 mt-1" id="seedbed-prep-pakyaw-total-cost" style="display:none;">
             <hr class="text-muted">
-            {{-- <label for="seedbedPrepPakyawTotalCost" class="form-label mt-0">Total Cost</label> --}}
             <div class="col-12 bg-light p-3 mb-3 rounded mt-0">
-                <label for="seedbedPrepPakyawTotalCost" class="form-label">Total Cost</label>
-                <input type="number" class="form-control" id="seedbedPrepPakyawTotalCost" placeholder="Enter Total Cost">
+                <label for="seedbed-prep-pakyaw-total-cost-input" class="form-label">Total Cost</label>
+                <input type="number" class="form-control" id="seedbed-prep-pakyaw-total-cost-input" placeholder="Enter Total Cost">
             </div>
         </div>
 
@@ -24,11 +23,12 @@
 
         <!-- Regular Inputs -->
         <div id="seedbed-prep-regular-fields">
-            <!-- Repeatable Block Starts -->
+            <!-- Plowing -->
             <div class="block">
                 <div class="row g-3">
                     <div class="col-12">
                         <label class="form-label">Labor: Plowing</label>
+                        <input type="hidden" name="seedbed_prep[0][activity]" value="Plowing">
                     </div>
                 </div>
                 <div class="row p-3 mb-3 rounded bg-light">
@@ -36,26 +36,28 @@
                         <label class="form-label text-muted">Qty</label>
                         <div class="input-step step-primary full-width d-flex">
                             <button type="button" class="minus">–</button>
-                            <input type="number" class="product-quantity form-control text-center quantity" value="0" min="0" step="1">
+                            <input type="number" name="seedbed_prep[0][qty]" class="form-control text-center quantity" value="0" min="0" step="1">
                             <button type="button" class="plus">+</button>
                         </div>
                     </div>
                     <div class="col-4">
                         <label class="form-label text-muted">Unit Cost</label>
-                        <input type="number" class="form-control unit-cost" placeholder="Unit Cost" />
+                        <input type="number" name="seedbed_prep[0][unit_cost]" class="form-control unit-cost" placeholder="Unit Cost" />
                     </div>
                     <div class="col-4">
                         <label class="form-label text-muted">Total Cost</label>
-                        <input type="number" class="form-control total-cost" placeholder="Total Cost" disabled/>
+                        <input type="number" name="seedbed_prep[0][total_cost]" class="form-control total-cost" placeholder="Total Cost" readonly  />
                     </div>
                 </div>
             </div>
             <hr class="text-muted">
 
+            <!-- Harrowing -->
             <div class="block">
                 <div class="row g-3">
                     <div class="col-12">
                         <label class="form-label">Labor: Harrowing</label>
+                        <input type="hidden" name="seedbed_prep[1][activity]" value="Harrowing">
                     </div>
                 </div>
                 <div class="row p-3 mb-3 rounded bg-light">
@@ -63,27 +65,28 @@
                         <label class="form-label text-muted">Qty</label>
                         <div class="input-step step-primary full-width d-flex">
                             <button type="button" class="minus">–</button>
-                            <input type="number" class="product-quantity form-control text-center quantity" value="0" min="0" step="1">
+                            <input type="number" name="seedbed_prep[1][qty]" class="form-control text-center quantity" value="0" min="0" step="1">
                             <button type="button" class="plus">+</button>
                         </div>
                     </div>
                     <div class="col-4">
                         <label class="form-label text-muted">Unit Cost</label>
-                        <input type="number" class="form-control unit-cost" placeholder="Unit Cost" />
+                        <input type="number" name="seedbed_prep[1][unit_cost]" class="form-control unit-cost" placeholder="Unit Cost" />
                     </div>
                     <div class="col-4">
                         <label class="form-label text-muted">Total Cost</label>
-                        <input type="number" class="form-control total-cost" placeholder="Total Cost" disabled />
+                        <input type="number" name="seedbed_prep[1][total_cost]" class="form-control total-cost" placeholder="Total Cost" readonly  />
                     </div>
                 </div>
             </div>
             <hr class="text-muted">
-            <!-- End of each block -->
 
+            <!-- Seedbed Construction -->
             <div class="block">
                 <div class="row g-3">
                     <div class="col-12">
                         <label class="form-label">Labor: Seedbed Construction</label>
+                        <input type="hidden" name="seedbed_prep[2][activity]" value="Seedbed Construction">
                     </div>
                 </div>
                 <div class="row p-3 mb-3 rounded bg-light">
@@ -91,23 +94,21 @@
                         <label class="form-label text-muted">Qty</label>
                         <div class="input-step step-primary full-width d-flex">
                             <button type="button" class="minus">–</button>
-                            <input type="number" class="product-quantity form-control text-center quantity" value="0" min="0" step="1">
+                            <input type="number" name="seedbed_prep[2][qty]" class="form-control text-center quantity" value="0" min="0" step="1">
                             <button type="button" class="plus">+</button>
                         </div>
                     </div>
                     <div class="col-4">
                         <label class="form-label text-muted">Unit Cost</label>
-                        <input type="number" class="form-control unit-cost" placeholder="Unit Cost" />
+                        <input type="number" name="seedbed_prep[2][unit_cost]" class="form-control unit-cost" placeholder="Unit Cost" />
                     </div>
                     <div class="col-4">
                         <label class="form-label text-muted">Total Cost</label>
-                        <input type="number" class="form-control total-cost" placeholder="Total Cost" disabled />
+                        <input type="number" name="seedbed_prep[2][total_cost]" class="form-control total-cost" placeholder="Total Cost" readonly  />
                     </div>
                 </div>
             </div>
             <hr class="text-muted">
-            <!-- End of each block -->
-
         </div>
 
         <div class="d-flex align-items-start gap-3 mt-4">
@@ -120,4 +121,3 @@
         </div>
     </div>
 </div>
-<!-- end tab pane -->

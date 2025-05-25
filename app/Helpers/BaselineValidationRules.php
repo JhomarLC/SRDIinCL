@@ -38,6 +38,15 @@ class BaselineValidationRules
                 'seed_varieties.*.unit_cost' => 'nullable|numeric|min:0',
                 'seed_varieties.*.total_cost' => 'nullable|numeric|min:0',
             ],
+            'seedbed-prep' => [
+                'seedbed_prep_is_pakyaw' => 'required|boolean',
+                'seedbed_prep_package_cost' => 'required_if:seedbed_prep_is_pakyaw,1|nullable|numeric|min:0',
+
+                'seedbed_prep.*.activity' => 'required_if:seedbed_prep_is_pakyaw,0|string|max:255',
+                'seedbed_prep.*.qty' => 'required_if:seedbed_prep_is_pakyaw,0|nullable|integer|min:0',
+                'seedbed_prep.*.unit_cost' => 'required_if:seedbed_prep_is_pakyaw,0|nullable|numeric|min:0',
+                'seedbed_prep.*.total_cost' => 'required_if:seedbed_prep_is_pakyaw,0|nullable|numeric|min:0',
+            ],
         ];
 
         if ($step === 'all') {
@@ -67,6 +76,13 @@ class BaselineValidationRules
             // Varieties
             'seed_varieties.*.variety_name.required' => 'Variety name is required.',
             'seed_varieties.*.purchase_type.required' => 'Please select Free or Purchase for the variety.',
+
+              // Seedbed Prep
+            'seedbed_prep_package_cost.required_if' => 'Please enter the seedbed package cost when pakyaw is selected.',
+            'seedbed_prep.*.activity.required_if' => 'Activity name is required when seedbed prep is not pakyaw.',
+            'seedbed_prep.*.qty.required_if' => 'Quantity is required for the seedbed prep activity.',
+            'seedbed_prep.*.unit_cost.required_if' => 'Unit cost is required for the seedbed prep activity.',
+            'seedbed_prep.*.total_cost.required_if' => 'Total cost is required for the seedbed prep activity.',
         ];
     }
 }

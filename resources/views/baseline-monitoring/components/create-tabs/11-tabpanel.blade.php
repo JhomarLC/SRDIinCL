@@ -6,7 +6,7 @@
 
     <div class="mt-3">
         <!-- Regular Inputs -->
-        <div id="seedbed-prep-regular-fields">
+        <div id="other-regular-fields">
             <!-- Repeatable Block Starts -->
             <div class="block">
                 <div class="row g-3">

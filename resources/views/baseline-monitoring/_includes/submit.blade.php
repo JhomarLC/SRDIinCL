@@ -29,7 +29,7 @@ $(function () {
         fullFormData.append("seeds_prep_is_pakyaw", isSeedsPakyaw);
 
         if (isSeedsPakyaw) {
-            const seedsPackageCost = $("#seedsPrepPakyawTotalCost").val() || 0;
+            const seedsPackageCost = $("#seeds-prep-pakyaw-total-cost-input").val() || 0;
             fullFormData.append("seeds_prep_package_cost", seedsPackageCost);
         } else {
             $("#seeds-prep-regular-fields .block").each(function (index) {
@@ -64,6 +64,28 @@ $(function () {
             fullFormData.append(`seed_varieties[${index}][unit_cost]`, unitCost);
             fullFormData.append(`seed_varieties[${index}][total_cost]`, totalCost);
         });
+
+        // Seedbed Preparation
+        const isSeedbedPakyaw = $("#seedbed-prep-pakyaw").is(":checked") ? 1 : 0;
+        fullFormData.append("seedbed_prep_is_pakyaw", isSeedbedPakyaw);
+
+        if (isSeedbedPakyaw) {
+            const seedbedPackageCost = $("#seedbed-prep-pakyaw-total-cost-input").val() || 0;
+            fullFormData.append("seedbed_prep_package_cost", seedbedPackageCost);
+        } else {
+            $("#seedbed-prep-regular-fields .block").each(function (index) {
+                const activity = $(this).find('input[name$="[activity]"]').val();
+                const qty = $(this).find('input[name$="[qty]"]').val() || 0;
+                const unitCost = $(this).find('input[name$="[unit_cost]"]').val() || 0;
+                const totalCost = parseFloat(qty) * parseFloat(unitCost);
+
+                fullFormData.append(`seedbed_prep[${index}][activity]`, activity);
+                fullFormData.append(`seedbed_prep[${index}][qty]`, qty);
+                fullFormData.append(`seedbed_prep[${index}][unit_cost]`, unitCost);
+                fullFormData.append(`seedbed_prep[${index}][total_cost]`, totalCost || 0);
+            });
+        }
+
 
         // 🔍 Log the contents of the FormData
         console.group("📦 Submitted Form Data");
@@ -103,7 +125,7 @@ $(function () {
         e.preventDefault();
         showLoader("Validating...");
 
-        const steps = ["land-preparation", "seeds-prep"];
+        const steps = ["land-preparation", "seeds-prep", "seedbed-prep"];
         const formData1 = new FormData();
 
         const stepForms = {
@@ -133,7 +155,7 @@ $(function () {
                 formData1.append("seeds_prep_is_pakyaw", isPakyaw);
 
                 if (isPakyaw) {
-                    const packageCost = $("#seedsPrepPakyawTotalCost").val() || 0;
+                    const packageCost = $("#seeds-prep-pakyaw-total-cost-input").val() || 0;
                     formData1.append("seeds_prep_package_cost", packageCost);
                 } else {
                     $("#seeds-prep-regular-fields .block").each(function (index) {
@@ -172,7 +194,29 @@ $(function () {
                     formData1.append(`seed_varieties[${index}][unit_cost]`, unitCost);
                     formData1.append(`seed_varieties[${index}][total_cost]`, totalCost);
                 });
+            },
+            "seedbed-prep": () => {
+                const isPakyaw = $("#seedbed-prep-pakyaw").is(":checked") ? 1 : 0;
+                formData1.append("seedbed_prep_is_pakyaw", isPakyaw);
+
+                if (isPakyaw) {
+                    const packageCost = $("#seedbed-prep-pakyaw-total-cost-input").val() || 0;
+                    formData1.append("seedbed_prep_package_cost", packageCost);
+                } else {
+                    $("#seedbed-prep-regular-fields .block").each(function (index) {
+                        const activity = $(this).find('input[name^="seedbed_prep["][name$="[activity]"]').val();
+                        const qty = $(this).find('input[name^="seedbed_prep["][name$="[qty]"]').val() || 0;
+                        const unitCost = $(this).find('input[name^="seedbed_prep["][name$="[unit_cost]"]').val() || 0;
+                        const totalCost = parseFloat(qty) * parseFloat(unitCost);
+
+                        formData1.append(`seedbed_prep[${index}][activity]`, activity);
+                        formData1.append(`seedbed_prep[${index}][qty]`, qty);
+                        formData1.append(`seedbed_prep[${index}][unit_cost]`, unitCost);
+                        formData1.append(`seedbed_prep[${index}][total_cost]`, totalCost || 0);
+                    });
+                }
             }
+
         };
 
         const validateSteps = async () => {

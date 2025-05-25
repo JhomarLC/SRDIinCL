@@ -8,6 +8,8 @@ use App\Models\FarmingData;
 use App\Models\LandPreparation;
 use App\Models\LandPreparationParticulars;
 use App\Models\Participant;
+use App\Models\SeedBedPreparation;
+use App\Models\SeedBedPreparationParticulars;
 use App\Models\SeedsPreparation;
 use App\Models\SeedsPreparationParticulars;
 use App\Models\Variety;
@@ -103,11 +105,6 @@ class BaselineMonitoringController extends Controller
             ->addColumn('address', function ($participants) {
                 return $participants->full_address;
             })
-            // ->addColumn('season', function ($participants) {
-            //     return $participants->farming_data->map(function ($data) {
-            //         return "{$data->season} {$data->year_training_conducted}";
-            //     })->join(', ');
-            // })
             ->addColumn('wet_season', function ($participants) {
                 // $wetRecord = $participants->farming_data
                 //                 ->where('season', 'Wet Season')
@@ -255,18 +252,40 @@ class BaselineMonitoringController extends Controller
                     'updated_at' => now(),
                 ]);
             }
+
+            /**
+             * 4. Save Seedbed Preparation
+             */
+            $seedbedPrep = SeedBedPreparation::create([
+                'farming_data_id' => $id,
+                'is_pakyaw' => $validated['seedbed_prep_is_pakyaw'] ?? 0,
+                'package_cost' => $validated['seedbed_prep_package_cost'] ?? null,
+            ]);
+
+            if (!$validated['seedbed_prep_is_pakyaw']) {
+                foreach ($request->input('seedbed_prep', []) as $activity) {
+                    SeedBedPreparationParticulars::create([
+                        'seedbed_preparation_id' => $seedbedPrep->id,
+                        'activity' => $activity['activity'],
+                        'qty' => $activity['qty'] ?? 0,
+                        'unit_cost' => $activity['unit_cost'] ?? 0,
+                        'total_cost' => $activity['total_cost'] ?? 0,
+                    ]);
+                }
+            }
+
             DB::commit();
 
             return response()->json([
                 'status' => 'success',
-                'message' => 'Land preparation data saved successfully!',
+                'message' => 'Baseline data saved successfully!',
             ]);
         } catch (Exception $e) {
             DB::rollback();
 
             return response()->json([
                 'status' => 'error',
-                'message' => 'Failed to save land preparation data.',
+                'message' => 'Failed to save Baseline data.',
                 'error' => $e->getMessage(),
             ], 500);
         }

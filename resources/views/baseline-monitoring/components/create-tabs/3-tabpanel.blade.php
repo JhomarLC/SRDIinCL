@@ -1,4 +1,4 @@
-<div class="tab-pane fade" id="v-pills-seeds-prep" role="tabpanel" aria-labelledby="v-pills-seeds-prep-tab">
+<div class="tab-pane fade" id="v-pills-seeds-prep" role="tabpanel" aria-labelledby="v-pills-seeds-prep-tab" data-activity="seeds-prep">
     <div>
         <h5>Seeds Preparation</h5>
         <p class="text-muted">Fill all information below</p>
@@ -15,8 +15,8 @@
         <div class="row g-3 mt-1" id="seeds-prep-pakyaw-total-cost" style="display:none;">
             <hr class="text-muted">
             <div class="col-12 bg-light p-3 mb-3 rounded mt-0">
-                <label for="seedsPrepPakyawTotalCost" class="form-label">Seeds Prep Cost</label>
-                <input type="number" class="form-control" id="seedsPrepPakyawTotalCost" placeholder="Enter Total Cost">
+                <label for="seeds-prep-pakyaw-total-cost-input" class="form-label">Seeds Prep Cost</label>
+                <input type="number" class="form-control" id="seeds-prep-pakyaw-total-cost-input" placeholder="Enter Total Cost">
             </div>
         </div>
 
@@ -45,7 +45,7 @@
                     </div>
                     <div class="col-4">
                         <label class="form-label text-muted">Total Cost</label>
-                        <input type="number" name="seed_prep[0][total_cost]" class="form-control total-cost total-cost" placeholder="Total Cost" disabled />
+                        <input type="number" name="seed_prep[0][total_cost]" class="form-control total-cost total-cost" placeholder="Total Cost" readonly  />
                     </div>
                 </div>
             </div>
@@ -75,7 +75,7 @@
                     </div>
                     <div class="col-4">
                         <label class="form-label text-muted">Total Cost</label>
-                        <input type="number" name="seed_prep[1][total_cost]" class="form-control total-cost total-cost" placeholder="Total Cost" disabled />
+                        <input type="number" name="seed_prep[1][total_cost]" class="form-control total-cost total-cost" placeholder="Total Cost" readonly  />
                     </div>
                 </div>
             </div>
@@ -105,7 +105,7 @@
                     </div>
                     <div class="col-4">
                         <label class="form-label text-muted">Total Cost</label>
-                        <input type="number" name="seed_prep[2][total_cost]" class="form-control total-cost total-cost" placeholder="Total Cost" disabled />
+                        <input type="number" name="seed_prep[2][total_cost]" class="form-control total-cost total-cost" placeholder="Total Cost" readonly  />
                     </div>
                 </div>
             </div>
@@ -141,7 +141,7 @@
         </div>
 
         <!-- Navigation Buttons -->
-        <div class="d-flex align-items-start gap-3 mt-4">
+        <div class="sticky-next-button d-flex align-items-start gap-3 mt-4">
             <button type="button" class="btn btn-light btn-label previestab" data-previous="v-pills-dry-season-info-tab">
                 <i class="ri-arrow-left-line label-icon align-middle fs-16 me-2"></i> Previous
             </button>

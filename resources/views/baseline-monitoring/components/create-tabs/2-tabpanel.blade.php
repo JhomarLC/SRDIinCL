@@ -1,4 +1,4 @@
-  <div class="tab-pane fade" id="v-pills-land-preparation" role="tabpanel" aria-labelledby="v-pills-land-preparation-tab">
+  <div class="tab-pane fade" id="v-pills-land-preparation" role="tabpanel" aria-labelledby="v-pills-land-preparation-tab" data-activity="land-preparation">
     <div>
         <h5>Land Preparation</h5>
         <p class="text-muted">Fill all information below</p>
@@ -44,7 +44,7 @@
                     </div>
                     <div class="col-4">
                         <label class="form-label text-muted">Total Cost</label>
-                        <input type="number" name="land_prep[0][total_cost]" class="form-control total-cost" placeholder="Total Cost" disabled/>
+                        <input type="number" name="land_prep[0][total_cost]" class="form-control total-cost" placeholder="Total Cost" readonly />
                     </div>
                 </div>
             </div>
@@ -72,7 +72,7 @@
                     </div>
                     <div class="col-4">
                         <label class="form-label text-muted">Total Cost</label>
-                        <input type="number" name="land_prep[1][total_cost]" class="form-control total-cost" placeholder="Total Cost" disabled />
+                        <input type="number" name="land_prep[1][total_cost]" class="form-control total-cost" placeholder="Total Cost" readonly  />
                     </div>
                 </div>
             </div>
@@ -101,7 +101,7 @@
                     </div>
                     <div class="col-4">
                         <label class="form-label text-muted">Total Cost</label>
-                        <input type="number" name="land_prep[2][total_cost]" class="form-control total-cost" placeholder="Total Cost" disabled />
+                        <input type="number" name="land_prep[2][total_cost]" class="form-control total-cost" placeholder="Total Cost" readonly  />
                     </div>
                 </div>
             </div>
@@ -130,7 +130,7 @@
                     </div>
                     <div class="col-4">
                         <label class="form-label text-muted">Total Cost</label>
-                        <input type="number" name="land_prep[3][total_cost]" class="form-control total-cost" placeholder="Total Cost" disabled />
+                        <input type="number" name="land_prep[3][total_cost]" class="form-control total-cost" placeholder="Total Cost" readonly  />
                     </div>
                 </div>
             </div>
@@ -158,7 +158,7 @@
                     </div>
                     <div class="col-4">
                         <label class="form-label text-muted">Total Cost</label>
-                        <input type="number" name="land_prep[4][total_cost]" class="form-control total-cost" placeholder="Total Cost" disabled />
+                        <input type="number" name="land_prep[4][total_cost]" class="form-control total-cost" placeholder="Total Cost" readonly  />
                     </div>
                 </div>
             </div>
@@ -186,7 +186,7 @@
                     </div>
                     <div class="col-4">
                         <label class="form-label text-muted">Total Cost</label>
-                        <input type="number" name="land_prep[5][total_cost]" class="form-control total-cost" placeholder="Total Cost" disabled />
+                        <input type="number" name="land_prep[5][total_cost]" class="form-control total-cost" placeholder="Total Cost" readonly  />
                     </div>
                 </div>
             </div>
@@ -214,7 +214,7 @@
                     </div>
                     <div class="col-4">
                         <label class="form-label text-muted">Total Cost</label>
-                        <input type="number" name="land_prep[6][total_cost]" class="form-control total-cost" placeholder="Total Cost" disabled />
+                        <input type="number" name="land_prep[6][total_cost]" class="form-control total-cost" placeholder="Total Cost" readonly  />
                     </div>
                 </div>
             </div>
@@ -242,7 +242,7 @@
                     </div>
                     <div class="col-4">
                         <label class="form-label text-muted">Total Cost</label>
-                        <input type="number" name="land_prep[7][total_cost]" class="form-control total-cost" placeholder="Total Cost" disabled />
+                        <input type="number" name="land_prep[7][total_cost]" class="form-control total-cost" placeholder="Total Cost" readonly  />
                     </div>
                 </div>
             </div>
@@ -252,7 +252,7 @@
 
         </div>
 
-        <div class="d-flex align-items-start gap-3 mt-4">
+        <div class="sticky-next-button d-flex align-items-start gap-3 mt-4">
             <button type="button" class="btn btn-light btn-label previestab" data-previous="v-pills-dry-season-info-tab">
                 <i class="ri-arrow-left-line label-icon align-middle fs-16 me-2"></i> Previous
             </button>
