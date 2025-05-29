@@ -180,6 +180,60 @@ $(function () {
             }
         }
 
+        // FERTILIZER MANAGEMENT
+        $('#fertilizer-applications-wrapper .fertilizer-application-block').each(function (appIndex) {
+            const $block = $(this);
+
+            // --- Selected Fertilizers (Multi-select) ---
+            const fertilizers = $block.find('select[name="fertilizer-application[]"]').val() || [];
+            fertilizers.forEach((val, idx) => {
+                fullFormData.append(`fertilizer_management[${appIndex}][fertilizers][${idx}]`, val);
+            });
+
+            // --- 'Others' input ---
+            const others = $block.find('input[name="others-fertilizer-application"]').val()?.trim();
+            if (others) {
+                fullFormData.append(`fertilizer_management[${appIndex}][others]`, others);
+            }
+
+            // --- Per-Fertilizer Inputs ---
+            $block.find('.fertilizer-block').each(function (itemIndex) {
+                const $fert = $(this);
+                const fertName = $fert.data("fertilizer-name") || '';
+                const purchaseType = $fert.find('input[type="radio"]:checked').val() || '';
+                const qty = parseFloat($fert.find(".quantity").val()) || 0;
+                const unitCost = parseFloat($fert.find(".unit-cost").val()) || 0;
+                const totalCost = parseFloat($fert.find(".total-cost").val()) || 0;
+
+                fullFormData.append(`fertilizer_management[${appIndex}][items][${itemIndex}][fertilizer_name]`, fertName);
+                fullFormData.append(`fertilizer_management[${appIndex}][items][${itemIndex}][purchase_type]`, purchaseType);
+                fullFormData.append(`fertilizer_management[${appIndex}][items][${itemIndex}][qty]`, qty);
+                fullFormData.append(`fertilizer_management[${appIndex}][items][${itemIndex}][unit_cost]`, unitCost);
+                fullFormData.append(`fertilizer_management[${appIndex}][items][${itemIndex}][total_cost]`, totalCost);
+            });
+
+            // --- Labor: Fertilizer Application ---
+            const $fertilizerLaborBlock = $block.find('input[name$="[activity]"][value="Labor: Fertilizer application"]').closest('.block');
+            const fertQty = parseFloat($fertilizerLaborBlock.find('.quantity').val()) || 0;
+            const fertUnitCost = parseFloat($fertilizerLaborBlock.find('.unit-cost').val()) || 0;
+            const fertTotal = fertQty * fertUnitCost;
+
+            fullFormData.append(`fertilizer_management[${appIndex}][fert_application][activity]`, "Labor: Fertilizer application");
+            fullFormData.append(`fertilizer_management[${appIndex}][fert_application][qty]`, fertQty);
+            fullFormData.append(`fertilizer_management[${appIndex}][fert_application][unit_cost]`, fertUnitCost);
+            fullFormData.append(`fertilizer_management[${appIndex}][fert_application][total_cost]`, fertTotal || 0);
+
+            // --- Labor: Meals and Snacks ---
+            const $mealsBlock = $block.find('input[name$="[activity]"][value="Meals and Snacks"]').closest('.block');
+            const mealsQty = parseFloat($mealsBlock.find('.quantity').val()) || 0;
+            const mealsUnitCost = parseFloat($mealsBlock.find('.unit-cost').val()) || 0;
+            const mealsTotal = mealsQty * mealsUnitCost;
+
+            fullFormData.append(`fertilizer_management[${appIndex}][meals][activity]`, "Meals and Snacks");
+            fullFormData.append(`fertilizer_management[${appIndex}][meals][qty]`, mealsQty);
+            fullFormData.append(`fertilizer_management[${appIndex}][meals][unit_cost]`, mealsUnitCost);
+            fullFormData.append(`fertilizer_management[${appIndex}][meals][total_cost]`, mealsTotal || 0);
+        });
 
         // 🔍 Log the contents of the FormData
         console.group("📦 Submitted Form Data");
@@ -219,7 +273,15 @@ $(function () {
         e.preventDefault();
         showLoader("Validating...");
 
-        const steps = ["land-preparation", "seeds-prep", "seedbed-prep", "seedbed-fertilization", "crop-establishment"];
+        const steps = [
+            "land-preparation",
+            "seeds-prep",
+            "seedbed-prep",
+            "seedbed-fertilization",
+            "crop-establishment",
+            "fertilizer-management"
+        ];
+
         const formData1 = new FormData();
 
         const stepForms = {
@@ -348,33 +410,51 @@ $(function () {
             },
             // Crop Establishment
             "crop-establishment": () => {
-                    const cropMethod = $('#crop-method').val(); // DWSR or TPR
+                const cropMethod = $('#crop-method').val(); // DWSR or TPR
 
-                    let cropEstablishmentType = '';
+                let cropEstablishmentType = '';
+                if (cropMethod === 'DWSR') {
+                    cropEstablishmentType = $('#dwsr-section select[name="establishment_type"]').val() || '';
+                } else {
+                    cropEstablishmentType = $('#tpr-section input[name="establishment_type"]:checked').val() || '';
+                }
+
+                const isCropPakyaw = $('#crop-establishment-pakyaw').is(':checked') ? 1 : 0;
+
+                formData1.append('crop_est_method', cropMethod);
+                formData1.append('crop_est_establishment_type', cropEstablishmentType);
+                formData1.append('crop_est_is_pakyaw', isCropPakyaw);
+
+                if (isCropPakyaw) {
+                    const totalPackageCost = $('#crop-establishment-pakyaw-total-cost-input').val() || 0;
+                    formData1.append('crop_est_package_total_cost', totalPackageCost);
+                } else {
+                    let partIndex = 0;
+
                     if (cropMethod === 'DWSR') {
-                        cropEstablishmentType = $('#dwsr-section select[name="establishment_type"]').val() || '';
-                    } else {
-                        cropEstablishmentType = $('#tpr-section input[name="establishment_type"]:checked').val() || '';
-                    }
+                        const $block = $('#dwsr-section');
 
-                    const isCropPakyaw = $('#crop-establishment-pakyaw').is(':checked') ? 1 : 0;
+                        const activity = $block.find('input[name="crop_est_particulars[0][activity]"]').val();
+                        const qty = $block.find('input[name="crop_est_particulars[0][qty]"]').val() || 0;
+                        const unitCost = $block.find('input[name="crop_est_particulars[0][unit_cost]"]').val() || 0;
+                        const totalCost = parseFloat(qty) * parseFloat(unitCost);
 
-                    formData1.append('crop_est_method', cropMethod);
-                    formData1.append('crop_est_establishment_type', cropEstablishmentType);
-                    formData1.append('crop_est_is_pakyaw', isCropPakyaw);
+                        formData1.append(`crop_est_particulars[${partIndex}][activity]`, activity);
+                        formData1.append(`crop_est_particulars[${partIndex}][qty]`, qty);
+                        formData1.append(`crop_est_particulars[${partIndex}][unit_cost]`, unitCost);
+                        formData1.append(`crop_est_particulars[${partIndex}][total_cost]`, totalCost || 0);
 
-                    if (isCropPakyaw) {
-                        const totalPackageCost = $('#crop-establishment-pakyaw-total-cost-input').val() || 0;
-                        formData1.append('crop_est_package_total_cost', totalPackageCost);
-                    } else {
-                        let partIndex = 0;
+                    } else if (cropMethod === 'TPR') {
+                        $('#tpr-section .block').each(function () {
+                            const $block = $(this);
+                            const isManualOnly = $block.is('[data-tpr-block="manual-only"]');
 
-                        if (cropMethod === 'DWSR') {
-                            const $block = $('#dwsr-section');
+                            if (cropEstablishmentType === 'Mechanical' && isManualOnly) return;
 
-                            const activity = $block.find('input[name="crop_est_particulars[0][activity]"]').val();
-                            const qty = $block.find('input[name="crop_est_particulars[0][qty]"]').val() || 0;
-                            const unitCost = $block.find('input[name="crop_est_particulars[0][unit_cost]"]').val() || 0;
+                            const activity = $block.find('input[name$="[activity]"]').val();
+                            if (!activity?.trim()) return; // ✅ skip empty ones
+                            const qty = $block.find('input[name$="[qty]"]').val() || 0;
+                            const unitCost = $block.find('input[name$="[unit_cost]"]').val() || 0;
                             const totalCost = parseFloat(qty) * parseFloat(unitCost);
 
                             formData1.append(`crop_est_particulars[${partIndex}][activity]`, activity);
@@ -382,30 +462,67 @@ $(function () {
                             formData1.append(`crop_est_particulars[${partIndex}][unit_cost]`, unitCost);
                             formData1.append(`crop_est_particulars[${partIndex}][total_cost]`, totalCost || 0);
 
-                        } else if (cropMethod === 'TPR') {
-                            $('#tpr-section .block').each(function () {
-                                const $block = $(this);
-                                const isManualOnly = $block.is('[data-tpr-block="manual-only"]');
-
-                                if (cropEstablishmentType === 'Mechanical' && isManualOnly) return;
-
-                                const activity = $block.find('input[name$="[activity]"]').val();
-                                if (!activity?.trim()) return; // ✅ skip empty ones
-                                const qty = $block.find('input[name$="[qty]"]').val() || 0;
-                                const unitCost = $block.find('input[name$="[unit_cost]"]').val() || 0;
-                                const totalCost = parseFloat(qty) * parseFloat(unitCost);
-
-                                formData1.append(`crop_est_particulars[${partIndex}][activity]`, activity);
-                                formData1.append(`crop_est_particulars[${partIndex}][qty]`, qty);
-                                formData1.append(`crop_est_particulars[${partIndex}][unit_cost]`, unitCost);
-                                formData1.append(`crop_est_particulars[${partIndex}][total_cost]`, totalCost || 0);
-
-                                partIndex++;
-                            });
-                        }
+                            partIndex++;
+                        });
                     }
                 }
+            },
+            "fertilizer-management": () => {
+                $('#fertilizer-applications-wrapper .fertilizer-application-block').each(function (appIndex) {
+                    const $block = $(this);
 
+                    // Fertilizer selections
+                    const fertilizers = $block.find('select[name="fertilizer-application[]"]').val() || [];
+                    fertilizers.forEach((val, idx) => {
+                        formData1.append(`fertilizer_management[${appIndex}][fertilizers][${idx}]`, val);
+                    });
+
+                    // Others input
+                    const others = $block.find('input[name="others-fertilizer-application"]').val()?.trim();
+                    if (others) {
+                        formData1.append(`fertilizer_management[${appIndex}][others]`, others);
+                    }
+
+                    // Fertilizer items
+                    $block.find('.fertilizer-block').each(function (itemIndex) {
+                        const $item = $(this);
+                        const fertName = $item.data("fertilizer-name");
+                        const purchaseType = $item.find('input[type="radio"]:checked').val() || '';
+                        const qty = $item.find(".quantity").val() || 0;
+                        const unitCost = $item.find(".unit-cost").val() || 0;
+                        const totalCost = $item.find(".total-cost").val() || 0;
+
+                        formData1.append(`fertilizer_management[${appIndex}][items][${itemIndex}][fertilizer_name]`, fertName);
+                        formData1.append(`fertilizer_management[${appIndex}][items][${itemIndex}][purchase_type]`, purchaseType);
+                        formData1.append(`fertilizer_management[${appIndex}][items][${itemIndex}][qty]`, qty);
+                        formData1.append(`fertilizer_management[${appIndex}][items][${itemIndex}][unit_cost]`, unitCost);
+                        formData1.append(`fertilizer_management[${appIndex}][items][${itemIndex}][total_cost]`, totalCost);
+                    });
+
+                    // 🔧 FIXED Labor Section
+                    const $laborApp = $block.find('.fertilizer-management-block .block').filter(function () {
+                        return $(this).find('.form-label').first().text().includes('Fertilizer application');
+                    });
+                    const fertQty = $laborApp.find('.quantity').val() || 0;
+                    const fertUnitCost = $laborApp.find('.unit-cost').val() || 0;
+                    const fertTotal = parseFloat(fertQty) * parseFloat(fertUnitCost);
+                    formData1.append(`fertilizer_management[${appIndex}][fert_application][activity]`, "Labor: Fertilizer application");
+                    formData1.append(`fertilizer_management[${appIndex}][fert_application][qty]`, fertQty);
+                    formData1.append(`fertilizer_management[${appIndex}][fert_application][unit_cost]`, fertUnitCost);
+                    formData1.append(`fertilizer_management[${appIndex}][fert_application][total_cost]`, fertTotal || 0);
+
+                    const $laborMeals = $block.find('.fertilizer-management-block .block').filter(function () {
+                        return $(this).find('.form-label').first().text().includes('Meals and Snacks');
+                    });
+                    const mealsQty = $laborMeals.find('.quantity').val() || 0;
+                    const mealsUnitCost = $laborMeals.find('.unit-cost').val() || 0;
+                    const mealsTotal = parseFloat(mealsQty) * parseFloat(mealsUnitCost);
+                    formData1.append(`fertilizer_management[${appIndex}][meals][activity]`, "Meals and Snacks");
+                    formData1.append(`fertilizer_management[${appIndex}][meals][qty]`, mealsQty);
+                    formData1.append(`fertilizer_management[${appIndex}][meals][unit_cost]`, mealsUnitCost);
+                    formData1.append(`fertilizer_management[${appIndex}][meals][total_cost]`, mealsTotal || 0);
+                });
+            }
 
         };
 

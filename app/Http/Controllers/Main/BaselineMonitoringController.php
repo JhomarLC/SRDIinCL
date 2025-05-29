@@ -7,6 +7,9 @@ use App\Helpers\SeasonHelper;
 use App\Models\CropEstablishment;
 use App\Models\CropEstablishmentParticulars;
 use App\Models\FarmingData;
+use App\Models\FertilizerApplication;
+use App\Models\FertilizerApplicationItem;
+use App\Models\FertilizerApplicationLabor;
 use App\Models\LandPreparation;
 use App\Models\LandPreparationParticulars;
 use App\Models\Participant;
@@ -330,6 +333,51 @@ class BaselineMonitoringController extends Controller
                         'qty' => $activity['qty'] ?? 0,
                         'unit_cost' => $activity['unit_cost'] ?? 0,
                         'total_cost' => $activity['total_cost'] ?? 0,
+                    ]);
+                }
+            }
+
+            /**
+             * 7. Save Fertilizer Applications
+             */
+            foreach ($request->input('fertilizer_management', []) as $application) {
+                $fertApp = FertilizerApplication::create([
+                    'farming_data_id' => $id,
+                    'application_order' => null, // You may want to track order if needed
+                    'others' => $application['others'] ?? null,
+                ]);
+
+                // Save fertilizer items
+                foreach ($application['items'] ?? [] as $item) {
+                    FertilizerApplicationItem::create([
+                        'fertilizer_application_id' => $fertApp->id,
+                        'fertilizer_name' => $item['fertilizer_name'] ?? null,
+                        'purchase_type' => $item['purchase_type'] ?? 'free',
+                        'qty' => $item['qty'] ?? 0,
+                        'unit_cost' => $item['unit_cost'] ?? 0,
+                        'total_cost' => $item['total_cost'] ?? 0,
+                    ]);
+                }
+
+                // Save labor: Fertilizer application
+                if (!empty($application['fert_application'])) {
+                    FertilizerApplicationLabor::create([
+                        'fertilizer_application_id' => $fertApp->id,
+                        'activity' => $application['fert_application']['activity'] ?? 'Labor: Fertilizer application',
+                        'qty' => $application['fert_application']['qty'] ?? 0,
+                        'unit_cost' => $application['fert_application']['unit_cost'] ?? 0,
+                        'total_cost' => $application['fert_application']['total_cost'] ?? 0,
+                    ]);
+                }
+
+                // Save labor: Meals and Snacks
+                if (!empty($application['meals'])) {
+                    FertilizerApplicationLabor::create([
+                        'fertilizer_application_id' => $fertApp->id,
+                        'activity' => $application['meals']['activity'] ?? 'Meals and Snacks',
+                        'qty' => $application['meals']['qty'] ?? 0,
+                        'unit_cost' => $application['meals']['unit_cost'] ?? 0,
+                        'total_cost' => $application['meals']['total_cost'] ?? 0,
                     ]);
                 }
             }

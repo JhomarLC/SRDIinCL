@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('seed_bed_fertilization_fertilizers', function (Blueprint $table) {
+        Schema::create('fertilizer_application_items', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('seed_bed_fertilization_id');
-            $table->foreign('seed_bed_fertilization_id', 'fk_sbf_fertilizers_m_fert_id')
+            $table->unsignedBigInteger('fertilizer_application_id');
+            $table->foreign('fertilizer_application_id', 'fk_fa_fertilizers_m_fert_id')
                 ->references('id')
-                ->on('seed_bed_fertilizations')
+                ->on('fertilizer_applications')
                 ->onDelete('cascade');
 
             $table->string('fertilizer_name')->nullable();
@@ -33,10 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('seed_bed_fertilization_fertilizers', function (Blueprint $table) {
-            $table->dropForeign('fk_sbf_fertilizers_m_fert_id');
-        });
-
-        Schema::dropIfExists('seed_bed_fertilization_fertilizers');
+        Schema::dropIfExists('fertilizer_application_items');
     }
 };

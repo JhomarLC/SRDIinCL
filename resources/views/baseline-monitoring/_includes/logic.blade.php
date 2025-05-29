@@ -287,7 +287,7 @@
             updateActivityTotals(); // ← important!
         })
 
-      $('#crop-establishment-pakyaw').on('change', function () {
+        $('#crop-establishment-pakyaw').on('change', function () {
             const isChecked = $(this).is(':checked');
             $('#crop-est-is-pakyaw').val(isChecked ? 1 : 0);
             $('#crop-establishment-pakyaw-total-cost').toggle(isChecked);
@@ -553,15 +553,14 @@
         $('#fertilizer-selector').trigger('choices-updated');
     });
 
-    $(document).ready(function () {
-        initFertilizerSelector({
-            selectorId: 'fertilizer-application-selector',
-            othersInputId: 'others-fertilizer-application',
-            containerId: 'fertilizer-application-container',
-            blockPrefix: 'fertilizer'
-        });
-
-    });
+    // $(document).ready(function () {
+    //     initFertilizerSelector({
+    //         selectorId: 'fertilizer-application-selector',
+    //         othersInputId: 'others-fertilizer-application',
+    //         containerId: 'fertilizer-application-container',
+    //         blockPrefix: 'fertilizer'
+    //     });
+    // });
 
     let appCounter = 1;
 
@@ -588,7 +587,20 @@
             appCounter++;
             const template = $('#fertilizer-application-template').html();
             const newHtml = template.replace(/{index}/g, appCounter);
-            $('#fertilizer-applications-wrapper').append(newHtml);
+            const $newBlock = $(newHtml);
+
+            // ✅ FIX: Update name attributes in cloned labor inputs
+            $newBlock.find('[name]').each(function () {
+                const oldName = $(this).attr('name');
+                if (oldName && oldName.includes('fertilizer_management[')) {
+                    const newName = oldName.replace(/fertilizer_management\[\d+\]/, `fertilizer_management[${appCounter}]`);
+                    $(this).attr('name', newName);
+                }
+            });
+
+            // ✅ Append the block AFTER renaming names
+            $('#fertilizer-applications-wrapper').append($newBlock);
+            $newBlock.find('.quantity, .unit-cost').trigger('input');
 
             const suffixes = ['st', 'nd', 'rd'];
             const suffix = suffixes[appCounter - 1] || 'th';
@@ -621,6 +633,8 @@
             // }
             $(this).closest('.fertilizer-application-block').remove();
             reindexApplicationLabels();
+
+            updateActivityTotals();
         });
     });
 

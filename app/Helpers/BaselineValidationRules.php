@@ -71,6 +71,25 @@ class BaselineValidationRules
                 'crop_est_particulars.*.unit_cost' => 'required_if:crop_est_is_pakyaw,0|nullable|numeric|min:0',
                 'crop_est_particulars.*.total_cost' => 'required_if:crop_est_is_pakyaw,0|nullable|numeric|min:0',
             ],
+            'fertilizer-management' => [
+                // Application-level
+                'fertilizer_management.*.fertilizers' => 'nullable|array',
+                'fertilizer_management.*.fertilizers.*' => 'nullable|string|max:255',
+                'fertilizer_management.*.others' => 'nullable|string|max:500',
+
+                // Labor - Fertilizer Application
+                'fertilizer_management.*.fert_application.activity' => 'required|string|max:255',
+                'fertilizer_management.*.fert_application.qty' => 'nullable|integer|min:0',
+                'fertilizer_management.*.fert_application.unit_cost' => 'nullable|numeric|min:0',
+                'fertilizer_management.*.fert_application.total_cost' => 'nullable|numeric|min:0',
+
+                // Labor - Meals and Snacks
+                'fertilizer_management.*.meals.activity' => 'required|string|max:255',
+                'fertilizer_management.*.meals.qty' => 'nullable|integer|min:0',
+                'fertilizer_management.*.meals.unit_cost' => 'nullable|numeric|min:0',
+                'fertilizer_management.*.meals.total_cost' => 'nullable|numeric|min:0',
+            ],
+
         ];
 
         if ($step === 'all') {
@@ -127,6 +146,17 @@ class BaselineValidationRules
             'crop_est_particulars.*.unit_cost.required_if' => 'Unit cost is required for the crop establishment activity.',
             'crop_est_particulars.*.total_cost.required_if' => 'Total cost is required for the crop establishment activity.',
 
+            // Fertilizer Management
+            'fertilizer_management.*.fert_application.activity.required' => 'Fertilizer application labor activity is required.',
+            'fertilizer_management.*.meals.activity.required' => 'Meals and Snacks activity is required.',
+
+            'fertilizer_management.*.fert_application.qty.integer' => 'Fertilizer labor quantity must be a number.',
+            'fertilizer_management.*.fert_application.unit_cost.numeric' => 'Fertilizer labor unit cost must be a valid number.',
+            'fertilizer_management.*.fert_application.total_cost.numeric' => 'Fertilizer labor total cost must be a valid number.',
+
+            'fertilizer_management.*.meals.qty.integer' => 'Meals quantity must be a number.',
+            'fertilizer_management.*.meals.unit_cost.numeric' => 'Meals unit cost must be a valid number.',
+            'fertilizer_management.*.meals.total_cost.numeric' => 'Meals total cost must be a valid number.',
         ];
     }
 }

@@ -199,6 +199,7 @@ function initFertilizerSelector({
         `;
         $container.append(block);
         bindEvents();
+        updateActivityTotals();
     }
 
     // Reindex block labels
@@ -212,25 +213,6 @@ function initFertilizerSelector({
 
     // Bind quantity and cost logic
     function bindEvents() {
-        $('.minus').off('click').on('click', function () {
-            const $input = $(this).siblings('input.quantity');
-            const val = parseInt($input.val()) || 0;
-            if (val > 0) $input.val(val - 1).trigger('input');
-        });
-
-        $('.plus').off('click').on('click', function () {
-            const $input = $(this).siblings('input.quantity');
-            const val = parseInt($input.val()) || 0;
-            $input.val(val + 1).trigger('input');
-        });
-
-        $('.quantity, .unit-cost').off('input').on('input', function () {
-            const $row = $(this).closest('.row');
-            const qty = parseFloat($row.find('.quantity').val()) || 0;
-            const unit = parseFloat($row.find('.unit-cost').val()) || 0;
-            $row.find('.total-cost').val((qty * unit).toFixed(2));
-        });
-
         $(`input[type=radio][name^=${blockPrefix}_type_]`).off('change').on('change', function () {
             const $block = $(this).closest(`.${blockPrefix}-block`);
             const isFree = $(this).val() === 'free';

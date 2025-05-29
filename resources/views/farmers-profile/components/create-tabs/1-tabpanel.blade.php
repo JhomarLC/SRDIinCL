@@ -62,11 +62,11 @@ aria-labelledby="pills-personal-info-tab">
             <div class="col-sm-3">
                 <label for="gender" class="form-label">Sex <span class="text-danger">*</span></label>
                 <select class="form-control mb-3 select2" id="gender" name="gender">
-                    <option selected disabled hidden>-- SELECT GENDER --</option>
+                    <option selected disabled hidden>-- SELECT SEX --</option>
                     <option value="Male" selected>Male</option>
                     <option value="Female">Female</option>
                 </select>
-                <div class="invalid-feedback">Please select gender</div>
+                <div class="invalid-feedback">Please select sex</div>
             </div>
         </div>
     </div>
