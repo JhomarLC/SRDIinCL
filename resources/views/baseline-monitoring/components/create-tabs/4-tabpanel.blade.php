@@ -1,4 +1,4 @@
-<div class="tab-pane fade" id="v-pills-seedbed-prep" role="tabpanel" aria-labelledby="v-pills-seedbed-prep-tab" data-activity="seedbed-prep">
+<div class="tab-pane fade" id="v-pills-seedbed-prep" role="tabpanel" aria-labelledby="v-pills-seedbed-prep-tab" data-activity="seedbed-prep" data-has-package="true">
     <div>
         <h5>Seedbed Preparation</h5>
         <p class="text-muted">Fill all information below</p>

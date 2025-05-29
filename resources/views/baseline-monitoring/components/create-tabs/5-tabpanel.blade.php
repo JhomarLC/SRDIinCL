@@ -1,5 +1,4 @@
- <div class="tab-pane fade" id="v-pills-seedbed-fertilization" role="tabpanel"
-    aria-labelledby="v-pills-seedbed-fertilization-tab">
+ <div class="tab-pane fade" id="v-pills-seedbed-fertilization" role="tabpanel" data-activity="seedbed-fertilization" data-has-package="false">
     <div>
         <h5>Seedbed Fertilization</h5>
         <p class="text-muted">Fill all information below</p>
@@ -21,11 +20,15 @@
                     data-choices
                     data-choices-removeItem
                     multiple>
-                    <option value="Complete (14-14-14-24S)">Complete (14-14-14-24S)</option>
-                    <option value="Ammonium Phosphate (16-20-0)">Ammonium Phosphate (16-20-0)</option>
-                    <option value="Ammonium Sulphate (21-0-0-24S)">Ammonium Sulphate (21-0-0-24S)</option>
-                    <option value="Muriate of Potash (0-0-60)">Muriate of Potash (0-0-60)</option>
+                    <option value="Complete (14-14-14-12S)">Complete (14-14-14-12S)</option>
                     <option value="Urea (46-0-0)">Urea (46-0-0)</option>
+                    <option value="Muriate of Potash (0-0-60)">Muriate of Potash (0-0-60)</option>
+                    <option value="AmmoSul (21-0-0-24)">AmmoSul (21-0-0-24)</option>
+                    <option value="AmmoPhos (16-20-0)">AmmoPhos (16-20-0)</option>
+                    <option value="AmmoPhos (18-46-0)">AmmoPhos (18-46-0)</option>
+                    <option value="SoloPhos (0-18-0)">SoloPhos (0-18-0)</option>
+                    <option value="Copper Sulfate">Copper Sulfate</option>
+                    <option value="Zinc Sulfate">Zinc Sulfate</option>
                 </select>
             </div>
         </div>
@@ -40,28 +43,29 @@
         <!-- Regular Inputs -->
 
         <div id="seedbed-fertilization-regular-fields">
-            <div class="block">
+            <div class="block fertilizer-block">
                 <div class="row g-3">
                     <div class="col-12">
                         <label class="form-label">Labor: Seedbed Fertilizer Application</label>
                     </div>
+                    <input name="seedbed_fert[0][activity]" value="Seedbed Fertilizer Application" hidden>
                 </div>
                 <div class="row p-3 mb-3 rounded bg-light">
                     <div class="col-4">
                         <label class="form-label text-muted">Qty</label>
                         <div class="input-step step-primary full-width d-flex">
                             <button type="button" class="minus">–</button>
-                            <input type="number" class="product-quantity form-control text-center quantity" value="0" min="0" step="1">
+                            <input type="number" name="seedbed_fert[0][qty]" class="product-quantity form-control text-center quantity" value="0" min="0" step="1">
                             <button type="button" class="plus">+</button>
                         </div>
                     </div>
                     <div class="col-4">
                         <label class="form-label text-muted">Unit Cost</label>
-                        <input type="number" class="form-control unit-cost soaking-unit-cost" placeholder="Unit Cost" />
+                        <input type="number" name="seedbed_fert[0][unit_cost]" class="form-control unit-cost soaking-unit-cost" placeholder="Unit Cost" />
                     </div>
                     <div class="col-4">
                         <label class="form-label text-muted">Total Cost</label>
-                        <input type="number" class="form-control total-cost soaking-total-cost" placeholder="Total Cost" disabled/>
+                        <input type="number" name="seedbed_fert[0][total_cost]" class="form-control total-cost soaking-total-cost" placeholder="Total Cost" readonly/>
                     </div>
                 </div>
             </div>
@@ -73,23 +77,24 @@
                     <div class="col-12">
                         <label class="form-label">Meals and Snacks</label>
                     </div>
+                    <input name="seedbed_fert[1][activity]" value="Meals and Snacks" hidden>
                 </div>
                 <div class="row p-3 mb-3 rounded bg-light">
                     <div class="col-4">
                         <label class="form-label text-muted">Qty</label>
                         <div class="input-step step-primary full-width d-flex">
                             <button type="button" class="minus">–</button>
-                            <input type="number" class="product-quantity form-control text-center quantity" value="0" min="0" step="1">
+                            <input type="number" name="seedbed_fert[1][qty]" class="product-quantity form-control text-center quantity" value="0" min="0" step="1">
                             <button type="button" class="plus">+</button>
                         </div>
                     </div>
                     <div class="col-4">
                         <label class="form-label text-muted">Unit Cost</label>
-                        <input type="number" class="form-control unit-cost" placeholder="Unit Cost" />
+                        <input type="number" name="seedbed_fert[1][unit_cost]" class="form-control unit-cost" placeholder="Unit Cost" />
                     </div>
                     <div class="col-4">
                         <label class="form-label text-muted">Total Cost</label>
-                        <input type="number" class="form-control total-cost" placeholder="Total Cost" disabled />
+                        <input type="number" name="seedbed_fert[1][total_cost]" class="form-control total-cost" placeholder="Total Cost" readonlyd />
                     </div>
                 </div>
             </div>

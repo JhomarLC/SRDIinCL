@@ -86,6 +86,100 @@ $(function () {
             });
         }
 
+        // Seedbed Fertilization
+        $("#seedbed-fertilization-regular-fields .block").each(function (index) {
+            const activity = $(this).find('input[name^="seedbed_fert["][name$="[activity]"]').val();
+            const qty = $(this).find('input[name^="seedbed_fert["][name$="[qty]"]').val() || 0;
+            const unitCost = $(this).find('input[name^="seedbed_fert["][name$="[unit_cost]"]').val() || 0;
+            const totalCost = parseFloat(qty) * parseFloat(unitCost);
+
+            fullFormData.append(`seedbed_fertilization[${index}][activity]`, activity);
+            fullFormData.append(`seedbed_fertilization[${index}][qty]`, qty);
+            fullFormData.append(`seedbed_fertilization[${index}][unit_cost]`, unitCost);
+            fullFormData.append(`seedbed_fertilization[${index}][total_cost]`, totalCost || 0);
+        });
+
+        // Optional 'Others' input
+        const othersFertilizer = $("#others-fertilizer").val()?.trim();
+        if (othersFertilizer) {
+            fullFormData.append("seedbed_fertilization_others", othersFertilizer);
+        }
+
+        // Dynamic Fertilizer List (container)
+        $("#fertilizer-container .fertilizer-block").each(function (index) {
+            const fertilizerName = $(this).data("fertilizer-name");
+            const purchaseType = $(this).find(`input[name^="fertilizer_type_"]:checked`).val() || '';
+
+            const qty = $(this).find(".quantity").val() || 0;
+            const unitCost = $(this).find(".unit-cost").val() || 0;
+            const totalCost = $(this).find(".total-cost").val() || 0;
+
+            fullFormData.append(`seedbed_fertilizer[${index}][fertilizer_name]`, fertilizerName);
+            fullFormData.append(`seedbed_fertilizer[${index}][purchase_type]`, purchaseType);
+            fullFormData.append(`seedbed_fertilizer[${index}][qty]`, qty);
+            fullFormData.append(`seedbed_fertilizer[${index}][unit_cost]`, unitCost);
+            fullFormData.append(`seedbed_fertilizer[${index}][total_cost]`, totalCost);
+        });
+
+        // Crop Establishment
+        const cropMethod = $('#crop-method').val(); // DWSR or TPR
+
+        // Get establishment type based on method
+        const cropEstablishmentType = cropMethod === 'DWSR'
+            ? $('#dwsr-section select[name="establishment_type"]').val() || ''
+            : $('input[name="establishment_type"]:checked').val() || '';
+
+        const isCropPakyaw = $('#crop-establishment-pakyaw').is(':checked') ? 1 : 0;
+
+        fullFormData.append('crop_est_method', cropMethod);
+        fullFormData.append('crop_est_establishment_type', cropEstablishmentType);
+        fullFormData.append('crop_est_is_pakyaw', isCropPakyaw);
+
+        if (isCropPakyaw) {
+            const totalPackageCost = $('#crop-establishment-pakyaw-total-cost-input').val() || 0;
+            fullFormData.append('crop_est_package_total_cost', totalPackageCost);
+        } else {
+            let partIndex = 0;
+
+            if (cropMethod === 'DWSR') {
+                const $block = $('#dwsr-section');
+                const activity = $block.find('input[name="crop_est_particulars[0][activity]"]').val()?.trim();
+                const qty = $block.find('input[name="crop_est_particulars[0][qty]"]').val() || 0;
+                const unitCost = $block.find('input[name="crop_est_particulars[0][unit_cost]"]').val() || 0;
+                const totalCost = parseFloat(qty) * parseFloat(unitCost);
+
+                // ✅ Only append if activity is not blank
+                if (activity) {
+                    fullFormData.append(`crop_est_particulars[${partIndex}][activity]`, activity);
+                    fullFormData.append(`crop_est_particulars[${partIndex}][qty]`, qty);
+                    fullFormData.append(`crop_est_particulars[${partIndex}][unit_cost]`, unitCost);
+                    fullFormData.append(`crop_est_particulars[${partIndex}][total_cost]`, totalCost || 0);
+                }
+            }
+
+            if (cropMethod === 'TPR') {
+                $('#tpr-section .block').each(function () {
+                    const $block = $(this);
+                    const isManualOnly = $block.is('[data-tpr-block="manual-only"]');
+                    if (cropEstablishmentType === 'Mechanical' && isManualOnly) return;
+
+                    const activity = $block.find('input[name$="[activity]"]').val()?.trim();
+                    const qty = $block.find('input[name$="[qty]"]').val() || 0;
+                    const unitCost = $block.find('input[name$="[unit_cost]"]').val() || 0;
+                    const totalCost = parseFloat(qty) * parseFloat(unitCost);
+
+                    if (!activity) return; // ⛔ skip empty rows
+
+                    fullFormData.append(`crop_est_particulars[${partIndex}][activity]`, activity);
+                    fullFormData.append(`crop_est_particulars[${partIndex}][qty]`, qty);
+                    fullFormData.append(`crop_est_particulars[${partIndex}][unit_cost]`, unitCost);
+                    fullFormData.append(`crop_est_particulars[${partIndex}][total_cost]`, totalCost || 0);
+
+                    partIndex++;
+                });
+            }
+        }
+
 
         // 🔍 Log the contents of the FormData
         console.group("📦 Submitted Form Data");
@@ -125,7 +219,7 @@ $(function () {
         e.preventDefault();
         showLoader("Validating...");
 
-        const steps = ["land-preparation", "seeds-prep", "seedbed-prep"];
+        const steps = ["land-preparation", "seeds-prep", "seedbed-prep", "seedbed-fertilization", "crop-establishment"];
         const formData1 = new FormData();
 
         const stepForms = {
@@ -215,7 +309,103 @@ $(function () {
                         formData1.append(`seedbed_prep[${index}][total_cost]`, totalCost || 0);
                     });
                 }
-            }
+            },
+            "seedbed-fertilization": () => {
+                // Seedbed Fertilizer Labor/Activities
+                $("#seedbed-fertilization-regular-fields .block").each(function (index) {
+                    const activity = $(this).find('input[name^="seedbed_fert["][name$="[activity]"]').val();
+                    const qty = $(this).find('input[name^="seedbed_fert["][name$="[qty]"]').val() || 0;
+                    const unitCost = $(this).find('input[name^="seedbed_fert["][name$="[unit_cost]"]').val() || 0;
+                    const totalCost = parseFloat(qty) * parseFloat(unitCost);
+
+                    formData1.append(`seedbed_fertilization[${index}][activity]`, activity);
+                    formData1.append(`seedbed_fertilization[${index}][qty]`, qty);
+                    formData1.append(`seedbed_fertilization[${index}][unit_cost]`, unitCost);
+                    formData1.append(`seedbed_fertilization[${index}][total_cost]`, totalCost || 0);
+                });
+
+                // Optional 'Others' text field
+                const others = $("#others-fertilizer").val()?.trim();
+                if (others) {
+                    formData1.append("seedbed_fertilization_others", others);
+                }
+
+                // Fertilizer entries
+                $("#fertilizer-container .fertilizer-block").each(function (index) {
+                    const fertilizerName = $(this).data("fertilizer-name");
+                    const purchaseType = $(this).find(`input[name^="fertilizer_type_"]:checked`).val() || '';
+
+                    const qty = $(this).find(".quantity").val() || 0;
+                    const unitCost = $(this).find(".unit-cost").val() || 0;
+                    const totalCost = $(this).find(".total-cost").val() || 0;
+
+                    formData1.append(`seedbed_fertilizer[${index}][fertilizer_name]`, fertilizerName);
+                    formData1.append(`seedbed_fertilizer[${index}][purchase_type]`, purchaseType);
+                    formData1.append(`seedbed_fertilizer[${index}][qty]`, qty);
+                    formData1.append(`seedbed_fertilizer[${index}][unit_cost]`, unitCost);
+                    formData1.append(`seedbed_fertilizer[${index}][total_cost]`, totalCost);
+                });
+            },
+            // Crop Establishment
+            "crop-establishment": () => {
+                    const cropMethod = $('#crop-method').val(); // DWSR or TPR
+
+                    let cropEstablishmentType = '';
+                    if (cropMethod === 'DWSR') {
+                        cropEstablishmentType = $('#dwsr-section select[name="establishment_type"]').val() || '';
+                    } else {
+                        cropEstablishmentType = $('#tpr-section input[name="establishment_type"]:checked').val() || '';
+                    }
+
+                    const isCropPakyaw = $('#crop-establishment-pakyaw').is(':checked') ? 1 : 0;
+
+                    formData1.append('crop_est_method', cropMethod);
+                    formData1.append('crop_est_establishment_type', cropEstablishmentType);
+                    formData1.append('crop_est_is_pakyaw', isCropPakyaw);
+
+                    if (isCropPakyaw) {
+                        const totalPackageCost = $('#crop-establishment-pakyaw-total-cost-input').val() || 0;
+                        formData1.append('crop_est_package_total_cost', totalPackageCost);
+                    } else {
+                        let partIndex = 0;
+
+                        if (cropMethod === 'DWSR') {
+                            const $block = $('#dwsr-section');
+
+                            const activity = $block.find('input[name="crop_est_particulars[0][activity]"]').val();
+                            const qty = $block.find('input[name="crop_est_particulars[0][qty]"]').val() || 0;
+                            const unitCost = $block.find('input[name="crop_est_particulars[0][unit_cost]"]').val() || 0;
+                            const totalCost = parseFloat(qty) * parseFloat(unitCost);
+
+                            formData1.append(`crop_est_particulars[${partIndex}][activity]`, activity);
+                            formData1.append(`crop_est_particulars[${partIndex}][qty]`, qty);
+                            formData1.append(`crop_est_particulars[${partIndex}][unit_cost]`, unitCost);
+                            formData1.append(`crop_est_particulars[${partIndex}][total_cost]`, totalCost || 0);
+
+                        } else if (cropMethod === 'TPR') {
+                            $('#tpr-section .block').each(function () {
+                                const $block = $(this);
+                                const isManualOnly = $block.is('[data-tpr-block="manual-only"]');
+
+                                if (cropEstablishmentType === 'Mechanical' && isManualOnly) return;
+
+                                const activity = $block.find('input[name$="[activity]"]').val();
+                                if (!activity?.trim()) return; // ✅ skip empty ones
+                                const qty = $block.find('input[name$="[qty]"]').val() || 0;
+                                const unitCost = $block.find('input[name$="[unit_cost]"]').val() || 0;
+                                const totalCost = parseFloat(qty) * parseFloat(unitCost);
+
+                                formData1.append(`crop_est_particulars[${partIndex}][activity]`, activity);
+                                formData1.append(`crop_est_particulars[${partIndex}][qty]`, qty);
+                                formData1.append(`crop_est_particulars[${partIndex}][unit_cost]`, unitCost);
+                                formData1.append(`crop_est_particulars[${partIndex}][total_cost]`, totalCost || 0);
+
+                                partIndex++;
+                            });
+                        }
+                    }
+                }
+
 
         };
 

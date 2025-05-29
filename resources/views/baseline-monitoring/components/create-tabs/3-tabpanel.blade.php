@@ -1,4 +1,4 @@
-<div class="tab-pane fade" id="v-pills-seeds-prep" role="tabpanel" aria-labelledby="v-pills-seeds-prep-tab" data-activity="seeds-prep">
+<div class="tab-pane fade" id="v-pills-seeds-prep" role="tabpanel" aria-labelledby="v-pills-seeds-prep-tab" data-activity="seeds-prep"  data-has-package="true">
     <div>
         <h5>Seeds Preparation</h5>
         <p class="text-muted">Fill all information below</p>
@@ -45,7 +45,7 @@
                     </div>
                     <div class="col-4">
                         <label class="form-label text-muted">Total Cost</label>
-                        <input type="number" name="seed_prep[0][total_cost]" class="form-control total-cost total-cost" placeholder="Total Cost" readonly  />
+                        <input type="number" name="seed_prep[0][total_cost]" class="form-control total-cost total-cost" placeholder="Total Cost" readonly />
                     </div>
                 </div>
             </div>
@@ -75,7 +75,7 @@
                     </div>
                     <div class="col-4">
                         <label class="form-label text-muted">Total Cost</label>
-                        <input type="number" name="seed_prep[1][total_cost]" class="form-control total-cost total-cost" placeholder="Total Cost" readonly  />
+                        <input type="number" name="seed_prep[1][total_cost]" class="form-control total-cost total-cost" placeholder="Total Cost" readonly />
                     </div>
                 </div>
             </div>
@@ -105,7 +105,7 @@
                     </div>
                     <div class="col-4">
                         <label class="form-label text-muted">Total Cost</label>
-                        <input type="number" name="seed_prep[2][total_cost]" class="form-control total-cost total-cost" placeholder="Total Cost" readonly  />
+                        <input type="number" name="seed_prep[2][total_cost]" class="form-control total-cost total-cost" placeholder="Total Cost" readonly />
                     </div>
                 </div>
             </div>

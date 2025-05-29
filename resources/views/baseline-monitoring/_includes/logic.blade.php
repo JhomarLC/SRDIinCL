@@ -8,61 +8,130 @@
             const activityKey = $section.data('activity');
             let activityTotal = 0;
 
-            // Check if this section uses package
-            const isPackage = $section.find('[id$="-pakyaw"]').is(':checked');
+            const hasPackage = $section.data('has-package') === true || $section.data('has-package') === 'true';
+            let isPackage = false;
+
+            const isCropEstablishment = activityKey === 'crop-establishment';
+            const cropMethod = isCropEstablishment ? $('#crop-method').val() : null;
+            const establishmentType = isCropEstablishment
+                ? cropMethod === 'DWSR'
+                    ? $('select[name="establishment_type"]', '#dwsr-section').val()
+                    : $('input[name="tpr_establishment_type"]:checked').val()
+                : null;
+                $('select[name="establishment_type"]', '#dwsr-section').val()
+
+
+            if (isCropEstablishment) {
+                const cropMethod = $('#crop-method').val();
+
+                if (cropMethod === 'TPR') {
+                    isPackage = $('#crop-establishment-pakyaw').is(':checked');
+                }
+                // DWSR has no package mode currently, so skip
+            } else {
+                isPackage = hasPackage && $section.find('[id$="-pakyaw"]').is(':checked');
+            }
 
             if (isPackage) {
-                // Only use pakyaw input
                 const pakyawInput = $section.find('[id$="-pakyaw-total-cost"] input[type="number"]');
                 if (pakyawInput.length) {
                     const val = parseFloat(pakyawInput.val()) || 0;
                     activityTotal = val;
                 }
             } else {
-                // Sum regular total-cost inputs only
-                $section.find('.block .total-cost').filter(':not(:disabled)').each(function () {
+                // Define scope for crop method
+                let $blocks = $section.find('.block');
+
+                if (isCropEstablishment) {
+                    // Define scope only within active method
+                    if (cropMethod === 'DWSR') {
+                        $blocks = $section.find('#dwsr-section .block');
+                    } else if (cropMethod === 'TPR') {
+                        $blocks = $section.find('#tpr-section .block');
+                    }
+                }
+
+                $blocks.find('.total-cost').filter(':not(:disabled)').each(function () {
+                    const $block = $(this).closest('.block');
+                    const isManualOnly = $block.is('[data-tpr-block="manual-only"]');
+
+                    // Only skip if mechanical and block is manual-only
+                    if (isCropEstablishment && cropMethod === 'TPR' && establishmentType === 'Mechanical' && isManualOnly) {
+                        return;
+                    }
+                    const val = parseFloat($(this).val()) || 0;
+                    activityTotal += val;
+                });
+            }
+
+            // Always include these sections if present
+            $section.find('.variety-block .total-cost, .fertilizer-block .total-cost')
+                .filter(':not(:disabled)')
+                .each(function () {
                     const val = parseFloat($(this).val()) || 0;
                     activityTotal += val;
                 });
 
-            }
-            $section.find('.variety-block .total-cost').filter(':not(:disabled)').each(function () {
-                const val = parseFloat($(this).val()) || 0;
-                activityTotal += val;
-            });
-
             activityTotals[activityKey] = activityTotal;
 
-            // Update the per-activity sidebar total
             $(`#total-${activityKey}`).text(activityTotal.toLocaleString(undefined, {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
             }));
 
             grandTotal += activityTotal;
+            console.log('Updating totals...');
+            console.log('Method:', cropMethod);
+            console.log('Establishment Type:', establishmentType);
+
         });
 
-        // Update the grand total
         $('#grand-total-expenses').text(grandTotal.toLocaleString(undefined, {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
         }));
+
     }
 
     $(document).ready(function () {
+        // DWSR dynamic input listeners
+        $(document).on('input', '#dwsr-section .quantity, #dwsr-section .unit-cost', function () {
+            const $row = $(this).closest('.row');
+            const qty = parseFloat($row.find('.quantity').val()) || 0;
+            const unit = parseFloat($row.find('.unit-cost').val()) || 0;
+            const total = qty * unit;
 
+            $row.find('.total-cost').val(total.toFixed(2));
+            updateActivityTotals();
+        });
+
+        $('select[name="establishment_type"]').on('change', function () {
+            const selected = $(this).val();
+            $('input[name="crop_est_particulars[0][activity]"]').val(selected || '');
+        });
+
+        $(document).on('wheel', 'input[type=number]', function (e) {
+            $(this).blur(); // remove focus to prevent scroll change
+        });
         updateActivityTotals();
 
         $(document).on('input', '[id$="-pakyaw-total-cost"] input[type="number"]', function () {
             updateActivityTotals();
         });
+
         $(document).off('click', '.minus').on('click', '.minus', function () {
             const $input = $(this).siblings('input.quantity');
             let current = parseInt($input.val()) || 0;
-            if (current > 0) $input.val(current - 1).trigger('input');
+            if (current > 0) {
+                $input.val(current - 1);
+            } else {
+                $input.val(0); // ensure it's 0
+            }
+            $input.trigger('input'); // ✅ always trigger input
 
             updateActivityTotals();
         });
+
 
         $(document).off('click', '.plus').on('click', '.plus', function () {
             const $input = $(this).siblings('input.quantity');
@@ -107,23 +176,53 @@
             updateActivityTotals();
         });
 
+         // DWSR vs TPR toggle
         $('input[name="method_crop_establishment"]').on('change', function () {
             const method = $('input[name="method_crop_establishment"]:checked').val();
+            $('#crop-method').val(method);
 
             if (method === 'DWSR') {
-                $('#v-pills-seedbed-prep-tab').hide();
-                $('#v-pills-seedbed-fertilization-tab').hide();
+                // Hide/show
+                $('#dwsr-section').show();
+                $('#tpr-section').hide();
 
-                // Redirect if current tab is hidden
-                const currentTab = $('.nav-link.active').attr('id');
-                if (currentTab === 'v-pills-seedbed-prep-tab' || currentTab === 'v-pills-seedbed-fertilization-tab') {
-                    $('#v-pills-dry-season-info-tab').click(); // or any other visible tab
-                }
+                // Hide Seedbed Prep and Fert tabs
+                $('#v-pills-seedbed-prep-tab, #v-pills-seedbed-fertilization-tab').hide();
+
+                // RESET TPR inputs
+                $('#crop-establishment-pakyaw').prop('checked', false); // uncheck
+                $('#crop-establishment-pakyaw-total-cost-input').val('');
+                $('#tpr-section .total-cost').val('');
+
+                 // Disable TPR inputs
+                $('#tpr-section input, #tpr-section select').prop('disabled', true);
+                // Enable DWSR inputs
+                $('#dwsr-section input, #dwsr-section select').prop('disabled', false);
             } else {
-                $('#v-pills-seedbed-prep-tab').show();
-                $('#v-pills-seedbed-fertilization-tab').show();
+                $('#dwsr-section').hide();
+                $('#tpr-section').show();
+
+                // Show Seedbed Prep and Fert tabs
+                $('#v-pills-seedbed-prep-tab, #v-pills-seedbed-fertilization-tab').show();
+
+                // RESET DWSR inputs
+                $('#dwsr-section .total-cost').val('');
+
+                 // Disable DWSR inputs
+                $('#dwsr-section input, #dwsr-section select').prop('disabled', true);
+                // Enable TPR inputs
+                $('#tpr-section input, #tpr-section select').prop('disabled', false);
+
             }
+
+            updateActivityTotals();
         });
+
+        // Manual/Mechanical toggle
+        $('input[name="establishment_type"]').on('change', function () {
+            updateActivityTotals();
+        });
+
 
         // Initial check on page load
         $('input[name="method_crop_establishment"]:checked').trigger('change');
@@ -187,15 +286,18 @@
 
             updateActivityTotals(); // ← important!
         })
-        // Show/hide based on "Package" checkbox in Seeds Preparation
+
+      $('#crop-establishment-pakyaw').on('change', function () {
+            const isChecked = $(this).is(':checked');
+            $('#crop-est-is-pakyaw').val(isChecked ? 1 : 0);
+            $('#crop-establishment-pakyaw-total-cost').toggle(isChecked);
+            $('#crop-establishment-regular-fields').toggle(!isChecked);
+            updateActivityTotals();
+        });
+
         $('#crop-establishment-pakyaw').on('change', function () {
-            if ($(this).is(':checked')) {
-                $('#crop-establishment-pakyaw-total-cost').show();
-                $('#crop-establishment-regular-fields').hide();
-            } else {
-                $('#crop-establishment-pakyaw-total-cost').hide();
-                $('#crop-establishment-regular-fields').show();
-            }
+            const isChecked = $(this).is(':checked');
+            const $pakyawInput = $('#crop-establishment-pakyaw-total-cost-input');
         });
 
     });
@@ -543,6 +645,7 @@
             } else {
                 $('#dwsr-section, #tpr-section').hide();
             }
+            updateActivityTotals();
         }
 
         // Run on page load
@@ -554,16 +657,28 @@
         });
 
         function toggleTPRFields(establishmentType) {
-            if (establishmentType === 'purchase') { // Mechanical
-                $('[data-tpr-block="manual-only"]').hide();
-            } else {
+            if (establishmentType === 'Manual') {
                 $('[data-tpr-block="manual-only"]').show();
+            } else {
+                $('[data-tpr-block="manual-only"]').hide();
             }
         }
 
-        $(document).on('change', 'input[name="soaking-type"]', function () {
+        $(document).on('change', 'input[name="establishment_type"]', function () {
             const value = $(this).val();
             toggleTPRFields(value);
+            $('.total-cost', '#tpr-section').val('');
+            updateActivityTotals();
+        });
+
+        // Trigger totals calculation for DWSR fields
+        $('#dwsr-section').on('input', '.quantity, .unit-cost', function () {
+            const $row = $(this).closest('.row');
+            const qty = parseFloat($row.find('.quantity').val()) || 0;
+            const unit = parseFloat($row.find('.unit-cost').val()) || 0;
+            $row.find('.total-cost').val((qty * unit).toFixed(2));
+
+            updateActivityTotals();
         });
     });
 
@@ -692,6 +807,14 @@
         $('input[name="water-management-type"]').on('change', toggleMainIrrigationType);
         $('#water-management-pakyaw').on('change', togglePackageMode);
     });
+
+    function togglePakyaw(sectionId) {
+        const isChecked = $(`#${sectionId}-pakyaw`).is(':checked');
+        $(`#${sectionId}-pakyaw-total-cost`).toggle(isChecked);
+        $(`#${sectionId}-regular-fields`).toggle(!isChecked);
+        updateActivityTotals();
+    }
+    $('#crop-establishment-pakyaw').on('change', () => togglePakyaw('crop-establishment'));
 
     let pestAppCounter = 1;
 

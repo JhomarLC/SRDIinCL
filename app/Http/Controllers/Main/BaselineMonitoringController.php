@@ -4,10 +4,15 @@ namespace App\Http\Controllers\Main;
 
 use App\Helpers\BaselineValidationRules;
 use App\Helpers\SeasonHelper;
+use App\Models\CropEstablishment;
+use App\Models\CropEstablishmentParticulars;
 use App\Models\FarmingData;
 use App\Models\LandPreparation;
 use App\Models\LandPreparationParticulars;
 use App\Models\Participant;
+use App\Models\SeedBedFertilizationFertilizers;
+use App\Models\SeedBedFertilizationParticulars;
+use App\Models\SeedBedFertilizations;
 use App\Models\SeedBedPreparation;
 use App\Models\SeedBedPreparationParticulars;
 use App\Models\SeedsPreparation;
@@ -34,7 +39,7 @@ class BaselineMonitoringController extends Controller
 
     public function validateAllSteps(Request $request)
     {
-        $steps = ['land-prep'];
+        $steps = ['all'];
         $messages = BaselineValidationRules::messages();
 
         $allErrors = [];
@@ -266,6 +271,61 @@ class BaselineMonitoringController extends Controller
                 foreach ($request->input('seedbed_prep', []) as $activity) {
                     SeedBedPreparationParticulars::create([
                         'seedbed_preparation_id' => $seedbedPrep->id,
+                        'activity' => $activity['activity'],
+                        'qty' => $activity['qty'] ?? 0,
+                        'unit_cost' => $activity['unit_cost'] ?? 0,
+                        'total_cost' => $activity['total_cost'] ?? 0,
+                    ]);
+                }
+            }
+
+            /**
+             * 5. Save Seedbed Fertilization
+             */
+            $seedbedFertilization = SeedBedFertilizations::create([
+                'farming_data_id' => $id,
+                'others' => $request->input('seedbed_fertilization_others'),
+            ]);
+
+            // No pakyaw check – just loop if any input exists
+            foreach ($request->input('seedbed_fertilization', []) as $activity) {
+                SeedBedFertilizationParticulars::create([
+                    'seed_bed_fertilization_id' => $seedbedFertilization->id,
+                    'activity' => $activity['activity'],
+                    'qty' => $activity['qty'] ?? 0,
+                    'unit_cost' => $activity['unit_cost'] ?? 0,
+                    'total_cost' => $activity['total_cost'] ?? 0,
+                ]);
+            }
+
+            // Save seedbed fertilizers
+            foreach ($request->input('seedbed_fertilizer', []) as $fertilizer) {
+                SeedBedFertilizationFertilizers::create([
+                    'seed_bed_fertilization_id' => $seedbedFertilization->id,
+                    'fertilizer_name' => $fertilizer['fertilizer_name'] ?? null,
+                    'purchase_type' => $fertilizer['purchase_type'],
+                    'qty' => $fertilizer['qty'] ?? 0,
+                    'unit_cost' => $fertilizer['unit_cost'] ?? 0,
+                    'total_cost' => $fertilizer['total_cost'] ?? 0,
+                ]);
+            }
+
+
+            /**
+             * 6. Save Crop Establishment
+             */
+            $cropEstablishment = CropEstablishment::create([
+                'farming_data_id' => $id,
+                'method' => $validated['crop_est_method'],
+                'establishment_type' => $validated['crop_est_establishment_type'] ?? null,
+                'is_pakyaw' => $validated['crop_est_is_pakyaw'],
+                'package_total_cost' => $validated['crop_est_package_total_cost'] ?? null,
+            ]);
+
+            if (!$validated['crop_est_is_pakyaw']) {
+                foreach ($request->input('crop_est_particulars', []) as $activity) {
+                    CropEstablishmentParticulars::create([
+                        'crop_establishment_id' => $cropEstablishment->id,
                         'activity' => $activity['activity'],
                         'qty' => $activity['qty'] ?? 0,
                         'unit_cost' => $activity['unit_cost'] ?? 0,

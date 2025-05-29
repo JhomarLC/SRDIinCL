@@ -47,6 +47,30 @@ class BaselineValidationRules
                 'seedbed_prep.*.unit_cost' => 'required_if:seedbed_prep_is_pakyaw,0|nullable|numeric|min:0',
                 'seedbed_prep.*.total_cost' => 'required_if:seedbed_prep_is_pakyaw,0|nullable|numeric|min:0',
             ],
+            'seedbed-fertilization' => [
+                'seedbed_fertilization.*.activity' => 'nullable|string|max:255',
+                'seedbed_fertilization.*.qty' => 'nullable|nullable|integer|min:0',
+                'seedbed_fertilization.*.unit_cost' => 'nullable|nullable|numeric|min:0',
+                'seedbed_fertilization.*.total_cost' => 'nullable|nullable|numeric|min:0',
+
+                'seedbed_fertilizer.*.fertilizer_name' => 'nullable|string|max:255',
+                'seedbed_fertilizer.*.qty' => 'nullable|integer|min:0',
+                'seedbed_fertilizer.*.unit_cost' => 'nullable|numeric|min:0',
+                'seedbed_fertilizer.*.total_cost' => 'nullable|numeric|min:0',
+
+                'seedbed_fertilization_others' => 'nullable|string|max:500',
+            ],
+            'crop-establishment' => [
+                'crop_est_method' => 'required|in:DWSR,TPR',
+                'crop_est_establishment_type' => 'nullable|string|max:255',
+                'crop_est_is_pakyaw' => 'required|boolean',
+                'crop_est_package_total_cost' => 'required_if:crop_est_is_pakyaw,1|nullable|numeric|min:0',
+
+                'crop_est_particulars.*.activity' => 'required_if:crop_est_is_pakyaw,0|string|max:255',
+                'crop_est_particulars.*.qty' => 'required_if:crop_est_is_pakyaw,0|nullable|integer|min:0',
+                'crop_est_particulars.*.unit_cost' => 'required_if:crop_est_is_pakyaw,0|nullable|numeric|min:0',
+                'crop_est_particulars.*.total_cost' => 'required_if:crop_est_is_pakyaw,0|nullable|numeric|min:0',
+            ],
         ];
 
         if ($step === 'all') {
@@ -83,6 +107,26 @@ class BaselineValidationRules
             'seedbed_prep.*.qty.required_if' => 'Quantity is required for the seedbed prep activity.',
             'seedbed_prep.*.unit_cost.required_if' => 'Unit cost is required for the seedbed prep activity.',
             'seedbed_prep.*.total_cost.required_if' => 'Total cost is required for the seedbed prep activity.',
+
+            // Optional: general fallback validation messages (if needed)
+            'seedbed_fertilization.*.activity.string' => 'Activity must be a string.',
+            'seedbed_fertilization.*.qty.integer' => 'Quantity must be a number.',
+            'seedbed_fertilization.*.unit_cost.numeric' => 'Unit cost must be a valid number.',
+            'seedbed_fertilization.*.total_cost.numeric' => 'Total cost must be a valid number.',
+
+            // 'seedbed_fertilizer.*.purchase_type.required' => 'Please select Free or Purchase for the fertilizer.',
+
+            // Crop Establishment
+            'crop_est_method.required' => 'Please select a crop establishment method.',
+            'crop_est_method.in' => 'Method must be either DWSR or TPR.',
+            'crop_est_is_pakyaw.required' => 'Please indicate if this is a pakyaw (package) method.',
+            'crop_est_package_total_cost.required_if' => 'Please enter the total cost for crop establishment if pakyaw is selected.',
+
+            'crop_est_particulars.*.activity.required_if' => 'Activity name is required when crop establishment is not pakyaw.',
+            'crop_est_particulars.*.qty.required_if' => 'Quantity is required for the crop establishment activity.',
+            'crop_est_particulars.*.unit_cost.required_if' => 'Unit cost is required for the crop establishment activity.',
+            'crop_est_particulars.*.total_cost.required_if' => 'Total cost is required for the crop establishment activity.',
+
         ];
     }
 }

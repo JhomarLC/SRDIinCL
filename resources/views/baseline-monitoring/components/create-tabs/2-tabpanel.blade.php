@@ -1,4 +1,4 @@
-  <div class="tab-pane fade" id="v-pills-land-preparation" role="tabpanel" aria-labelledby="v-pills-land-preparation-tab" data-activity="land-preparation">
+  <div class="tab-pane fade" id="v-pills-land-preparation" role="tabpanel" aria-labelledby="v-pills-land-preparation-tab" data-activity="land-preparation" data-has-package="true">
     <div>
         <h5>Land Preparation</h5>
         <p class="text-muted">Fill all information below</p>

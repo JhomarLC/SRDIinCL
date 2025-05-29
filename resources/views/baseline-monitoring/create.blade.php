@@ -189,7 +189,7 @@
                             <!-- end nav -->
                         </div> <!-- end col-->
                         <div class="col-lg-6">
-                            <div class="scrollable-content px-lg-4">
+                            <div class="px-lg-4">
                                 <div class="tab-content">
                                     @include('baseline-monitoring.components.create-tabs.1-tabpanel')
                                     @include('baseline-monitoring.components.create-tabs.2-tabpanel')
