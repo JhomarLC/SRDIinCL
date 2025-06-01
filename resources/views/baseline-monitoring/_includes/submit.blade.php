@@ -3,6 +3,9 @@ $(function () {
     const submitFinalForm = () => {
         const fullFormData = new FormData();
 
+        // Crop Establishment
+        const cropMethod = $('#crop-method').val(); // DWSR or TPR
+
         // Land Preparation Data Only
         const isPakyaw = $("#land-prep-pakyaw").is(":checked") ? 1 : 0;
         fullFormData.append("land_prep_is_pakyaw", isPakyaw);
@@ -65,46 +68,47 @@ $(function () {
             fullFormData.append(`seed_varieties[${index}][total_cost]`, totalCost);
         });
 
-        // Seedbed Preparation
-        const isSeedbedPakyaw = $("#seedbed-prep-pakyaw").is(":checked") ? 1 : 0;
-        fullFormData.append("seedbed_prep_is_pakyaw", isSeedbedPakyaw);
+        if (cropMethod === 'TPR') {
+            // Seedbed Preparation
+            const isSeedbedPakyaw = $("#seedbed-prep-pakyaw").is(":checked") ? 1 : 0;
+            fullFormData.append("seedbed_prep_is_pakyaw", isSeedbedPakyaw);
 
-        if (isSeedbedPakyaw) {
-            const seedbedPackageCost = $("#seedbed-prep-pakyaw-total-cost-input").val() || 0;
-            fullFormData.append("seedbed_prep_package_cost", seedbedPackageCost);
-        } else {
-            $("#seedbed-prep-regular-fields .block").each(function (index) {
-                const activity = $(this).find('input[name$="[activity]"]').val();
-                const qty = $(this).find('input[name$="[qty]"]').val() || 0;
-                const unitCost = $(this).find('input[name$="[unit_cost]"]').val() || 0;
+            if (isSeedbedPakyaw) {
+                const seedbedPackageCost = $("#seedbed-prep-pakyaw-total-cost-input").val() || 0;
+                fullFormData.append("seedbed_prep_package_cost", seedbedPackageCost);
+            } else {
+                $("#seedbed-prep-regular-fields .block").each(function (index) {
+                    const activity = $(this).find('input[name$="[activity]"]').val();
+                    const qty = $(this).find('input[name$="[qty]"]').val() || 0;
+                    const unitCost = $(this).find('input[name$="[unit_cost]"]').val() || 0;
+                    const totalCost = parseFloat(qty) * parseFloat(unitCost);
+
+                    fullFormData.append(`seedbed_prep[${index}][activity]`, activity);
+                    fullFormData.append(`seedbed_prep[${index}][qty]`, qty);
+                    fullFormData.append(`seedbed_prep[${index}][unit_cost]`, unitCost);
+                    fullFormData.append(`seedbed_prep[${index}][total_cost]`, totalCost || 0);
+                });
+            }
+
+            // Seedbed Fertilization
+            $("#seedbed-fertilization-regular-fields .block").each(function (index) {
+                const activity = $(this).find('input[name^="seedbed_fert["][name$="[activity]"]').val();
+                const qty = $(this).find('input[name^="seedbed_fert["][name$="[qty]"]').val() || 0;
+                const unitCost = $(this).find('input[name^="seedbed_fert["][name$="[unit_cost]"]').val() || 0;
                 const totalCost = parseFloat(qty) * parseFloat(unitCost);
 
-                fullFormData.append(`seedbed_prep[${index}][activity]`, activity);
-                fullFormData.append(`seedbed_prep[${index}][qty]`, qty);
-                fullFormData.append(`seedbed_prep[${index}][unit_cost]`, unitCost);
-                fullFormData.append(`seedbed_prep[${index}][total_cost]`, totalCost || 0);
+                fullFormData.append(`seedbed_fertilization[${index}][activity]`, activity);
+                fullFormData.append(`seedbed_fertilization[${index}][qty]`, qty);
+                fullFormData.append(`seedbed_fertilization[${index}][unit_cost]`, unitCost);
+                fullFormData.append(`seedbed_fertilization[${index}][total_cost]`, totalCost || 0);
             });
+
+            // Optional 'Others' input
+            const othersFertilizer = $("#others-fertilizer").val()?.trim();
+            if (othersFertilizer) {
+                fullFormData.append("seedbed_fertilization_others", othersFertilizer);
+            }
         }
-
-        // Seedbed Fertilization
-        $("#seedbed-fertilization-regular-fields .block").each(function (index) {
-            const activity = $(this).find('input[name^="seedbed_fert["][name$="[activity]"]').val();
-            const qty = $(this).find('input[name^="seedbed_fert["][name$="[qty]"]').val() || 0;
-            const unitCost = $(this).find('input[name^="seedbed_fert["][name$="[unit_cost]"]').val() || 0;
-            const totalCost = parseFloat(qty) * parseFloat(unitCost);
-
-            fullFormData.append(`seedbed_fertilization[${index}][activity]`, activity);
-            fullFormData.append(`seedbed_fertilization[${index}][qty]`, qty);
-            fullFormData.append(`seedbed_fertilization[${index}][unit_cost]`, unitCost);
-            fullFormData.append(`seedbed_fertilization[${index}][total_cost]`, totalCost || 0);
-        });
-
-        // Optional 'Others' input
-        const othersFertilizer = $("#others-fertilizer").val()?.trim();
-        if (othersFertilizer) {
-            fullFormData.append("seedbed_fertilization_others", othersFertilizer);
-        }
-
         // Dynamic Fertilizer List (container)
         $("#fertilizer-container .fertilizer-block").each(function (index) {
             const fertilizerName = $(this).data("fertilizer-name");
@@ -121,8 +125,6 @@ $(function () {
             fullFormData.append(`seedbed_fertilizer[${index}][total_cost]`, totalCost);
         });
 
-        // Crop Establishment
-        const cropMethod = $('#crop-method').val(); // DWSR or TPR
 
         // Get establishment type based on method
         const cropEstablishmentType = cropMethod === 'DWSR'
@@ -286,7 +288,6 @@ $(function () {
             }
         }
 
-
         // 🔍 Log the contents of the FormData
         console.group("📦 Submitted Form Data");
         for (let [key, value] of fullFormData.entries()) {
@@ -297,28 +298,28 @@ $(function () {
             $farmingData = $participant->farming_data->where('season', $normalizedSeason)->first();
         @endphp
         // // Submit
-        $.ajax({
-            url: "{{ route('baseline-monitoring.store', [$farmingData->id, $farmingData->season]) }}",
-            type: "POST",
-            headers: {
-                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
-            },
-            data: fullFormData,
-            processData: false,
-            contentType: false,
-            success: function (response) {
-                showAlertModal("success", response.message);
-                setTimeout(() => window.location.href = "/baseline-monitoring/" + {{ $participant->id }}, 1500);
-            },
-            error: function (xhr) {
-                hideLoader();
-                console.error("❌ Submission Error", xhr);
-                showAlertModal("error", "Something went wrong during submission.");
-            },
-            complete: function () {
-                hideLoader();
-            }
-        });
+        // $.ajax({
+        //     url: "{{ route('baseline-monitoring.store', [$farmingData->id, $farmingData->season]) }}",
+        //     type: "POST",
+        //     headers: {
+        //         "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+        //     },
+        //     data: fullFormData,
+        //     processData: false,
+        //     contentType: false,
+        //     success: function (response) {
+        //         showAlertModal("success", response.message);
+        //         setTimeout(() => window.location.href = "/baseline-monitoring/" + {{ $participant->id }}, 1500);
+        //     },
+        //     error: function (xhr) {
+        //         hideLoader();
+        //         console.error("❌ Submission Error", xhr);
+        //         showAlertModal("error", "Something went wrong during submission.");
+        //     },
+        //     complete: function () {
+        //         hideLoader();
+        //     }
+        // });
     };
 
     $("#submitBaseline").on("click", function (e) {
@@ -405,6 +406,9 @@ $(function () {
                 });
             },
             "seedbed-prep": () => {
+                const cropMethod = $('#crop-method').val();
+                if (cropMethod !== 'TPR') return;
+
                 const isPakyaw = $("#seedbed-prep-pakyaw").is(":checked") ? 1 : 0;
                 formData1.append("seedbed_prep_is_pakyaw", isPakyaw);
 
@@ -426,6 +430,8 @@ $(function () {
                 }
             },
             "seedbed-fertilization": () => {
+                const cropMethod = $('#crop-method').val();
+                if (cropMethod !== 'TPR') return;
                 // Seedbed Fertilizer Labor/Activities
                 $("#seedbed-fertilization-regular-fields .block").each(function (index) {
                     const activity = $(this).find('input[name^="seedbed_fert["][name$="[activity]"]').val();

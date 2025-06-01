@@ -95,6 +95,8 @@
                                 </a>
                             </div>
                             <div>
+                                {{-- <pre>{{ json_encode($drySeasonData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}</pre> --}}
+
                                 {{-- For Dry Season --}}
                                 @include('baseline-monitoring.components.merged-activities-table', ['seasonData' => $drySeasonData])
                             </div>
@@ -116,6 +118,8 @@
                                 </a>
                             </div>
                             <div>
+                                {{-- <pre>{{ json_encode($wetSeasonData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}</pre> --}}
+
                                 {{-- For Wet Season --}}
                                 @include('baseline-monitoring.components.merged-activities-table', ['seasonData' => $wetSeasonData])
                             </div>

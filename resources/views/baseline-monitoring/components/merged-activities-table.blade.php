@@ -43,6 +43,14 @@
             continue; // ⬅️ Important: skip generic handling
         }
 
+        if (!empty($section['particulars']) && ($section['is_pakyaw'] ?? false) && is_numeric($section['package_cost'])) {
+            foreach ($section['particulars'] as $item) {
+                $addRow($mergedRows, $label, $item['activity'], '-', '-', '-');
+            }
+            $addRow($mergedRows, $label, 'Total (Pakyaw Package)', '-', '-', $section['package_cost']);
+            continue;
+        }
+
         // Generic activity row addition
         foreach ($section['particulars'] ?? [] as $item) {
             $addRow($mergedRows, $label, $item['activity'], $item['qty'], $item['unit_cost'], $item['total_cost']);
@@ -75,17 +83,34 @@
         }
     }
 
+    if (
+        $data['water_management']['type'] === 'nia' || empty($data['water_management']['irrigations'] ?? [])
+    ) {
+        // 👉 Show single package row
+        $addRow(
+            $mergedRows,
+            'Water Management (NIA Package)',
+            'NIA Total Cost',
+            '-',
+            '-',
+            $data['water_management']['nia_total_amount'],
+            '',
+            'nia'
+        );
+    } else {
+        // 👉 Show irrigations normally
+        foreach ($data['water_management']['irrigations'] ?? [] as $irrigation) {
+            $label = 'Water - ' . $irrigation['label'];
+            foreach ($irrigation['details'] ?? [] as $detail) {
+                $addRow($mergedRows, $label, $detail['activity'], $detail['qty'], $detail['unit_cost'], $detail['total_cost'], '', $irrigation['method']);
+            }
 
-    foreach ($data['water_management']['irrigations'] ?? [] as $irrigation) {
-        $label = 'Water - ' . $irrigation['label'];
-        foreach ($irrigation['details'] ?? [] as $detail) {
-            $addRow($mergedRows, $label, $detail['activity'], $detail['qty'], $detail['unit_cost'], $detail['total_cost'], '', $irrigation['method']);
-        }
-
-        if (!empty($irrigation['nia_total'])) {
-            $addRow($mergedRows, $label, 'NIA Total Cost', '', '', $irrigation['nia_total'], '', $irrigation['method']);
+            if (!empty($irrigation['nia_total'])) {
+                $addRow($mergedRows, $label, 'NIA Total Cost', '-', '-', $irrigation['nia_total'], '', $irrigation['method']);
+            }
         }
     }
+
 @endphp
 
 <table class="table table-bordered table-striped">
@@ -116,5 +141,8 @@
                 </tr>
             @endforeach
         @endforeach
+        @if (empty($mergedRows))
+            <tr><td colspan="7" class="text-center text-muted">No data available for this crop method.</td></tr>
+        @endif
     </tbody>
 </table>

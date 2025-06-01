@@ -6,6 +6,8 @@ class BaselineValidationRules
 {
     public static function rules(string $step = 'all')
     {
+        $cropEstMethod = request('crop_est_method'); // Get from current request
+
         $rules = [
             'land-preparation' => [
                 'land_prep_is_pakyaw' => 'required|boolean',
@@ -39,7 +41,7 @@ class BaselineValidationRules
                 'seed_varieties.*.total_cost' => 'nullable|numeric|min:0',
             ],
             'seedbed-prep' => [
-                'seedbed_prep_is_pakyaw' => 'required|boolean',
+                'seedbed_prep_is_pakyaw' => 'nullable|boolean',
                 'seedbed_prep_package_cost' => 'required_if:seedbed_prep_is_pakyaw,1|nullable|numeric|min:0',
 
                 'seedbed_prep.*.activity' => 'required_if:seedbed_prep_is_pakyaw,0|string|max:255',
@@ -115,6 +117,12 @@ class BaselineValidationRules
             ],
 
         ];
+
+        // ✅ Conditionally unset seedbed rules if DWSR
+        if ($cropEstMethod === 'DWSR') {
+            unset($rules['seedbed-prep']);
+            unset($rules['seedbed-fertilization']);
+        }
 
         if ($step === 'all') {
             return array_merge(...array_values($rules));
