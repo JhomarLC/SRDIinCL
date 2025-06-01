@@ -142,7 +142,24 @@ class BaselineValidationRules
                 'pesticide_management.*.meals.unit_cost' => 'nullable|numeric|min:0',
                 'pesticide_management.*.meals.total_cost' => 'nullable|numeric|min:0',
             ],
+            'harvest-management' => [
+                'harvest_management_type' => 'required|in:Manual,Mechanical',
 
+                // Mechanical inputs
+                'harvest_mechanical.bags' => 'required_if:harvest_management_type,Mechanical|nullable|integer|min:0',
+                'harvest_mechanical.avg_bag_weight' => 'required_if:harvest_management_type,Mechanical|nullable|numeric|min:0',
+                'harvest_mechanical.price_per_kg' => 'required_if:harvest_management_type,Mechanical|nullable|numeric|min:0',
+                'harvest_mechanical.total_cost' => 'required_if:harvest_management_type,Mechanical|nullable|numeric|min:0',
+
+                // Manual inputs
+                'harvest_manual.is_package' => 'required_if:harvest_management_type,Manual|boolean',
+                'harvest_manual.package_total_cost' => 'required_if:harvest_manual.is_package,1|nullable|numeric|min:0',
+
+                'harvest_manual_items.*.activity' => 'required_if:harvest_manual.is_package,0|string|max:255',
+                'harvest_manual_items.*.qty' => 'required_if:harvest_manual.is_package,0|nullable|integer|min:0',
+                'harvest_manual_items.*.unit_cost' => 'required_if:harvest_manual.is_package,0|nullable|numeric|min:0',
+                'harvest_manual_items.*.total_cost' => 'required_if:harvest_manual.is_package,0|nullable|numeric|min:0',
+            ],
         ];
 
         // ✅ Conditionally unset seedbed rules if DWSR
@@ -239,6 +256,24 @@ class BaselineValidationRules
             'pesticide_management.*.chemical.activity.required_with' => 'Chemical application labor activity is required when quantity or unit cost is provided.',
             'pesticide_management.*.weeding.activity.required_with' => 'Manual weeding labor activity is required when quantity or unit cost is provided.',
             'pesticide_management.*.meals.activity.required_with' => 'Meals and snacks labor activity is required when quantity or unit cost is provided.',
+
+            // Harvest Management
+            'harvest_management_type.required' => 'Please select a type of harvesting.',
+            'harvest_management_type.in' => 'Harvesting type must be Manual or Mechanical.',
+
+            'harvest_mechanical.bags.required_if' => 'Number of bags is required for mechanical harvesting.',
+            'harvest_mechanical.avg_bag_weight.required_if' => 'Average bag weight is required for mechanical harvesting.',
+            'harvest_mechanical.price_per_kg.required_if' => 'Price per kilo is required for mechanical harvesting.',
+            'harvest_mechanical.total_cost.required_if' => 'Total cost is required for mechanical harvesting.',
+
+            'harvest_manual.is_package.required_if' => 'Please specify if manual harvesting is a package.',
+            'harvest_manual.package_total_cost.required_if' => 'Package total cost is required for manual harvesting (package).',
+
+            'harvest_manual_items.*.activity.required_if' => 'Activity name is required for manual harvesting (non-package).',
+            'harvest_manual_items.*.qty.required_if' => 'Quantity is required for manual harvesting (non-package).',
+            'harvest_manual_items.*.unit_cost.required_if' => 'Unit cost is required for manual harvesting (non-package).',
+            'harvest_manual_items.*.total_cost.required_if' => 'Total cost is required for manual harvesting (non-package).',
+
         ];
     }
 }

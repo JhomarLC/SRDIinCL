@@ -74,4 +74,9 @@ class FarmingData extends Model
     {
         return $this->hasOne(PesticideApplication::class);
     }
+
+    public function harvest_management()
+    {
+        return $this->hasOne(HarvestManagement::class);
+    }
 }

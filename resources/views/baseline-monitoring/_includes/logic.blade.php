@@ -83,7 +83,27 @@
                     });
                 }
             }
+             // ✅ HARVEST MANAGEMENT logic (custom handling)
+            else if (activityKey === 'harvest-management') {
+                const harvestType = $section.find('input[name="harvest_management[harvesting_type]"]:checked').val();
 
+                if (harvestType === 'Mechanical') {
+                    const mechanicalCost = parseFloat($section.find('.total-mechanical-cost').val()) || 0;
+                    activityTotal = mechanicalCost;
+                } else if (harvestType === 'Manual') {
+                    const isManualPackage = $section.find('#manual-package-checkbox').is(':checked');
+
+                    if (isManualPackage) {
+                        const val = parseFloat($section.find('#manualPackageTotalCost').val()) || 0;
+                        activityTotal = val;
+                    } else {
+                        $section.find('#manual-fields .total-cost').filter(':not(:disabled)').each(function () {
+                            const val = parseFloat($(this).val()) || 0;
+                            activityTotal += val;
+                        });
+                    }
+                }
+            }
             // ✅ DEFAULT (all other activity tabs)
             else {
                 isPackage = hasPackage && $section.find('[id$="-pakyaw"]').is(':checked');
@@ -174,7 +194,10 @@
 
     // Call once on DOM ready
     $(document).ready(function () {
-        bindWaterManagementEvents();
+        $(document).on('change input', '#manual-package-checkbox, #manualPackageTotalCost', function () {
+            updateActivityTotals();
+            bindWaterManagementEvents();
+        });
     });
 
     $(document).ready(function () {
@@ -198,7 +221,6 @@
             $(this).blur(); // remove focus to prevent scroll change
         });
 
-
         updateActivityTotals();
 
         $(document).on('input', '[id$="-pakyaw-total-cost"] input[type="number"]', function () {
@@ -206,7 +228,7 @@
         });
 
         $(document).off('click', '.minus').on('click', '.minus', function () {
-            const $input = $(this).siblings('input.quantity');
+            const $input = $(this).siblings('input');
             let current = parseInt($input.val()) || 0;
             if (current > 0) {
                 $input.val(current - 1);
@@ -220,7 +242,7 @@
 
 
         $(document).off('click', '.plus').on('click', '.plus', function () {
-            const $input = $(this).siblings('input.quantity');
+            const $input = $(this).siblings('input');
             let current = parseInt($input.val()) || 0;
             $input.val(current + 1).trigger('input');
 
@@ -993,14 +1015,33 @@
         const manualFields = $('#manual-fields');
         const packageCheckbox = $('#manual-package-checkbox');
         const packageTotal = $('#manual-package-total-cost');
+        const packageCheckboxContainer = $('#manual-package-checkbox-container');
 
-        // Initial view
+        $(document).on('change', 'input[name="harvest_management[harvesting_type]"]', function () {
+            updateActivityTotals();
+        });
+
+        $(document).on('input', '#manual-fields .quantity, #manual-fields .unit-cost', function () {
+            const $row = $(this).closest('.row');
+            const qty = parseFloat($row.find('.quantity').val()) || 0;
+            const unit = parseFloat($row.find('.unit-cost').val()) || 0;
+            const total = qty * unit;
+
+            $row.find('.total-cost').val(total.toFixed(2));
+
+            updateActivityTotals(); // 🔁 Trigger main totals update
+        });
+        // Initial setup
         updateHarvestView();
+        computeMechanicalHarvestCost();
+        bindManualCostCalculations();
 
-        // Change harvesting type
-        $('.harvesting-type').on('change', updateHarvestView);
+        // Change harvesting type (radio buttons)
+        $('input[name="harvest_management[harvesting_type]"]').on('change', function () {
+            updateHarvestView();
+        });
 
-        // Toggle package total
+        // Toggle package checkbox
         packageCheckbox.on('change', function () {
             if ($(this).is(':checked')) {
                 manualFields.hide();
@@ -1011,37 +1052,57 @@
             }
         });
 
+        // Update visibility logic
         function updateHarvestView() {
-            const type = $('input[name="harvesting-type"]:checked').val();
+            const type = $('input[name="harvest_management[harvesting_type]"]:checked').val();
 
             if (type === 'Mechanical') {
-                $('#mechanical-block').show();
-                $('#manual-fields').hide();
-                $('#manual-package-checkbox-container').hide();
-                $('#manual-package-total-cost').hide();
-                $('#manual-package-checkbox').prop('checked', false);
+                mechanicalBlock.show();
+                manualFields.hide();
+                packageCheckboxContainer.hide();
+                packageTotal.hide();
+                packageCheckbox.prop('checked', false);
             } else {
-                $('#mechanical-block').hide();
-                $('#manual-fields').show();
-                $('#manual-package-checkbox-container').show();
+                mechanicalBlock.hide();
+                manualFields.show();
+                packageCheckboxContainer.show();
             }
         }
-    });
 
-    $(document).ready(function () {
+        // // Mechanical harvesting cost = bags * avgWeight * pricePerKg
+        // function computeMechanicalHarvestCost() {
+        //     const bags = parseFloat(mechanicalBlock.find('.bags').val()) || 0;
+        //     const avgWeight = parseFloat(mechanicalBlock.find('.avg-bag-weight').val()) || 0;
+        //     const pricePerKilo = parseFloat(mechanicalBlock.find('.price-per-kg').val()) || 0;
+
+        //     const total = bags * avgWeight * pricePerKilo;
+        //     mechanicalBlock.find('.total-mechanical-cost').val(total.toFixed(2));
+        // }
+
         function computeMechanicalHarvestCost() {
-            const $block = $('#mechanical-block');
-            const bags = parseFloat($block.find('.bags').val()) || 0;
-            const avgWeight = parseFloat($block.find('.avg-bag-weight').val()) || 0;
-            const pricePerKilo = parseFloat($block.find('.price-per-kg').val()) || 0;
+            const bags = parseFloat($('#mechanical-block .bags').val()) || 0;
+            const avgWeight = parseFloat($('#mechanical-block .avg-bag-weight').val()) || 0;
+            const pricePerKilo = parseFloat($('#mechanical-block .price-per-kg').val()) || 0;
 
             const total = bags * avgWeight * pricePerKilo;
-            $block.find('.total-mechanical-cost').val(total.toFixed(2));
-        }
-        // Trigger calculation on input
-        $('#mechanical-block').on('input', '.bags, .avg-bag-weight, .price-per-kg', computeMechanicalHarvestCost);
+            $('#mechanical-block .total-mechanical-cost').val(total.toFixed(2));
 
-        computeMechanicalHarvestCost(); // Initial run
+            updateActivityTotals(); // Make sure this updates the activity totals too
+        }
+
+        // Ensure this fires on any relevant input change
+        $(document).on('input', '#mechanical-block .bags, #mechanical-block .avg-bag-weight, #mechanical-block .price-per-kg', computeMechanicalHarvestCost);
+
+        // Manual cost per item (qty * unit_cost)
+        function bindManualCostCalculations() {
+            $('#manual-fields').on('input', '.quantity, .unit-cost', function () {
+                const block = $(this).closest('.block');
+                const qty = parseFloat(block.find('.quantity').val()) || 0;
+                const unitCost = parseFloat(block.find('.unit-cost').val()) || 0;
+                const total = qty * unitCost;
+                block.find('.total-cost').val(total.toFixed(2));
+            });
+        }
     });
 
     $(document).ready(function () {

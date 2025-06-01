@@ -357,6 +357,44 @@ $(function () {
             fullFormData.append(`pesticide_management[${appIndex}][meals][total_cost]`, mealsTotal || 0);
         });
 
+        // HARVEST MANAGEMENT
+        const harvestType = $('input[name="harvest_management[harvesting_type]"]:checked').val(); // Manual or Mechanical
+        fullFormData.append("harvest_management_type", harvestType);
+
+        if (harvestType === 'Mechanical') {
+            const bags = parseFloat($('.bags').val()) || 0;
+            const avgWeight = parseFloat($('.avg-bag-weight').val()) || 0;
+            const pricePerKg = parseFloat($('.price-per-kg').val()) || 0;
+            const totalCost = parseFloat($('.total-mechanical-cost').val()) || 0;
+
+            fullFormData.append("harvest_mechanical[bags]", bags);
+            fullFormData.append("harvest_mechanical[avg_bag_weight]", avgWeight);
+            fullFormData.append("harvest_mechanical[price_per_kg]", pricePerKg);
+            fullFormData.append("harvest_mechanical[total_cost]", totalCost);
+        } else if (harvestType === 'Manual') {
+            const isManualPackage = $('#manual-package-checkbox').is(':checked') ? 1 : 0;
+            fullFormData.append("harvest_manual[is_package]", isManualPackage);
+
+            if (isManualPackage) {
+                const packageTotalCost = parseFloat($('#manualPackageTotalCost').val()) || 0;
+                fullFormData.append("harvest_manual[package_total_cost]", packageTotalCost);
+            } else {
+                $('#manual-fields .block').each(function (index) {
+                    const $block = $(this);
+                    const activity = $block.find('input[name$="[activity]"]').val() || '';
+                    const qty = parseFloat($block.find('.quantity').val()) || 0;
+                    const unitCost = parseFloat($block.find('.unit-cost').val()) || 0;
+                    const totalCost = qty * unitCost;
+
+                    fullFormData.append(`harvest_manual_items[${index}][activity]`, activity);
+                    fullFormData.append(`harvest_manual_items[${index}][qty]`, qty);
+                    fullFormData.append(`harvest_manual_items[${index}][unit_cost]`, unitCost);
+                    fullFormData.append(`harvest_manual_items[${index}][total_cost]`, totalCost);
+                });
+            }
+        }
+
+
         // 🔍 Log the contents of the FormData
         console.group("📦 Submitted Form Data");
         for (let [key, value] of fullFormData.entries()) {
@@ -403,7 +441,8 @@ $(function () {
             "crop-establishment",
             "fertilizer-management",
             "water-management",
-            "pest-management"
+            "pest-management",
+            "harvest-management"
         ];
 
         const formData1 = new FormData();
@@ -763,8 +802,44 @@ $(function () {
                         formData1.append(`pesticide_management[${appIndex}][${key}][total_cost]`, totalCost);
                     });
                 });
-            }
+            },
+            "harvest-management": () => {
+                const harvestType = $('input[name="harvest_management[harvesting_type]"]:checked').val();
+                formData1.append("harvest_management_type", harvestType);
 
+                if (harvestType === 'Mechanical') {
+                    const bags = parseFloat($('.bags').val()) || 0;
+                    const avgWeight = parseFloat($('.avg-bag-weight').val()) || 0;
+                    const pricePerKg = parseFloat($('.price-per-kg').val()) || 0;
+                    const totalCost = parseFloat($('.total-mechanical-cost').val()) || 0;
+
+                    formData1.append("harvest_mechanical[bags]", bags);
+                    formData1.append("harvest_mechanical[avg_bag_weight]", avgWeight);
+                    formData1.append("harvest_mechanical[price_per_kg]", pricePerKg);
+                    formData1.append("harvest_mechanical[total_cost]", totalCost);
+                } else if (harvestType === 'Manual') {
+                    const isManualPackage = $('#manual-package-checkbox').is(':checked') ? 1 : 0;
+                    formData1.append("harvest_manual[is_package]", isManualPackage);
+
+                    if (isManualPackage) {
+                        const packageTotalCost = parseFloat($('#manualPackageTotalCost').val()) || 0;
+                        formData1.append("harvest_manual[package_total_cost]", packageTotalCost);
+                    } else {
+                        $('#manual-fields .block').each(function (index) {
+                            const $block = $(this);
+                            const activity = $block.find('input[name$="[activity]"]').val() || '';
+                            const qty = parseFloat($block.find('.quantity').val()) || 0;
+                            const unitCost = parseFloat($block.find('.unit-cost').val()) || 0;
+                            const totalCost = qty * unitCost;
+
+                            formData1.append(`harvest_manual_items[${index}][activity]`, activity);
+                            formData1.append(`harvest_manual_items[${index}][qty]`, qty);
+                            formData1.append(`harvest_manual_items[${index}][unit_cost]`, unitCost);
+                            formData1.append(`harvest_manual_items[${index}][total_cost]`, totalCost);
+                        });
+                    }
+                }
+            }
         };
 
         const validateSteps = async () => {

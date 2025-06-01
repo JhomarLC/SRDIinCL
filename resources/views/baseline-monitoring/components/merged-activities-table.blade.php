@@ -163,9 +163,44 @@
             );
         }
     }
+        // HARVEST MANAGEMENT
+    $harvest = $data['harvest_management'] ?? null;
 
+    if ($harvest) {
+        $label = 'Harvest Management';
 
+        if ($harvest['harvesting_type'] === 'Mechanical' && !empty($harvest['mechanical'])) {
+            $mech = $harvest['mechanical'];
+            $addRow(
+                $mergedRows,
+                $label . ' (Mechanical)',
+                'Harvesting by Machine',
+                $mech['bags'] . ' bags @ ' . $mech['avg_bag_weight'] . 'kg',
+                $mech['price_per_kg'],
+                $mech['total_cost']
+            );
+        }
 
+        if ($harvest['harvesting_type'] === 'Manual' && !empty($harvest['manual'])) {
+            $manual = $harvest['manual'];
+            $activityLabel = $label . ' (Manual)';
+
+            if ($manual['is_package']) {
+                $addRow($mergedRows, $activityLabel, 'Harvest Package Cost', '-', '-', $manual['package_total_cost']);
+            } else {
+                foreach ($manual['items'] ?? [] as $item) {
+                    $addRow(
+                        $mergedRows,
+                        $activityLabel,
+                        $item['activity'],
+                        $item['qty'],
+                        $item['unit_cost'],
+                        $item['total_cost']
+                    );
+                }
+            }
+        }
+    }
 @endphp
 
 <table class="table table-bordered table-striped">

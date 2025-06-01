@@ -10,6 +10,10 @@ use App\Models\FarmingData;
 use App\Models\FertilizerApplication;
 use App\Models\FertilizerApplicationItem;
 use App\Models\FertilizerApplicationLabor;
+use App\Models\HarvestManagement;
+use App\Models\HarvestManualDetails;
+use App\Models\HarvestManualItems;
+use App\Models\HarvestMechanicalDetails;
 use App\Models\LandPreparation;
 use App\Models\LandPreparationParticulars;
 use App\Models\Participant;
@@ -483,6 +487,48 @@ class BaselineMonitoringController extends Controller
                 }
             });
 
+            /**
+             * 10. Save Harvest Management
+             */
+            $harvestType = $validated['harvest_management_type'] ?? null;
+
+            $harvestManagement = HarvestManagement::create([
+                'farming_data_id' => $id,
+                'harvesting_type' => $harvestType,
+            ]);
+
+            if ($harvestType === 'Mechanical') {
+               HarvestMechanicalDetails::create([
+                    'harvest_management_id' => $harvestManagement->id,
+                    'bags' => $validated['harvest_mechanical']['bags'] ?? 0,
+                    'avg_bag_weight' => $validated['harvest_mechanical']['avg_bag_weight'] ?? 0,
+                    'price_per_kg' => $validated['harvest_mechanical']['price_per_kg'] ?? 0,
+                    'total_cost' => $validated['harvest_mechanical']['total_cost'] ?? 0,
+                ]);
+            }
+
+            if ($harvestType === 'Manual') {
+                $isPackage = $validated['harvest_manual']['is_package'] ?? 0;
+
+                $manualDetail =HarvestManualDetails::create([
+                    'harvest_management_id' => $harvestManagement->id,
+                    'is_package' => $isPackage,
+                    'package_total_cost' => $isPackage ? ($validated['harvest_manual']['package_total_cost'] ?? 0) : null,
+                ]);
+
+                if (!$isPackage) {
+                    foreach ($request->input('harvest_manual_items', []) as $item) {
+                       HarvestManualItems::create([
+                            'harvest_manual_detail_id' => $manualDetail->id,
+                            'activity' => $item['activity'],
+                            'qty' => $item['qty'] ?? 0,
+                            'unit_cost' => $item['unit_cost'] ?? 0,
+                            'total_cost' => $item['total_cost'] ?? 0,
+                        ]);
+                    }
+                }
+            }
+
 
             DB::commit();
 
@@ -519,6 +565,8 @@ class BaselineMonitoringController extends Controller
             'farming_data.water_management.irrigations.details',
             'farming_data.pesticide_applications.details',
             'farming_data.pesticide_applications.brandNames',
+            'farming_data.harvest_management.mechanical',
+            'farming_data.harvest_management.manual.items',
         ])->findOrFail($id);
 
         $drySeasonData = $participant_farming_data->farming_data->firstWhere('season', 'Dry Season');
