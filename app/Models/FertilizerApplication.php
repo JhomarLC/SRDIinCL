@@ -11,7 +11,7 @@ class FertilizerApplication extends Model
 
     protected $fillable = [
         'farming_data_id',
-        'application_order',
+        'label',
         'others'
     ];
 

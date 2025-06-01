@@ -43,7 +43,7 @@
         <!-- Regular Inputs -->
 
         <div id="seedbed-fertilization-regular-fields">
-            <div class="block fertilizer-block">
+            <div class="block">
                 <div class="row g-3">
                     <div class="col-12">
                         <label class="form-label">Labor: Seedbed Fertilizer Application</label>

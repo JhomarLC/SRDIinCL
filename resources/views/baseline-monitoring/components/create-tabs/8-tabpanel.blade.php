@@ -1,6 +1,7 @@
 
 <!-- START: Water Management Tab -->
-<div class="tab-pane fade show" id="v-pills-water-management" role="tabpanel" aria-labelledby="v-pills-water-management-tab">
+<div class="tab-pane fade show" id="v-pills-water-management" role="tabpanel" aria-labelledby="v-pills-water-management-tab"
+ data-activity="water-management" data-has-package="true">
     <div>
         <h5>Water Management</h5>
         <p class="text-muted">Fill all information below</p>
@@ -26,7 +27,9 @@
     <div class="row g-3 mt-1" id="water-management-nia-total-cost" style="display:none;">
         <div class="col-12 bg-light p-3 mb-3 rounded mt-0">
             <label class="form-label">NIA Total Amount</label>
-            <input type="number" class="form-control" placeholder="Enter Total Cost">
+            <input type="number" id="nia-total-cost-input" class="form-control" placeholder="Enter Total Cost">
+
+            {{-- <input type="number" class="form-control" placeholder="Enter Total Cost"> --}}
         </div>
     </div>
 
@@ -82,12 +85,13 @@
                     <div class="row g-3 mt-2 nia-total-cost-irrigation" style="display: none;">
                         <div class="col-12 bg-light p-3 mb-3 rounded mt-0">
                             <label class="form-label">NIA Total Amount</label>
-                            <input type="number" class="form-control" placeholder="Enter Total Cost">
+                            <input type="number" class="form-control nia-per-irrigation-cost" placeholder="Enter Total Cost">
                         </div>
                     </div>
 
                     <!-- Supplementary Breakdown -->
                     <div class="supplementary-irrigation-details">
+                        <!-- Irrigation fee (NIS/CIS) -->
                         <div class="block">
                             <div class="row g-3 mt-2">
                                 <div class="col-12 d-flex justify-content-between align-items-center">
@@ -96,6 +100,7 @@
                                         <option value="nia">NIA</option>
                                         <option value="supplementary">Supplementary</option>
                                     </select>
+                                    <input type="hidden" name="water_management[1][details][0][activity]" value="Irrigation fee (NIS/CIS)">
                                 </div>
                             </div>
                             <div class="row p-3 mb-3 rounded bg-light">
@@ -103,24 +108,24 @@
                                     <label class="form-label text-muted">Qty</label>
                                     <div class="input-step step-primary full-width d-flex">
                                         <button type="button" class="minus">–</button>
-                                        <input type="number" class="quantity form-control text-center" value="0" min="0" step="1">
+                                        <input type="number" name="water_management[1][details][0][qty]" class="form-control quantity text-center" value="0" min="0" step="1">
                                         <button type="button" class="plus">+</button>
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <label class="form-label text-muted">Unit Cost</label>
-                                    <input type="number" class="form-control unit-cost" placeholder="Unit Cost" />
+                                    <input type="number" name="water_management[1][details][0][unit_cost]" class="form-control unit-cost" placeholder="Unit Cost">
                                 </div>
                                 <div class="col-4">
                                     <label class="form-label text-muted">Total Cost</label>
-                                    <input type="number" class="form-control total-cost" placeholder="Total Cost" disabled />
+                                    <input type="number" name="water_management[1][details][0][total_cost]" class="form-control total-cost" placeholder="Total Cost" disabled>
                                 </div>
                             </div>
                         </div>
 
                         <hr class="text-muted">
 
-                        <!-- Fuel Cost -->
+                        <!-- Fuel cost (STW), liters -->
                         <div class="block">
                             <div class="row g-3">
                                 <div class="col-12 d-flex justify-content-between align-items-center">
@@ -129,6 +134,7 @@
                                         <option value="nia">NIA</option>
                                         <option value="supplementary">Supplementary</option>
                                     </select>
+                                    <input type="hidden" name="water_management[1][details][1][activity]" value="Fuel cost (STW), liters">
                                 </div>
                             </div>
                             <div class="row p-3 mb-3 rounded bg-light">
@@ -136,24 +142,24 @@
                                     <label class="form-label text-muted">Qty</label>
                                     <div class="input-step step-primary full-width d-flex">
                                         <button type="button" class="minus">–</button>
-                                        <input type="number" class="quantity form-control text-center" value="0" min="0" step="1">
+                                        <input type="number" name="water_management[1][details][1][qty]" class="form-control quantity text-center" value="0" min="0" step="1">
                                         <button type="button" class="plus">+</button>
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <label class="form-label text-muted">Unit Cost</label>
-                                    <input type="number" class="form-control unit-cost" placeholder="Unit Cost" />
+                                    <input type="number" name="water_management[1][details][1][unit_cost]" class="form-control unit-cost" placeholder="Unit Cost">
                                 </div>
                                 <div class="col-4">
                                     <label class="form-label text-muted">Total Cost</label>
-                                    <input type="number" class="form-control total-cost" placeholder="Total Cost" disabled />
+                                    <input type="number" name="water_management[1][details][1][total_cost]" class="form-control total-cost" placeholder="Total Cost" disabled>
                                 </div>
                             </div>
                         </div>
 
                         <hr class="text-muted">
 
-                        <!-- Labor -->
+                        <!-- Labor: Irrigation -->
                         <div class="block">
                             <div class="row g-3">
                                 <div class="col-12 d-flex justify-content-between align-items-center">
@@ -162,6 +168,7 @@
                                         <option value="nia">NIA</option>
                                         <option value="supplementary">Supplementary</option>
                                     </select>
+                                    <input type="hidden" name="water_management[1][details][2][activity]" value="Labor: Irrigation">
                                 </div>
                             </div>
                             <div class="row p-3 mb-3 rounded bg-light">
@@ -169,24 +176,24 @@
                                     <label class="form-label text-muted">Qty</label>
                                     <div class="input-step step-primary full-width d-flex">
                                         <button type="button" class="minus">–</button>
-                                        <input type="number" class="quantity form-control text-center" value="0" min="0" step="1">
+                                        <input type="number" name="water_management[1][details][2][qty]" class="form-control quantity text-center" value="0" min="0" step="1">
                                         <button type="button" class="plus">+</button>
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <label class="form-label text-muted">Unit Cost</label>
-                                    <input type="number" class="form-control unit-cost" placeholder="Unit Cost" />
+                                    <input type="number" name="water_management[1][details][2][unit_cost]" class="form-control unit-cost" placeholder="Unit Cost">
                                 </div>
                                 <div class="col-4">
                                     <label class="form-label text-muted">Total Cost</label>
-                                    <input type="number" class="form-control total-cost" placeholder="Total Cost" disabled />
+                                    <input type="number" name="water_management[1][details][2][total_cost]" class="form-control total-cost" placeholder="Total Cost" disabled>
                                 </div>
                             </div>
                         </div>
 
                         <hr class="text-muted">
 
-                        <!-- Meals -->
+                        <!-- Meals and Snacks -->
                         <div class="block">
                             <div class="row g-3">
                                 <div class="col-12 d-flex justify-content-between align-items-center">
@@ -195,6 +202,7 @@
                                         <option value="nia">NIA</option>
                                         <option value="supplementary">Supplementary</option>
                                     </select>
+                                    <input type="hidden" name="water_management[1][details][3][activity]" value="Meals and Snacks">
                                 </div>
                             </div>
                             <div class="row p-3 mb-3 rounded bg-light">
@@ -202,17 +210,17 @@
                                     <label class="form-label text-muted">Qty</label>
                                     <div class="input-step step-primary full-width d-flex">
                                         <button type="button" class="minus">–</button>
-                                        <input type="number" class="quantity form-control text-center" value="0" min="0" step="1">
+                                        <input type="number" name="water_management[1][details][3][qty]" class="form-control quantity text-center" value="0" min="0" step="1">
                                         <button type="button" class="plus">+</button>
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <label class="form-label text-muted">Unit Cost</label>
-                                    <input type="number" class="form-control unit-cost" placeholder="Unit Cost" />
+                                    <input type="number" name="water_management[1][details][3][unit_cost]" class="form-control unit-cost" placeholder="Unit Cost">
                                 </div>
                                 <div class="col-4">
                                     <label class="form-label text-muted">Total Cost</label>
-                                    <input type="number" class="form-control total-cost" placeholder="Total Cost" disabled />
+                                    <input type="number" name="water_management[1][details][3][total_cost]" class="form-control total-cost" placeholder="Total Cost" disabled>
                                 </div>
                             </div>
                         </div>

@@ -106,6 +106,8 @@ function initFertilizerSelector({
     const $container = $(`#${containerId}`);
     let otherCounter = 0;
 
+    console.log(blockPrefix);
+
     const observer = new MutationObserver(() => {
         $selector.trigger(`${blockPrefix}-choices-updated`);
     });
@@ -166,17 +168,31 @@ function initFertilizerSelector({
 
     // Create block
     function createBlock(id, name, isOther) {
+        const safeId = id.replace(/\s+/g, '_'); // Remove spaces for radio safety
+
         const block = `
-            <div class="border rounded p-3 mb-3 ${blockPrefix}-block" data-${blockPrefix}-id="${id}" data-${blockPrefix}-name="${name}">
+            <div class="border rounded p-3 mb-3 ${blockPrefix}-block"
+                data-${blockPrefix}-id="${id}"
+                data-${blockPrefix}-name="${name}">
+
                 <h6 class="${blockPrefix}-label"></h6>
+
                 <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="${blockPrefix}_type_${id}" id="${blockPrefix}_free_${id}" value="free">
-                    <label class="form-check-label" for="${blockPrefix}_free_${id}">Free</label>
+                    <input class="form-check-input" type="radio"
+                        name="${blockPrefix}_type_${safeId}"
+                        id="${blockPrefix}_free_${safeId}"
+                        value="free">
+                    <label class="form-check-label" for="${blockPrefix}_free_${safeId}">Free</label>
                 </div>
+
                 <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="${blockPrefix}_type_${id}" id="${blockPrefix}_purchase_${id}" value="purchase" checked>
-                    <label class="form-check-label" for="${blockPrefix}_purchase_${id}">Purchase</label>
+                    <input class="form-check-input" type="radio"
+                        name="${blockPrefix}_type_${safeId}"
+                        id="${blockPrefix}_purchase_${safeId}"
+                        value="purchase" checked>
+                    <label class="form-check-label" for="${blockPrefix}_purchase_${safeId}">Purchase</label>
                 </div>
+
                 <div class="row mt-2 bg-light p-3 rounded">
                     <div class="col-4">
                         <label class="form-label text-muted">Qty</label>
@@ -188,19 +204,21 @@ function initFertilizerSelector({
                     </div>
                     <div class="col-4">
                         <label class="form-label text-muted">Unit Cost</label>
-                        <input type="number" name="unit_cost_${id}" class="form-control unit-cost" placeholder="Unit Cost">
+                        <input type="number" name="unit_cost_${safeId}" class="form-control unit-cost" placeholder="Unit Cost">
                     </div>
                     <div class="col-4">
                         <label class="form-label text-muted">Total Cost</label>
-                        <input type="number" name="total_cost_${id}" class="form-control total-cost" placeholder="0.00" readonly>
+                        <input type="number" name="total_cost_${safeId}" class="form-control total-cost" placeholder="0.00" readonly>
                     </div>
                 </div>
             </div>
         `;
+
         $container.append(block);
-        bindEvents();
+        bindEvents(); // Rebind after adding
         updateActivityTotals();
     }
+
 
     // Reindex block labels
     function reindexBlocks() {

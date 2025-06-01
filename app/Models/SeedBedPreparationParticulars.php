@@ -10,7 +10,7 @@ class SeedBedPreparationParticulars extends Model
     use HasFactory;
 
     protected $fillable = [
-        'seedbed_preparation_id',
+        'seed_bed_preparation_id',
         'activity',
         'qty',
         'unit_cost',

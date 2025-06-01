@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('seed_bed_fertilization_fertilizers', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('seed_bed_fertilization_id');
-            $table->foreign('seed_bed_fertilization_id', 'fk_sbf_fertilizers_m_fert_id')
+            $table->unsignedBigInteger('seed_bed_fertilizations_id');
+            $table->foreign('seed_bed_fertilizations_id', 'fk_sbf_fertilizers_m_fert_id')
                 ->references('id')
                 ->on('seed_bed_fertilizations')
                 ->onDelete('cascade');

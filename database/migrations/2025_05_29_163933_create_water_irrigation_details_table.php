@@ -11,22 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('seed_bed_fertilization_particulars', function (Blueprint $table) {
+        Schema::create('water_irrigation_details', function (Blueprint $table) {
             $table->id();
-
-            $table->unsignedBigInteger('seed_bed_fertilizations_id');
-            $table->foreign('seed_bed_fertilizations_id', 'fk_sbf_fertilizers_fert_id')
-                ->references('id')
-                ->on('seed_bed_fertilizations')
-                ->onDelete('cascade');
-
-            $table->string('activity');
+            $table->foreignId(column: 'water_irrigation_id')->constrained()->onDelete('cascade');
+            $table->string('activity'); // Fee, Fuel, Labor, Meals
             $table->integer('qty')->nullable();
             $table->decimal('unit_cost', 10, 2)->nullable();
             $table->decimal('total_cost', 10, 2)->nullable();
             $table->timestamps();
         });
-
     }
 
     /**
@@ -34,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('seed_bed_fertilization_particulars');
+        Schema::dropIfExists('water_irrigation_details');
     }
 };

@@ -12,59 +12,97 @@
             let isPackage = false;
 
             const isCropEstablishment = activityKey === 'crop-establishment';
+            const isWaterManagement = activityKey === 'water-management';
+
             const cropMethod = isCropEstablishment ? $('#crop-method').val() : null;
             const establishmentType = isCropEstablishment
                 ? cropMethod === 'DWSR'
                     ? $('select[name="establishment_type"]', '#dwsr-section').val()
                     : $('input[name="tpr_establishment_type"]:checked').val()
                 : null;
-                $('select[name="establishment_type"]', '#dwsr-section').val()
 
+            // ✅ WATER MANAGEMENT logic
+            if (isWaterManagement) {
+                const irrigationType = $('input[name="water-management-type"]:checked').val();
 
-            if (isCropEstablishment) {
-                const cropMethod = $('#crop-method').val();
+                if (irrigationType === 'nia') {
+                    // Just use the main NIA total cost input
+                    const niaTotal = parseFloat($('#nia-total-cost-input').val()) || 0;
+                    activityTotal = niaTotal;
+                } else {
+                    // Supplementary logic
+                    isPackage = $('#water-management-pakyaw').is(':checked');
 
+                    if (isPackage) {
+                        const val = parseFloat($('#water-management-pakyaw-total-cost input').val()) || 0;
+                        activityTotal = val;
+                    } else {
+                        $('#irrigation-blocks-container .irrigation-block').each(function () {
+                            const $block = $(this);
+                            const method = $block.find('input[type="radio"]:checked').val();
+
+                            if (method === 'is_nia_both') {
+                                const val = parseFloat($block.find('.nia-per-irrigation-cost').val()) || 0;
+                                activityTotal += val;
+                            } else {
+                                $block.find('.supplementary-irrigation-details .block').each(function () {
+                                    const val = parseFloat($(this).find('.total-cost').val()) || 0;
+                                    activityTotal += val;
+                                });
+                            }
+                        });
+                    }
+                }
+            }
+
+            // ✅ CROP ESTABLISHMENT logic
+            else if (isCropEstablishment) {
                 if (cropMethod === 'TPR') {
                     isPackage = $('#crop-establishment-pakyaw').is(':checked');
                 }
-                // DWSR has no package mode currently, so skip
-            } else {
+
+                if (isPackage) {
+                    const pakyawInput = $section.find('[id$="-pakyaw-total-cost"] input[type="number"]');
+                    if (pakyawInput.length) {
+                        const val = parseFloat(pakyawInput.val()) || 0;
+                        activityTotal = val;
+                    }
+                } else {
+                    let $blocks = cropMethod === 'DWSR'
+                        ? $section.find('#dwsr-section .block')
+                        : $section.find('#tpr-section .block');
+
+                    $blocks.find('.total-cost').filter(':not(:disabled)').each(function () {
+                        const $block = $(this).closest('.block');
+                        const isManualOnly = $block.is('[data-tpr-block="manual-only"]');
+
+                        if (cropMethod === 'TPR' && establishmentType === 'Mechanical' && isManualOnly) return;
+
+                        const val = parseFloat($(this).val()) || 0;
+                        activityTotal += val;
+                    });
+                }
+            }
+
+            // ✅ DEFAULT (all other activity tabs)
+            else {
                 isPackage = hasPackage && $section.find('[id$="-pakyaw"]').is(':checked');
+
+                if (isPackage) {
+                    const pakyawInput = $section.find('[id$="-pakyaw-total-cost"] input[type="number"]');
+                    if (pakyawInput.length) {
+                        const val = parseFloat(pakyawInput.val()) || 0;
+                        activityTotal = val;
+                    }
+                } else {
+                    $section.find('.block .total-cost').filter(':not(:disabled)').each(function () {
+                        const val = parseFloat($(this).val()) || 0;
+                        activityTotal += val;
+                    });
+                }
             }
 
-            if (isPackage) {
-                const pakyawInput = $section.find('[id$="-pakyaw-total-cost"] input[type="number"]');
-                if (pakyawInput.length) {
-                    const val = parseFloat(pakyawInput.val()) || 0;
-                    activityTotal = val;
-                }
-            } else {
-                // Define scope for crop method
-                let $blocks = $section.find('.block');
-
-                if (isCropEstablishment) {
-                    // Define scope only within active method
-                    if (cropMethod === 'DWSR') {
-                        $blocks = $section.find('#dwsr-section .block');
-                    } else if (cropMethod === 'TPR') {
-                        $blocks = $section.find('#tpr-section .block');
-                    }
-                }
-
-                $blocks.find('.total-cost').filter(':not(:disabled)').each(function () {
-                    const $block = $(this).closest('.block');
-                    const isManualOnly = $block.is('[data-tpr-block="manual-only"]');
-
-                    // Only skip if mechanical and block is manual-only
-                    if (isCropEstablishment && cropMethod === 'TPR' && establishmentType === 'Mechanical' && isManualOnly) {
-                        return;
-                    }
-                    const val = parseFloat($(this).val()) || 0;
-                    activityTotal += val;
-                });
-            }
-
-            // Always include these sections if present
+            // ✅ Always include variety and fertilizer block totals
             $section.find('.variety-block .total-cost, .fertilizer-block .total-cost')
                 .filter(':not(:disabled)')
                 .each(function () {
@@ -72,6 +110,7 @@
                     activityTotal += val;
                 });
 
+            // ✅ Store and render total for each activity
             activityTotals[activityKey] = activityTotal;
 
             $(`#total-${activityKey}`).text(activityTotal.toLocaleString(undefined, {
@@ -80,18 +119,63 @@
             }));
 
             grandTotal += activityTotal;
-            console.log('Updating totals...');
-            console.log('Method:', cropMethod);
-            console.log('Establishment Type:', establishmentType);
-
         });
 
+        // ✅ Final grand total update
         $('#grand-total-expenses').text(grandTotal.toLocaleString(undefined, {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
         }));
-
     }
+    // Reusable update trigger for all key interactions
+    function bindWaterManagementEvents() {
+        // When switching NIA/Supplementary type
+        $(document).on('change', 'input[name="water-management-type"]', function () {
+            const isNia = $(this).val() === 'nia';
+
+            // Toggle visibility
+            $('#water-management-nia-total-cost').toggle(isNia);
+            $('#water-management-regular-fields').toggle(!isNia);
+
+            updateActivityTotals();
+        });
+
+        // When typing in the main NIA total cost input (delegated for dynamic cases)
+        $(document).on('input', '#nia-total-cost-input', function () {
+            updateActivityTotals();
+        });
+
+        // When toggling package checkbox
+        $(document).on('change', '#water-management-pakyaw', function () {
+            updateActivityTotals();
+        });
+
+        // When changing per-irrigation radio (NIA/Supplementary)
+        $(document).on('change', '.irrigation-methods input[type="radio"]', function () {
+            const $block = $(this).closest('.irrigation-block');
+            const selected = $(this).val();
+
+            if (selected === 'is_nia_both') {
+                $block.find('.nia-total-cost-irrigation').show();
+                $block.find('.supplementary-irrigation-details').hide();
+            } else {
+                $block.find('.nia-total-cost-irrigation').hide();
+                $block.find('.supplementary-irrigation-details').show();
+            }
+
+            updateActivityTotals();
+        });
+
+        // When typing in any NIA per-irrigation cost input
+        $(document).on('input', '.nia-per-irrigation-cost', function () {
+            updateActivityTotals();
+        });
+    }
+
+    // Call once on DOM ready
+    $(document).ready(function () {
+        bindWaterManagementEvents();
+    });
 
     $(document).ready(function () {
         // DWSR dynamic input listeners
@@ -113,6 +197,8 @@
         $(document).on('wheel', 'input[type=number]', function (e) {
             $(this).blur(); // remove focus to prevent scroll change
         });
+
+
         updateActivityTotals();
 
         $(document).on('input', '[id$="-pakyaw-total-cost"] input[type="number"]', function () {
@@ -164,10 +250,10 @@
             if (isFree) {
                 $qty.val(0).prop('disabled', false);
                 $unit.val('').prop('disabled', true);
-                $total.val('').prop('disabled', true);
+                $total.val('').prop('disabled', true).trigger('input'); // <-- trigger update
             } else {
                 $unit.prop('disabled', false);
-                $total.prop('disabled', false);
+                $total.val('').prop('disabled', true).trigger('input'); // <-- trigger update
             }
 
             $minus.prop('disabled', false);
@@ -326,6 +412,7 @@
                 }).remove();
 
                 reindexVarietyBlocks();
+                updateActivityTotals();
             }
         });
 
@@ -344,6 +431,7 @@
             });
 
             reindexVarietyBlocks();
+            updateActivityTotals();
         });
 
         // Add from Others input
@@ -553,19 +641,10 @@
         $('#fertilizer-selector').trigger('choices-updated');
     });
 
-    // $(document).ready(function () {
-    //     initFertilizerSelector({
-    //         selectorId: 'fertilizer-application-selector',
-    //         othersInputId: 'others-fertilizer-application',
-    //         containerId: 'fertilizer-application-container',
-    //         blockPrefix: 'fertilizer'
-    //     });
-    // });
-
     let appCounter = 1;
 
     $(document).ready(function () {
-        // Initialize Choices and selectors for the first block
+        // Initialize first static block
         new Choices(document.getElementById('fertilizer-application-selector-1'), {
             removeItemButton: true
         });
@@ -584,12 +663,13 @@
         // Add new application
         $('#add-application-btn').on('click', function (e) {
             e.preventDefault();
-            appCounter++;
+
+            appCounter++; // Always increment to keep unique IDs/names
             const template = $('#fertilizer-application-template').html();
             const newHtml = template.replace(/{index}/g, appCounter);
             const $newBlock = $(newHtml);
 
-            // ✅ FIX: Update name attributes in cloned labor inputs
+            // Update name attributes with new counter
             $newBlock.find('[name]').each(function () {
                 const oldName = $(this).attr('name');
                 if (oldName && oldName.includes('fertilizer_management[')) {
@@ -598,14 +678,11 @@
                 }
             });
 
-            // ✅ Append the block AFTER renaming names
             $('#fertilizer-applications-wrapper').append($newBlock);
             $newBlock.find('.quantity, .unit-cost').trigger('input');
 
-            const suffixes = ['st', 'nd', 'rd'];
-            const suffix = suffixes[appCounter - 1] || 'th';
-            $(`.fertilizer-application-block`).last().find('.application-label')
-                .text(`${appCounter}${suffix} Application`);
+            // Always reindex for correct 1st, 2nd, 3rd label
+            reindexApplicationLabels();
 
             // Init Choices
             new Choices(document.getElementById(`fertilizer-application-selector-${appCounter}`), {
@@ -627,25 +704,25 @@
 
         // Remove application block
         $(document).on('click', '.remove-application-btn', function () {
-            // if ($('.fertilizer-application-block').length === 1) {
-            //     // alert("At least one application is required.");
-            //     return;
-            // }
             $(this).closest('.fertilizer-application-block').remove();
             reindexApplicationLabels();
-
             updateActivityTotals();
         });
     });
 
-    // Helper to reindex application block labels
+    // ✅ Always update visible labels based on DOM order, not appCounter
     function reindexApplicationLabels() {
         const suffixes = ['st', 'nd', 'rd'];
         $('.fertilizer-application-block').each(function (index) {
-            const suffix = suffixes[index] || 'th';
+            let suffix = 'th';
+            if (index === 0) suffix = 'st';
+            else if (index === 1) suffix = 'nd';
+            else if (index === 2) suffix = 'rd';
+
             $(this).find('.application-label').text(`${index + 1}${suffix} Application`);
         });
     }
+
 
     $(document).ready(function () {
         function toggleCropEstablishmentSection() {
@@ -745,6 +822,7 @@
 
         $(document).on('click', '.remove-irrigation', function () {
             $(this).closest('.irrigation-block').remove();
+            updateActivityTotals();
         });
 
         $('.add-irrigation').on('click', function (e) {

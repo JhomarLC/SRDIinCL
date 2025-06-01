@@ -56,6 +56,8 @@
 <div class="row mt-3">
     <div class="col-lg-12">
         <div class="card">
+            {{-- <pre>{{ json_encode($participant_farming_data, JSON_PRETTY_PRINT) }}</pre> --}}
+
             <div class="card-header d-flex align-items-center">
                 <h5 class="card-title mb-0 flex-grow-1">Lists of Farmers Profile</h5>
                 {{-- <a href="{{ route('farmers-profile.create') }}"  class="btn btn-secondary">

@@ -24,8 +24,7 @@
             <!-- Initial Application Block (index = 1) -->
             <div class="card profile-project-card shadow-none profile-project-primary fertilizer-application-block mt-4">
                 <div class="card-body">
-                    <h4>1st Application</h4>
-
+                    <h4 class="application-label">1st Application</h4>
                     <div>
                         <!-- Fertilizer Selection -->
                         <div class="row g-3">

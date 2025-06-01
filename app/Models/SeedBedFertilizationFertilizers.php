@@ -10,7 +10,7 @@ class SeedBedFertilizationFertilizers extends Model
     use HasFactory;
 
     protected $fillable = [
-        'seed_bed_fertilization_id',
+        'seed_bed_fertilizations_id',
         'fertilizer_name',
         'purchase_type',
         'qty',

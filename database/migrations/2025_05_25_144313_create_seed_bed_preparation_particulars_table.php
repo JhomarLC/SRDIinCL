@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('seed_bed_preparation_particulars', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('seedbed_preparation_id')
+            $table->foreignId('seed_bed_preparation_id')
                 ->constrained('seed_bed_preparations')
                 ->onDelete('cascade');
             $table->string('activity'); // Plowing, Harrowing, Seedbed Construction

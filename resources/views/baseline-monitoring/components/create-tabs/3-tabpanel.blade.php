@@ -141,7 +141,7 @@
         </div>
 
         <!-- Navigation Buttons -->
-        <div class="sticky-next-button d-flex align-items-start gap-3 mt-4">
+        <div class="d-flex align-items-start gap-3 mt-4">
             <button type="button" class="btn btn-light btn-label previestab" data-previous="v-pills-dry-season-info-tab">
                 <i class="ri-arrow-left-line label-icon align-middle fs-16 me-2"></i> Previous
             </button>

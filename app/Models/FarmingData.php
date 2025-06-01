@@ -34,4 +34,40 @@ class FarmingData extends Model
     {
         return $this->belongsTo(Participant::class, 'participant_id');
     }
+
+    public function land_preparation()
+    {
+        return $this->hasOne(LandPreparation::class);
+    }
+
+    public function seeds_preparation()
+    {
+        return $this->hasOne(SeedsPreparation::class);
+    }
+
+    public function seedbed_preparation()
+    {
+        return $this->hasOne(SeedBedPreparation::class);
+    }
+
+    public function seedbed_fertilizations()
+    {
+        return $this->hasOne(SeedBedFertilizations::class);
+    }
+
+    public function crop_establishment()
+    {
+        return $this->hasOne(CropEstablishment::class);
+    }
+
+    public function fertilizer_applications()
+    {
+        return $this->hasMany(FertilizerApplication::class);
+    }
+
+    public function water_management()
+    {
+        return $this->hasOne(WaterManagement::class);
+    }
+
 }

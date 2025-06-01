@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('fertilizer_applications', function (Blueprint $table) {
+        Schema::create('water_management', function (Blueprint $table) {
             $table->id();
             $table->foreignId('farming_data_id')->constrained('farming_data')->onDelete('cascade');
-            $table->string('label'); // e.g. "1st Application"
-            $table->string('others')->nullable(); // for "others" field
+            $table->enum('type', ['nia', 'supplementary'])->default('supplementary');
+            $table->boolean('is_package')->default(false);
+            $table->decimal('package_total_cost', 10, 2)->nullable();
+            $table->decimal('nia_total_amount', 10, 2)->nullable();
             $table->timestamps();
         });
     }
@@ -25,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('fertilizer_applications');
+        Schema::dropIfExists('water_management');
     }
 };

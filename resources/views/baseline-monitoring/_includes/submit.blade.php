@@ -183,6 +183,9 @@ $(function () {
         // FERTILIZER MANAGEMENT
         $('#fertilizer-applications-wrapper .fertilizer-application-block').each(function (appIndex) {
             const $block = $(this);
+             // --- Application Label ---
+            const appLabel = $block.find('.application-label').text().trim();
+            fullFormData.append(`fertilizer_management[${appIndex}][label]`, appLabel);
 
             // --- Selected Fertilizers (Multi-select) ---
             const fertilizers = $block.find('select[name="fertilizer-application[]"]').val() || [];
@@ -235,6 +238,55 @@ $(function () {
             fullFormData.append(`fertilizer_management[${appIndex}][meals][total_cost]`, mealsTotal || 0);
         });
 
+        // WATER MANAGEMENT
+        const wmType = $('input[name="water-management-type"]:checked').val(); // 'nia' or 'supplementary'
+        const isWmPakyaw = $('#water-management-pakyaw').is(':checked');
+        const wmIsPackage = wmType === 'supplementary' ? (isWmPakyaw ? 1 : 0) : 0;
+
+        fullFormData.append('water_management_type', wmType);
+        fullFormData.append('water_management_is_package', wmIsPackage);
+
+        if (wmType === 'nia') {
+            const total = parseFloat($('#nia-total-cost-input').val()) || 0;
+            fullFormData.append('water_management_nia_total', total);
+        } else {
+            if (wmIsPackage) {
+                const total = parseFloat($('#water-management-pakyaw-total-cost input').val()) || 0;
+                fullFormData.append('water_management_package_total_cost', total);
+            } else {
+                $('#irrigation-blocks-container .irrigation-block').each(function (index) {
+                    const $block = $(this);
+                    const label = $block.find('.irrigation-title').text().trim();
+                    const method = $block.find('input[type="radio"]:checked').val() === 'is_nia_both' ? 'nia' : 'supplementary';
+                    const irrigationPrefix = `water_irrigations[${index}]`;
+
+                    fullFormData.append(`${irrigationPrefix}[label]`, label);
+                    fullFormData.append(`${irrigationPrefix}[method]`, method);
+
+                    if (method === 'nia') {
+                        const niaTotal = parseFloat($block.find('.nia-per-irrigation-cost').val()) || 0;
+                        fullFormData.append(`${irrigationPrefix}[nia_total]`, niaTotal);
+                    } else {
+                        $block.find('.supplementary-irrigation-details .block').each(function (detailIndex) {
+                            const $detail = $(this);
+                            const activity = $detail.find('input[name$="[activity]"]').val()?.trim();
+                            const qty = parseInt($detail.find('.quantity').val()) || 0;
+                            const unitCost = parseFloat($detail.find('.unit-cost').val()) || 0;
+                            const totalCost = parseFloat(qty * unitCost) || 0;
+
+                            const detailPrefix = `${irrigationPrefix}[details][${detailIndex}]`;
+
+                            fullFormData.append(`${detailPrefix}[activity]`, activity);
+                            fullFormData.append(`${detailPrefix}[qty]`, qty);
+                            fullFormData.append(`${detailPrefix}[unit_cost]`, unitCost);
+                            fullFormData.append(`${detailPrefix}[total_cost]`, totalCost);
+                        });
+                    }
+                });
+            }
+        }
+
+
         // 🔍 Log the contents of the FormData
         console.group("📦 Submitted Form Data");
         for (let [key, value] of fullFormData.entries()) {
@@ -279,7 +331,8 @@ $(function () {
             "seedbed-prep",
             "seedbed-fertilization",
             "crop-establishment",
-            "fertilizer-management"
+            "fertilizer-management",
+            "water-management"
         ];
 
         const formData1 = new FormData();
@@ -522,8 +575,55 @@ $(function () {
                     formData1.append(`fertilizer_management[${appIndex}][meals][unit_cost]`, mealsUnitCost);
                     formData1.append(`fertilizer_management[${appIndex}][meals][total_cost]`, mealsTotal || 0);
                 });
-            }
+            },
+            "water-management": () => {
+                const wmType = $('input[name="water-management-type"]:checked').val(); // 'nia' or 'supplementary'
+                const isWmPakyaw = $('#water-management-pakyaw').is(':checked');
+                const wmIsPackage = wmType === 'supplementary' ? (isWmPakyaw ? 1 : 0) : 0;
 
+                formData1.append('water_management_type', wmType);
+                formData1.append('water_management_is_package', wmIsPackage);
+
+                if (wmType === 'nia') {
+                    const total = parseFloat($('#nia-total-cost-input').val()) || 0;
+                    formData1.append('water_management_nia_total', total);
+                } else {
+                    if (wmIsPackage) {
+                        const total = parseFloat($('#water-management-pakyaw-total-cost input').val()) || 0;
+                        formData1.append('water_management_package_total_cost', total);
+                    } else {
+                        $('#irrigation-blocks-container .irrigation-block').each(function (index) {
+                            const $block = $(this);
+                            const label = $block.find('.irrigation-title').text().trim();
+                            const method = $block.find('input[type="radio"]:checked').val() === 'is_nia_both' ? 'nia' : 'supplementary';
+                            const irrigationPrefix = `water_irrigations[${index}]`;
+
+                            formData1.append(`${irrigationPrefix}[label]`, label);
+                            formData1.append(`${irrigationPrefix}[method]`, method);
+
+                            if (method === 'nia') {
+                                const niaTotal = parseFloat($block.find('.nia-per-irrigation-cost').val()) || 0;
+                                formData1.append(`${irrigationPrefix}[nia_total]`, niaTotal);
+                            } else {
+                                $block.find('.supplementary-irrigation-details .block').each(function (detailIndex) {
+                                    const $detail = $(this);
+                                    const activity = $detail.find('input[name$="[activity]"]').val()?.trim();
+                                    const qty = parseInt($detail.find('.quantity').val()) || 0;
+                                    const unitCost = parseFloat($detail.find('.unit-cost').val()) || 0;
+                                    const totalCost = parseFloat(qty * unitCost) || 0;
+
+                                    const detailPrefix = `${irrigationPrefix}[details][${detailIndex}]`;
+
+                                    formData1.append(`${detailPrefix}[activity]`, activity);
+                                    formData1.append(`${detailPrefix}[qty]`, qty);
+                                    formData1.append(`${detailPrefix}[unit_cost]`, unitCost);
+                                    formData1.append(`${detailPrefix}[total_cost]`, totalCost);
+                                });
+                            }
+                        });
+                    }
+                }
+            }
         };
 
         const validateSteps = async () => {

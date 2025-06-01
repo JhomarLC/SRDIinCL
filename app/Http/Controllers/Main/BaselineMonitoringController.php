@@ -21,6 +21,9 @@ use App\Models\SeedBedPreparationParticulars;
 use App\Models\SeedsPreparation;
 use App\Models\SeedsPreparationParticulars;
 use App\Models\Variety;
+use App\Models\WaterIrrigation;
+use App\Models\WaterIrrigationDetails;
+use App\Models\WaterManagement;
 use DB;
 use Exception;
 use Illuminate\Http\Request;
@@ -75,8 +78,22 @@ class BaselineMonitoringController extends Controller
             'farming_data'
         ])->get();
 
+
+        $participant_farming_data = Participant::with([
+            'farming_data.land_preparation.particulars',
+            'farming_data.seeds_preparation.particulars',
+            'farming_data.seeds_preparation.seedVarieties',
+            'farming_data.seedbed_preparation.particulars',
+            'farming_data.seedbed_fertilizations.particulars',
+            'farming_data.seedbed_fertilizations.fertilizers',
+            'farming_data.crop_establishment.particulars',
+            'farming_data.fertilizer_applications.items',
+            'farming_data.fertilizer_applications.labors',
+            'farming_data.water_management.irrigations.details'
+        ])->get();
+
         // return response()->json($participants);
-        return view('baseline-monitoring.index', compact('participants'));
+        return view('baseline-monitoring.index', compact(['participants', 'participant_farming_data']));
     }
 
     public function getIndex(Request $request)
@@ -190,7 +207,6 @@ class BaselineMonitoringController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-
     public function store(Request $request, $id, $season)
     {
         $validated = $request->validate(
@@ -273,7 +289,7 @@ class BaselineMonitoringController extends Controller
             if (!$validated['seedbed_prep_is_pakyaw']) {
                 foreach ($request->input('seedbed_prep', []) as $activity) {
                     SeedBedPreparationParticulars::create([
-                        'seedbed_preparation_id' => $seedbedPrep->id,
+                        'seed_bed_preparation_id' => $seedbedPrep->id,
                         'activity' => $activity['activity'],
                         'qty' => $activity['qty'] ?? 0,
                         'unit_cost' => $activity['unit_cost'] ?? 0,
@@ -293,7 +309,7 @@ class BaselineMonitoringController extends Controller
             // No pakyaw check – just loop if any input exists
             foreach ($request->input('seedbed_fertilization', []) as $activity) {
                 SeedBedFertilizationParticulars::create([
-                    'seed_bed_fertilization_id' => $seedbedFertilization->id,
+                    'seed_bed_fertilizations_id' => $seedbedFertilization->id,
                     'activity' => $activity['activity'],
                     'qty' => $activity['qty'] ?? 0,
                     'unit_cost' => $activity['unit_cost'] ?? 0,
@@ -304,7 +320,7 @@ class BaselineMonitoringController extends Controller
             // Save seedbed fertilizers
             foreach ($request->input('seedbed_fertilizer', []) as $fertilizer) {
                 SeedBedFertilizationFertilizers::create([
-                    'seed_bed_fertilization_id' => $seedbedFertilization->id,
+                    'seed_bed_fertilizations_id' => $seedbedFertilization->id,
                     'fertilizer_name' => $fertilizer['fertilizer_name'] ?? null,
                     'purchase_type' => $fertilizer['purchase_type'],
                     'qty' => $fertilizer['qty'] ?? 0,
@@ -343,10 +359,9 @@ class BaselineMonitoringController extends Controller
             foreach ($request->input('fertilizer_management', []) as $application) {
                 $fertApp = FertilizerApplication::create([
                     'farming_data_id' => $id,
-                    'application_order' => null, // You may want to track order if needed
+                    'label' => $application['label'],
                     'others' => $application['others'] ?? null,
                 ]);
-
                 // Save fertilizer items
                 foreach ($application['items'] ?? [] as $item) {
                     FertilizerApplicationItem::create([
@@ -382,6 +397,38 @@ class BaselineMonitoringController extends Controller
                 }
             }
 
+            /**
+             * 8. Save Water Management
+             */
+            $waterManagement = WaterManagement::create([
+                'farming_data_id' => $id,
+                'type' => $validated['water_management_type'],
+                'is_package' => $validated['water_management_is_package'] ?? false,
+                'package_total_cost' => $validated['water_management_package_total_cost'] ?? null,
+                'nia_total_amount' => $validated['water_management_nia_total'] ?? null,
+            ]);
+
+            // Save irrigations
+            foreach ($request->input('water_irrigations', []) as $irrigation) {
+                $irrigationModel = WaterIrrigation::create([
+                    'water_management_id' => $waterManagement->id,
+                    'label' => $irrigation['label'] ?? '',
+                    'method' => $irrigation['method'] ?? 'supplementary',
+                    'nia_total' => $irrigation['nia_total'] ?? null,
+                ]);
+
+                foreach ($irrigation['details'] ?? [] as $detail) {
+                    WaterIrrigationDetails::create([
+                        'water_irrigation_id' => $irrigationModel->id,
+                        'activity' => $detail['activity'],
+                        'qty' => $detail['qty'] ?? 0,
+                        'unit_cost' => $detail['unit_cost'] ?? 0,
+                        'total_cost' => $detail['total_cost'] ?? 0,
+                    ]);
+                }
+            }
+
+
             DB::commit();
 
             return response()->json([
@@ -404,17 +451,26 @@ class BaselineMonitoringController extends Controller
      */
     public function show(string $id)
     {
-        $participant = Participant::with([
-            'farming_data'
+        $participant_farming_data = Participant::with([
+            'farming_data.land_preparation.particulars',
+            'farming_data.seeds_preparation.particulars',
+            'farming_data.seeds_preparation.seedVarieties',
+            'farming_data.seedbed_preparation.particulars',
+            'farming_data.seedbed_fertilizations.particulars',
+            'farming_data.seedbed_fertilizations.fertilizers',
+            'farming_data.crop_establishment.particulars',
+            'farming_data.fertilizer_applications.items',
+            'farming_data.fertilizer_applications.labors',
+            'farming_data.water_management.irrigations.details'
         ])->findOrFail($id);
 
-        $drySeasonData = $participant->farming_data->firstWhere('season', 'Dry Season');
-        $wetSeasonData = $participant->farming_data->firstWhere('season', 'Wet Season');
+        $drySeasonData = $participant_farming_data->farming_data->firstWhere('season', 'Dry Season');
+        $wetSeasonData = $participant_farming_data->farming_data->firstWhere('season', 'Wet Season');
 
         return view('baseline-monitoring.show', compact([
-            'participant',
             'drySeasonData',
             'wetSeasonData',
+            'participant_farming_data'
         ]));
     }
 

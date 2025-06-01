@@ -75,6 +75,7 @@ class BaselineValidationRules
                 // Application-level
                 'fertilizer_management.*.fertilizers' => 'nullable|array',
                 'fertilizer_management.*.fertilizers.*' => 'nullable|string|max:255',
+                'fertilizer_management.*.label' => 'nullable|string|max:500',
                 'fertilizer_management.*.others' => 'nullable|string|max:500',
 
                 // Labor - Fertilizer Application
@@ -88,6 +89,29 @@ class BaselineValidationRules
                 'fertilizer_management.*.meals.qty' => 'nullable|integer|min:0',
                 'fertilizer_management.*.meals.unit_cost' => 'nullable|numeric|min:0',
                 'fertilizer_management.*.meals.total_cost' => 'nullable|numeric|min:0',
+            ],
+            'water-management' => [
+                'water_management_type' => 'required|in:nia,supplementary',
+                'water_management_is_package' => 'required|boolean',
+
+                // If NIA, require total amount
+                'water_management_nia_total' => 'required_if:water_management_type,nia|nullable|numeric|min:0',
+
+                // If supplementary & is_package = 1
+                'water_management_package_total_cost' => 'required_if:water_management_is_package,1|nullable|numeric|min:0',
+
+                // Supplementary method → irrigation breakdown
+                'water_irrigations.*.label' => 'required_if:water_management_type,supplementary|string|max:255',
+                'water_irrigations.*.method' => 'required_if:water_management_type,supplementary|in:nia,supplementary',
+
+                // If method is NIA
+                'water_irrigations.*.nia_total' => 'required_if:water_irrigations.*.method,nia|nullable|numeric|min:0',
+
+                // If method is supplementary
+                'water_irrigations.*.details.*.activity' => 'required_if:water_irrigations.*.method,supplementary|string|max:255',
+                'water_irrigations.*.details.*.qty' => 'nullable|integer|min:0',
+                'water_irrigations.*.details.*.unit_cost' => 'nullable|numeric|min:0',
+                'water_irrigations.*.details.*.total_cost' => 'nullable|numeric|min:0',
             ],
 
         ];
@@ -157,6 +181,23 @@ class BaselineValidationRules
             'fertilizer_management.*.meals.qty.integer' => 'Meals quantity must be a number.',
             'fertilizer_management.*.meals.unit_cost.numeric' => 'Meals unit cost must be a valid number.',
             'fertilizer_management.*.meals.total_cost.numeric' => 'Meals total cost must be a valid number.',
+
+            'water_management_type.required' => 'Please select a water management type.',
+            'water_management_type.in' => 'Water management type must be either NIA or Supplementary.',
+            'water_management_is_package.required' => 'Please specify if water management is pakyaw.',
+            'water_management_nia_total.required_if' => 'NIA total cost is required if NIA is selected.',
+            'water_management_package_total_cost.required_if' => 'Package cost is required for pakyaw supplementary water management.',
+
+            'water_irrigations.*.label.required_if' => 'Irrigation label is required when using supplementary method.',
+            'water_irrigations.*.method.required_if' => 'Irrigation method is required for each irrigation entry.',
+            'water_irrigations.*.method.in' => 'Irrigation method must be either NIA or Supplementary.',
+
+            'water_irrigations.*.nia_total.required_if' => 'NIA total cost is required for NIA irrigation.',
+
+            'water_irrigations.*.details.*.activity.required_if' => 'Activity is required for supplementary irrigation.',
+            'water_irrigations.*.details.*.qty.integer' => 'Irrigation quantity must be a number.',
+            'water_irrigations.*.details.*.unit_cost.numeric' => 'Irrigation unit cost must be a valid number.',
+            'water_irrigations.*.details.*.total_cost.numeric' => 'Irrigation total cost must be a valid number.',
         ];
     }
 }
