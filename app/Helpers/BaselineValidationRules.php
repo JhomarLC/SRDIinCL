@@ -116,6 +116,33 @@ class BaselineValidationRules
                 'water_irrigations.*.details.*.total_cost' => 'nullable|numeric|min:0',
             ],
 
+            'pest-management' => [
+                // Application-level
+                'pesticide_management.*.pesticides' => 'nullable|array',
+                'pesticide_management.*.pesticides.*' => 'nullable|string|max:255',
+                'pesticide_management.*.label' => 'required|string|max:255',
+                'pesticide_management.*.others' => 'nullable|string|max:500',
+
+                'pesticide_management.*.brand_names' => 'nullable|array',
+                'pesticide_management.*.brand_names.*' => 'nullable|string|max:255',
+
+                // Labor - Only required if pesticide or any qty/unit_cost is provided
+                'pesticide_management.*.chemical.activity' => 'required_with:pesticide_management.*.chemical.qty,pesticide_management.*.chemical.unit_cost|string|max:255',
+                'pesticide_management.*.chemical.qty' => 'nullable|integer|min:0',
+                'pesticide_management.*.chemical.unit_cost' => 'nullable|numeric|min:0',
+                'pesticide_management.*.chemical.total_cost' => 'nullable|numeric|min:0',
+
+                'pesticide_management.*.weeding.activity' => 'required_with:pesticide_management.*.weeding.qty,pesticide_management.*.weeding.unit_cost|string|max:255',
+                'pesticide_management.*.weeding.qty' => 'nullable|integer|min:0',
+                'pesticide_management.*.weeding.unit_cost' => 'nullable|numeric|min:0',
+                'pesticide_management.*.weeding.total_cost' => 'nullable|numeric|min:0',
+
+                'pesticide_management.*.meals.activity' => 'required_with:pesticide_management.*.meals.qty,pesticide_management.*.meals.unit_cost|string|max:255',
+                'pesticide_management.*.meals.qty' => 'nullable|integer|min:0',
+                'pesticide_management.*.meals.unit_cost' => 'nullable|numeric|min:0',
+                'pesticide_management.*.meals.total_cost' => 'nullable|numeric|min:0',
+            ],
+
         ];
 
         // ✅ Conditionally unset seedbed rules if DWSR
@@ -206,6 +233,12 @@ class BaselineValidationRules
             'water_irrigations.*.details.*.qty.integer' => 'Irrigation quantity must be a number.',
             'water_irrigations.*.details.*.unit_cost.numeric' => 'Irrigation unit cost must be a valid number.',
             'water_irrigations.*.details.*.total_cost.numeric' => 'Irrigation total cost must be a valid number.',
+
+            'pesticide_management.*.brand_names.*.string' => 'Each brand name must be a valid string.',
+            'pesticide_management.*.brand_names.*.max' => 'Brand names may not exceed 255 characters.',
+            'pesticide_management.*.chemical.activity.required_with' => 'Chemical application labor activity is required when quantity or unit cost is provided.',
+            'pesticide_management.*.weeding.activity.required_with' => 'Manual weeding labor activity is required when quantity or unit cost is provided.',
+            'pesticide_management.*.meals.activity.required_with' => 'Meals and snacks labor activity is required when quantity or unit cost is provided.',
         ];
     }
 }

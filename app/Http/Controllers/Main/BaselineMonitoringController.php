@@ -13,6 +13,9 @@ use App\Models\FertilizerApplicationLabor;
 use App\Models\LandPreparation;
 use App\Models\LandPreparationParticulars;
 use App\Models\Participant;
+use App\Models\PesticideApplication;
+use App\Models\PesticideApplicationDetails;
+use App\Models\PesticideBrandName;
 use App\Models\SeedBedFertilizationFertilizers;
 use App\Models\SeedBedFertilizationParticulars;
 use App\Models\SeedBedFertilizations;
@@ -434,6 +437,52 @@ class BaselineMonitoringController extends Controller
                 }
             }
 
+            /**
+             * 9. Save Pesticide Applications
+             */
+            DB::transaction(function () use ($request, $id) {
+                foreach ($request->input('pesticide_management', []) as $application) {
+                    $pestApp = PesticideApplication::create([
+                        'farming_data_id' => $id,
+                        'label' => $application['label'] ?? null,
+                        'others' => $application['others'] ?? null,
+                    ]);
+
+                    // Batch brand names
+                    $brandNameData = [];
+                    foreach ($application['brand_names'] ?? [] as $type => $brandName) {
+                        if ($brandName) {
+                            $brandNameData[] = [
+                                'pesticide_application_id' => $pestApp->id,
+                                'pesticide_type' => $type,
+                                'pesticide_name' => $brandName,
+                                'created_at' => now(),
+                                'updated_at' => now(),
+                            ];
+                        }
+                    }
+                    PesticideBrandName::insert($brandNameData);
+
+                    // Batch labor details
+                    $detailData = [];
+                    foreach (['chemical', 'weeding', 'meals'] as $laborType) {
+                        $labor = $application[$laborType] ?? null;
+                        if ($labor && !empty($labor['activity'])) {
+                            $detailData[] = [
+                                'pesticide_application_id' => $pestApp->id,
+                                'activity' => $labor['activity'],
+                                'qty' => $labor['qty'] ?? 0,
+                                'unit_cost' => $labor['unit_cost'] ?? 0,
+                                'total_cost' => $labor['total_cost'] ?? 0,
+                                'created_at' => now(),
+                                'updated_at' => now(),
+                            ];
+                        }
+                    }
+                    PesticideApplicationDetails::insert($detailData);
+                }
+            });
+
 
             DB::commit();
 
@@ -467,7 +516,9 @@ class BaselineMonitoringController extends Controller
             'farming_data.crop_establishment.particulars',
             'farming_data.fertilizer_applications.items',
             'farming_data.fertilizer_applications.labors',
-            'farming_data.water_management.irrigations.details'
+            'farming_data.water_management.irrigations.details',
+            'farming_data.pesticide_applications.details',
+            'farming_data.pesticide_applications.brandNames',
         ])->findOrFail($id);
 
         $drySeasonData = $participant_farming_data->farming_data->firstWhere('season', 'Dry Season');

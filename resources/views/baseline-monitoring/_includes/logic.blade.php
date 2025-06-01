@@ -723,7 +723,6 @@
         });
     }
 
-
     $(document).ready(function () {
         function toggleCropEstablishmentSection() {
             const method = $('input[name="method_crop_establishment"]:checked').val();
@@ -924,22 +923,33 @@
             selectorId: 'pesticide-application-selector-1',
             othersInputId: 'others-pesticide-application-1',
             containerId: 'pesticide-application-container-1',
-            blockPrefix: 'pesticide'
+            blockPrefix: 'pesticide',
+            appIndex: 0
         });
 
         // Add Application
         $('#add-pesticide-application-btn').on('click', function (e) {
             e.preventDefault();
+
             pestAppCounter++;
-            const suffixes = ['st', 'nd', 'rd'];
-            const suffix = suffixes[pestAppCounter - 1] || 'th';
 
             const template = $('#pesticide-application-template').html();
             const newHtml = template.replace(/{index}/g, pestAppCounter);
-            $('#pesticide-applications-wrapper').append(newHtml);
+            const $newBlock = $(newHtml);
 
-            $('.pesticide-application-block').last().find('.application-label')
-                .text(`${pestAppCounter}${suffix} Application`);
+            // Update name attributes with new counter
+            $newBlock.find('[name]').each(function () {
+                const oldName = $(this).attr('name');
+                if (oldName && oldName.includes('pest_management[')) {
+                    const newName = oldName.replace(/pest_management\[\d+\]/, `pest_management[${appCounter}]`);
+                    $(this).attr('name', newName);
+                }
+            });
+
+            $('#pesticide-applications-wrapper').append($newBlock);
+            $newBlock.find('.quantity, .unit-cost').trigger('input');
+
+            reindexPesticideApplicationLabels();
 
             new Choices(document.getElementById(`pesticide-application-selector-${pestAppCounter}`), {
                 removeItemButton: true
@@ -953,26 +963,27 @@
                 selectorId: `pesticide-application-selector-${pestAppCounter}`,
                 othersInputId: `others-pesticide-application-${pestAppCounter}`,
                 containerId: `pesticide-application-container-${pestAppCounter}`,
-                blockPrefix: 'pesticide'
+                blockPrefix: 'pesticide',
+                appIndex: pestAppCounter - 1
             });
         });
 
         // Remove Application
         $(document).on('click', '.remove-application-btn', function () {
-            // if ($('.pesticide-application-block').length === 1) {
-            //     alert("At least one application is required.");
-            //     return;
-            // }
-
             $(this).closest('.pesticide-application-block').remove();
             reindexPesticideApplicationLabels();
+            updateActivityTotals();
         });
     });
 
     function reindexPesticideApplicationLabels() {
         const suffixes = ['st', 'nd', 'rd'];
         $('.pesticide-application-block').each(function (index) {
-            const suffix = suffixes[index] || 'th';
+            let suffix = 'th';
+            if (index === 0) suffix = 'st';
+            else if (index === 1) suffix = 'nd';
+            else if (index === 2) suffix = 'rd';
+
             $(this).find('.application-label').text(`${index + 1}${suffix} Application`);
         });
     }

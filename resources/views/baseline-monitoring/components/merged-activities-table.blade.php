@@ -84,8 +84,12 @@
     }
 
     if (
-        $data['water_management']['type'] === 'nia' || empty($data['water_management']['irrigations'] ?? [])
-    ) {
+        isset($data['water_management']) &&
+        (
+            ($data['water_management']['type'] ?? null) === 'nia' ||
+            empty($data['water_management']['irrigations'] ?? [])
+        )
+    ){
         // 👉 Show single package row
         $addRow(
             $mergedRows,
@@ -98,6 +102,20 @@
             'nia'
         );
     } else {
+         // 👉 Pakyaw supplementary
+        if (($data['water_management']['is_package'] ?? false) && is_numeric($data['water_management']['package_total_cost'] ?? null)) {
+            $addRow(
+                $mergedRows,
+                'Water Management (Supplementary Package)',
+                'Supplementary Total Cost',
+                '-',
+                '-',
+                $data['water_management']['package_total_cost'],
+                '',
+                'supplementary'
+            );
+        }
+
         // 👉 Show irrigations normally
         foreach ($data['water_management']['irrigations'] ?? [] as $irrigation) {
             $label = 'Water - ' . $irrigation['label'];
@@ -110,6 +128,43 @@
             }
         }
     }
+
+    // Handle both single and array formats of pesticide applications
+    $pestAppsRaw = $data['pesticide_applications'] ?? $data['pesticide_application'] ?? [];
+    $pestApps = [];
+
+    if (is_array($pestAppsRaw)) {
+        // If it's already an array of apps
+        $pestApps = array_is_list($pestAppsRaw) ? $pestAppsRaw : [$pestAppsRaw];
+    } else {
+        // If it’s a single object, wrap it
+        $pestApps = [$pestAppsRaw];
+    }
+
+    foreach ($pestApps as $app) {
+        $labelSuffix = isset($app['label']) ? ' - ' . $app['label'] : '';
+        $activityLabel = 'Pesticide' . $labelSuffix;
+
+        foreach ($app['brand_names'] ?? [] as $brand) {
+            $type = $brand['pesticide_type'] ?? 'Unknown';
+            $name = $brand['pesticide_name'] ?? 'Unnamed';
+            $particular = "$type: $name";
+            $addRow($mergedRows, $activityLabel, $particular, '-', '-', '-');
+        }
+
+        foreach ($app['details'] ?? [] as $detail) {
+            $addRow(
+                $mergedRows,
+                $activityLabel,
+                $detail['activity'],
+                $detail['qty'],
+                $detail['unit_cost'],
+                $detail['total_cost']
+            );
+        }
+    }
+
+
 
 @endphp
 

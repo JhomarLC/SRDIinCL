@@ -70,4 +70,8 @@ class FarmingData extends Model
         return $this->hasOne(WaterManagement::class);
     }
 
+    public function pesticide_applications()
+    {
+        return $this->hasOne(PesticideApplication::class);
+    }
 }

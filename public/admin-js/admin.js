@@ -262,7 +262,7 @@ function initFertilizerSelector({
 }
 
 // Init Selector Logic
-function initPesticideSelector({ selectorId, othersInputId, containerId, blockPrefix = 'pesticide' }) {
+function initPesticideSelector({ selectorId, othersInputId, containerId, blockPrefix = 'pesticide', appIndex = 0  }) {
     const $selector = $(`#${selectorId}`);
     const $othersInput = $(`#${othersInputId}`);
     const $container = $(`#${containerId}`);
@@ -319,7 +319,7 @@ function initPesticideSelector({ selectorId, othersInputId, containerId, blockPr
         const block = `
             <div class="${blockPrefix}-block border rounded p-3 mb-3" data-${blockPrefix}-id="${id}" data-${blockPrefix}-name="${name}">
                 <label class="form-label"><strong>${name}</strong>: Input Brand Name</label>
-                <input type="text" name="brand_name_${id}" class="form-control" placeholder="Enter Brand Name">
+                <input type="text" class="form-control brand-name" name="pesticide_management[${appIndex}][brand_names][${id}]" class="form-control" placeholder="Enter Brand Name">
             </div>
         `;
         $container.append(block);

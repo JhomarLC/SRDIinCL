@@ -288,6 +288,75 @@ $(function () {
             }
         }
 
+        $('#pesticide-applications-wrapper .pesticide-application-block').each(function (appIndex) {
+            const $block = $(this);
+
+            // Skip block if it's totally empty (no pesticide selected and no labor entered)
+            const hasPesticide = ($block.find(`select[name^="pesticide_application["]`).val() || []).length > 0;
+            const hasLaborQty = $block.find('.quantity').filter(function () {
+                return parseFloat($(this).val()) > 0;
+            }).length > 0;
+
+            if (!hasPesticide && !hasLaborQty) {
+                return; // skip this block
+            }
+
+            // Proceed to append this pesticide application
+            const appLabel = $block.find('.application-label').text().trim();
+            fullFormData.append(`pesticide_management[${appIndex}][label]`, appLabel);
+
+            const pesticides = $block.find(`select[name^="pesticide_application["]`).val() || [];
+            pesticides.forEach((val, idx) => {
+                fullFormData.append(`pesticide_management[${appIndex}][pesticides][${idx}]`, val);
+            });
+
+            const others = $block.find(`input[name^="others-pesticide-application["]`).val()?.trim();
+            if (others) {
+                fullFormData.append(`pesticide_management[${appIndex}][others]`, others);
+            }
+
+            $block.find('.brand-name').each(function () {
+                const nameAttr = $(this).attr("name");
+                const brandName = $(this).val()?.trim();
+                if (nameAttr && brandName) {
+                    fullFormData.append(nameAttr, brandName);
+                }
+            });
+
+            // --- Labor: Chemical Application ---
+            const $chemicalBlock = $block.find('input[name$="[activity]"][value="Labor: Chemical Application"]').closest('.block');
+            const chemQty = parseFloat($chemicalBlock.find('.quantity').val()) || 0;
+            const chemUnitCost = parseFloat($chemicalBlock.find('.unit-cost').val()) || 0;
+            const chemTotal = chemQty * chemUnitCost;
+
+            fullFormData.append(`pesticide_management[${appIndex}][chemical][activity]`, "Labor: Chemical Application");
+            fullFormData.append(`pesticide_management[${appIndex}][chemical][qty]`, chemQty);
+            fullFormData.append(`pesticide_management[${appIndex}][chemical][unit_cost]`, chemUnitCost);
+            fullFormData.append(`pesticide_management[${appIndex}][chemical][total_cost]`, chemTotal || 0);
+
+            // --- Labor: Manual Weeding ---
+            const $weedingBlock = $block.find('input[name$="[activity]"][value="Labor: Manual Weeding"]').closest('.block');
+            const weedQty = parseFloat($weedingBlock.find('.quantity').val()) || 0;
+            const weedUnitCost = parseFloat($weedingBlock.find('.unit-cost').val()) || 0;
+            const weedTotal = weedQty * weedUnitCost;
+
+            fullFormData.append(`pesticide_management[${appIndex}][weeding][activity]`, "Labor: Manual Weeding");
+            fullFormData.append(`pesticide_management[${appIndex}][weeding][qty]`, weedQty);
+            fullFormData.append(`pesticide_management[${appIndex}][weeding][unit_cost]`, weedUnitCost);
+            fullFormData.append(`pesticide_management[${appIndex}][weeding][total_cost]`, weedTotal || 0);
+
+            // --- Labor: Meals and Snacks ---
+            const $mealsBlock = $block.find('input[name$="[activity]"][value="Meals and Snacks"]').closest('.block');
+            const mealsQty = parseFloat($mealsBlock.find('.quantity').val()) || 0;
+            const mealsUnitCost = parseFloat($mealsBlock.find('.unit-cost').val()) || 0;
+            const mealsTotal = mealsQty * mealsUnitCost;
+
+            fullFormData.append(`pesticide_management[${appIndex}][meals][activity]`, "Meals and Snacks");
+            fullFormData.append(`pesticide_management[${appIndex}][meals][qty]`, mealsQty);
+            fullFormData.append(`pesticide_management[${appIndex}][meals][unit_cost]`, mealsUnitCost);
+            fullFormData.append(`pesticide_management[${appIndex}][meals][total_cost]`, mealsTotal || 0);
+        });
+
         // 🔍 Log the contents of the FormData
         console.group("📦 Submitted Form Data");
         for (let [key, value] of fullFormData.entries()) {
@@ -298,28 +367,28 @@ $(function () {
             $farmingData = $participant->farming_data->where('season', $normalizedSeason)->first();
         @endphp
         // // Submit
-        // $.ajax({
-        //     url: "{{ route('baseline-monitoring.store', [$farmingData->id, $farmingData->season]) }}",
-        //     type: "POST",
-        //     headers: {
-        //         "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
-        //     },
-        //     data: fullFormData,
-        //     processData: false,
-        //     contentType: false,
-        //     success: function (response) {
-        //         showAlertModal("success", response.message);
-        //         setTimeout(() => window.location.href = "/baseline-monitoring/" + {{ $participant->id }}, 1500);
-        //     },
-        //     error: function (xhr) {
-        //         hideLoader();
-        //         console.error("❌ Submission Error", xhr);
-        //         showAlertModal("error", "Something went wrong during submission.");
-        //     },
-        //     complete: function () {
-        //         hideLoader();
-        //     }
-        // });
+        $.ajax({
+            url: "{{ route('baseline-monitoring.store', [$farmingData->id, $farmingData->season]) }}",
+            type: "POST",
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+            },
+            data: fullFormData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                showAlertModal("success", response.message);
+                setTimeout(() => window.location.href = "/baseline-monitoring/" + {{ $participant->id }}, 1500);
+            },
+            error: function (xhr) {
+                hideLoader();
+                console.error("❌ Submission Error", xhr);
+                showAlertModal("error", "Something went wrong during submission.");
+            },
+            complete: function () {
+                hideLoader();
+            }
+        });
     };
 
     $("#submitBaseline").on("click", function (e) {
@@ -333,7 +402,8 @@ $(function () {
             "seedbed-fertilization",
             "crop-establishment",
             "fertilizer-management",
-            "water-management"
+            "water-management",
+            "pest-management"
         ];
 
         const formData1 = new FormData();
@@ -629,7 +699,72 @@ $(function () {
                         });
                     }
                 }
+            },
+            "pest-management": () => {
+                $('#pesticide-applications-wrapper .pesticide-application-block').each(function (appIndex) {
+                    const $block = $(this);
+
+                    // Detect non-empty block
+                    const pesticides = $block.find(`select[name^="pesticide_application["]`).val() || [];
+                    const hasPesticide = pesticides.length > 0;
+                    const hasLaborQty = $block.find('.quantity').filter(function () {
+                        return parseFloat($(this).val()) > 0;
+                    }).length > 0;
+
+                    if (!hasPesticide && !hasLaborQty) {
+                        return; // ❌ skip this application
+                    }
+
+                    // ✅ Append Label
+                    const appLabel = $block.find('.application-label').text().trim();
+                    formData1.append(`pesticide_management[${appIndex}][label]`, appLabel);
+
+                    // ✅ Append Pesticides
+                    pesticides.forEach((val, idx) => {
+                        formData1.append(`pesticide_management[${appIndex}][pesticides][${idx}]`, val);
+                    });
+
+                    // ✅ Append Others
+                    const others = $block.find(`input[name^="others-pesticide-application["]`).val()?.trim();
+                    if (others) {
+                        formData1.append(`pesticide_management[${appIndex}][others]`, others);
+                    }
+
+                    // ✅ Append Brand Names
+                    $block.find('.brand-name').each(function () {
+                        const nameAttr = $(this).attr("name"); // ex. pesticide_management[0][brand_names][Insecticide]
+                        const brandName = $(this).val()?.trim();
+                        if (!nameAttr || !brandName) return;
+
+                        const match = nameAttr.match(/pesticide_management\[(\d+)\]\[brand_names\]\[([^\]]+)\]/);
+                        if (match) {
+                            const idx = match[1];
+                            const type = match[2];
+                            formData1.append(`pesticide_management[${appIndex}][brand_names][${type}]`, brandName);
+                        }
+                    });
+
+                    // ✅ Append Labor Items
+                    const laborTypes = [
+                        { key: 'chemical', label: 'Labor: Chemical Application' },
+                        { key: 'weeding', label: 'Labor: Manual Weeding' },
+                        { key: 'meals', label: 'Meals and Snacks' },
+                    ];
+
+                    laborTypes.forEach(({ key, label }) => {
+                        const $labBlock = $block.find(`input[value="${label}"]`).closest('.block')
+                        const qty = parseFloat($labBlock.find('.quantity').val()) || 0;
+                        const unitCost = parseFloat($labBlock.find('.unit-cost').val()) || 0;
+                        const totalCost = qty * unitCost;
+
+                        formData1.append(`pesticide_management[${appIndex}][${key}][activity]`, label);
+                        formData1.append(`pesticide_management[${appIndex}][${key}][qty]`, qty);
+                        formData1.append(`pesticide_management[${appIndex}][${key}][unit_cost]`, unitCost);
+                        formData1.append(`pesticide_management[${appIndex}][${key}][total_cost]`, totalCost);
+                    });
+                });
             }
+
         };
 
         const validateSteps = async () => {
