@@ -394,6 +394,28 @@ $(function () {
             }
         }
 
+        const haulingBags = $('input[name="other_expenses[hauling][bags]"]').val() || 0;
+        const haulingUnitCost = $('input[name="other_expenses[hauling][unit_cost]"]').val() || 0;
+        const haulingTotal = haulingBags * haulingUnitCost;
+
+        fullFormData.append("other_expenses[hauling][bags]", haulingBags);
+        fullFormData.append("other_expenses[hauling][unit_cost]", haulingUnitCost);
+        fullFormData.append("other_expenses[hauling][total_cost]", haulingTotal);
+
+        const permBags = $('input[name="other_expenses[permanent_labor][bags]"]').val() || 0;
+        const permBagWeight = $('input[name="other_expenses[permanent_labor][avg_bag_weight]"]').val() || 0;
+        const permPricePerKg = $('input[name="other_expenses[permanent_labor][price_per_kg]"]').val() || 0;
+        const permPercent = $('input[name="other_expenses[permanent_labor][percent_share]"]').val() || 0;
+        const permTotal = permBags * permBagWeight * permPricePerKg * (permPercent / 100);
+
+        fullFormData.append("other_expenses[permanent_labor][bags]", permBags);
+        fullFormData.append("other_expenses[permanent_labor][avg_bag_weight]", permBagWeight);
+        fullFormData.append("other_expenses[permanent_labor][price_per_kg]", permPricePerKg);
+        fullFormData.append("other_expenses[permanent_labor][percent_share]", permPercent);
+        fullFormData.append("other_expenses[permanent_labor][total_cost]", permTotal);
+
+        const amilyarTotal = $('input[name="other_expenses[amilyar][total_cost]"]').val() || 0;
+        fullFormData.append("other_expenses[amilyar][total_cost]", amilyarTotal);
 
         // 🔍 Log the contents of the FormData
         console.group("📦 Submitted Form Data");
@@ -442,7 +464,8 @@ $(function () {
             "fertilizer-management",
             "water-management",
             "pest-management",
-            "harvest-management"
+            "harvest-management",
+            "other-expenses"
         ];
 
         const formData1 = new FormData();
@@ -839,6 +862,31 @@ $(function () {
                         });
                     }
                 }
+            },
+            "other-expenses": () => {
+                const haulingBags = $('input[name="other_expenses[hauling][bags]"]').val() || 0;
+                const haulingUnitCost = $('input[name="other_expenses[hauling][unit_cost]"]').val() || 0;
+                const haulingTotal = haulingBags * haulingUnitCost;
+
+                formData1.append("other_expenses[hauling][bags]", haulingBags);
+                formData1.append("other_expenses[hauling][unit_cost]", haulingUnitCost);
+                formData1.append("other_expenses[hauling][total_cost]", haulingTotal);
+
+                const permBags = $('input[name="other_expenses[permanent_labor][bags]"]').val() || 0;
+                const permBagWeight = $('input[name="other_expenses[permanent_labor][avg_bag_weight]"]').val() || 0;
+                const permPricePerKg = $('input[name="other_expenses[permanent_labor][price_per_kg]"]').val() || 0;
+                const permPercent = $('input[name="other_expenses[permanent_labor][percent_share]"]').val() || 0;
+
+                const permTotal = permBags * permBagWeight * permPricePerKg * (permPercent / 100);
+
+                formData1.append("other_expenses[permanent_labor][bags]", permBags);
+                formData1.append("other_expenses[permanent_labor][avg_bag_weight]", permBagWeight);
+                formData1.append("other_expenses[permanent_labor][price_per_kg]", permPricePerKg);
+                formData1.append("other_expenses[permanent_labor][percent_share]", permPercent);
+                formData1.append("other_expenses[permanent_labor][total_cost]", permTotal);
+
+                const amilyarTotal = $('input[name="other_expenses[amilyar][total_cost]"]').val() || 0;
+                formData1.append("other_expenses[amilyar][total_cost]", amilyarTotal);
             }
         };
 

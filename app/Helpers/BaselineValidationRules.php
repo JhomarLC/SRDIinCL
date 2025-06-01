@@ -160,6 +160,19 @@ class BaselineValidationRules
                 'harvest_manual_items.*.unit_cost' => 'required_if:harvest_manual.is_package,0|nullable|numeric|min:0',
                 'harvest_manual_items.*.total_cost' => 'required_if:harvest_manual.is_package,0|nullable|numeric|min:0',
             ],
+            'other-expenses' => [
+                'other_expenses.hauling.bags' => 'nullable|integer|min:0',
+                'other_expenses.hauling.unit_cost' => 'nullable|numeric|min:0',
+                'other_expenses.hauling.total_cost' => 'nullable|numeric|min:0',
+
+                'other_expenses.permanent_labor.bags' => 'nullable|integer|min:0',
+                'other_expenses.permanent_labor.avg_bag_weight' => 'nullable|numeric|min:0',
+                'other_expenses.permanent_labor.price_per_kg' => 'nullable|numeric|min:0',
+                'other_expenses.permanent_labor.percent_share' => 'nullable|numeric|min:0',
+                'other_expenses.permanent_labor.total_cost' => 'nullable|numeric|min:0',
+
+                'other_expenses.amilyar.total_cost' => 'nullable|numeric|min:0',
+            ],
         ];
 
         // ✅ Conditionally unset seedbed rules if DWSR
@@ -274,6 +287,18 @@ class BaselineValidationRules
             'harvest_manual_items.*.unit_cost.required_if' => 'Unit cost is required for manual harvesting (non-package).',
             'harvest_manual_items.*.total_cost.required_if' => 'Total cost is required for manual harvesting (non-package).',
 
+            // Other Expenses
+            'other_expenses.hauling.bags.integer' => 'Hauling bags must be a whole number.',
+            'other_expenses.hauling.unit_cost.numeric' => 'Hauling unit cost must be a valid number.',
+            'other_expenses.hauling.total_cost.numeric' => 'Hauling total cost must be a valid number.',
+
+            'other_expenses.permanent_labor.bags.integer' => 'Permanent labor bags must be a whole number.',
+            'other_expenses.permanent_labor.avg_bag_weight.numeric' => 'Average bag weight must be a valid number.',
+            'other_expenses.permanent_labor.price_per_kg.numeric' => 'Price per kilo must be a valid number.',
+            'other_expenses.permanent_labor.percent_share.numeric' => 'Percent share must be a valid number.',
+            'other_expenses.permanent_labor.total_cost.numeric' => 'Permanent labor total cost must be a valid number.',
+
+            'other_expenses.amilyar.total_cost.numeric' => 'Land ownership fee must be a valid number.',
         ];
     }
 }

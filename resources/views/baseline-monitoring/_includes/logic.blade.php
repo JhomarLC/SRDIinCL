@@ -104,6 +104,16 @@
                     }
                 }
             }
+            else if (activityKey === 'other-expenses') {
+                const hauling = $section.find('input[name="other_expenses[hauling][total_cost]"]').val();
+                const permanent = $section.find('input[name="other_expenses[permanent_labor][total_cost]"]').val();
+                const amilyar = $section.find('input[name="other_expenses[amilyar][total_cost]"]').val();
+
+                activityTotal += parseFloat(hauling) || 0;
+                activityTotal += parseFloat(permanent) || 0;
+                activityTotal += parseFloat(amilyar) || 0;
+            }
+
             // ✅ DEFAULT (all other activity tabs)
             else {
                 isPackage = hasPackage && $section.find('[id$="-pakyaw"]').is(':checked');
@@ -1106,29 +1116,44 @@
     });
 
     $(document).ready(function () {
+
+        // Recalculate when typing in Other Expenses fields
+        $(document).on('input', '[name^="other_expenses"]', function () {
+            updateActivityTotals();
+        });
+
+        // Auto-calculate total cost for Other Expenses (e.g., Hauling)
+        $(document).on('input', '[name="other_expenses[hauling][bags]"], [name="other_expenses[hauling][unit_cost]"]', function () {
+            const $row = $(this).closest('.row');
+            const qty = parseFloat($('[name="other_expenses[hauling][bags]"]').val()) || 0;
+            const unit = parseFloat($('[name="other_expenses[hauling][unit_cost]"]').val()) || 0;
+            const total = qty * unit;
+            $('[name="other_expenses[hauling][total_cost]"]').val(total.toFixed(2));
+            updateActivityTotals();
+        });
+
         function computePermanentLaborCost() {
-            const $block = $('#permanent-block:has(.percent-share)');
-            const bags = parseFloat($block.find('.bags').val()) || 0;
-            const avgWeight = parseFloat($block.find('.avg-bag-weight').val()) || 0;
-            const pricePerKilo = parseFloat($block.find('.price-per-kg').val()) || 0;
-            const percent = parseFloat($block.find('.percent-share').val()) || 0;
+            const bags = parseFloat($('[name="other_expenses[permanent_labor][bags]"]').val()) || 0;
+            const weight = parseFloat($('[name="other_expenses[permanent_labor][avg_bag_weight]"]').val()) || 0;
+            const price = parseFloat($('[name="other_expenses[permanent_labor][price_per_kg]"]').val()) || 0;
+            const percent = parseFloat($('[name="other_expenses[permanent_labor][percent_share]"]').val()) || 0;
 
-            const shareFraction = percent / 100;
-            const total = bags * shareFraction * avgWeight * pricePerKilo;
+            const total = bags * weight * price * (percent / 100);
+            $('[name="other_expenses[permanent_labor][total_cost]"]').val(total.toFixed(2));
 
-            $block.find('.total-permanent-cost').val(total.toFixed(2));
+            updateActivityTotals();
         }
 
-        // Input triggers
-        $('#permanent-block').on('input', '.bags, .avg-bag-weight, .price-per-kg, .percent-share', computePermanentLaborCost);
+        $(document).on('input',
+            '[name="other_expenses[permanent_labor][bags]"], ' +
+            '[name="other_expenses[permanent_labor][avg_bag_weight]"], ' +
+            '[name="other_expenses[permanent_labor][price_per_kg]"], ' +
+            '[name="other_expenses[permanent_labor][percent_share]"]',
+            computePermanentLaborCost
+        );
 
         // Initial calculation on load
         computePermanentLaborCost();
     });
 
-
-// $(document).ready(function () {
-//     updateHarvestView(); // initial
-//     $('.harvesting-type').on('change', updateHarvestView);
-// });
 </script>

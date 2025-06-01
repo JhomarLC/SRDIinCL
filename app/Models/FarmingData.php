@@ -79,4 +79,9 @@ class FarmingData extends Model
     {
         return $this->hasOne(HarvestManagement::class);
     }
+
+    public function other_expenses()
+    {
+        return $this->hasOne(OtherExpenses::class);
+    }
 }

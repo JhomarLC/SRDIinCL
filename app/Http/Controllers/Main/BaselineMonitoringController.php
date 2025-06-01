@@ -16,6 +16,7 @@ use App\Models\HarvestManualItems;
 use App\Models\HarvestMechanicalDetails;
 use App\Models\LandPreparation;
 use App\Models\LandPreparationParticulars;
+use App\Models\OtherExpenses;
 use App\Models\Participant;
 use App\Models\PesticideApplication;
 use App\Models\PesticideApplicationDetails;
@@ -529,6 +530,43 @@ class BaselineMonitoringController extends Controller
                 }
             }
 
+            /**
+             * 11. Save Other Expenses — only if any field is provided
+             */
+            $hasOtherExpenseInput = collect([
+                $request->input('other_expenses.hauling.bags'),
+                $request->input('other_expenses.hauling.unit_cost'),
+                $request->input('other_expenses.hauling.total_cost'),
+                $request->input('other_expenses.permanent_labor.bags'),
+                $request->input('other_expenses.permanent_labor.avg_bag_weight'),
+                $request->input('other_expenses.permanent_labor.price_per_kg'),
+                $request->input('other_expenses.permanent_labor.percent_share'),
+                $request->input('other_expenses.permanent_labor.total_cost'),
+                $request->input('other_expenses.amilyar.total_cost'),
+            ])->filter(function ($val) {
+                return $val !== null;
+            })->isNotEmpty();
+
+            if ($hasOtherExpenseInput) {
+                OtherExpenses::create([
+                    'farming_data_id' => $id,
+
+                    // Hauling
+                    'hauling_qty' => $request->input('other_expenses.hauling.bags') ?? null,
+                    'hauling_unit_cost' => $request->input('other_expenses.hauling.unit_cost') ?? null,
+                    'hauling_total_cost' => $request->input('other_expenses.hauling.total_cost') ?? null,
+
+                    // Permanent Hired Labor
+                    'hired_bags' => $request->input('other_expenses.permanent_labor.bags') ?? null,
+                    'hired_avg_bag_weight' => $request->input('other_expenses.permanent_labor.avg_bag_weight') ?? null,
+                    'hired_price_per_kg' => $request->input('other_expenses.permanent_labor.price_per_kg') ?? null,
+                    'hired_percent_share' => $request->input('other_expenses.permanent_labor.percent_share') ?? null,
+                    'hired_total_cost' => $request->input('other_expenses.permanent_labor.total_cost') ?? null,
+
+                    // Amilyar
+                    'land_ownership_fee' => $request->input('other_expenses.amilyar.total_cost') ?? null,
+                ]);
+            }
 
             DB::commit();
 
@@ -567,6 +605,7 @@ class BaselineMonitoringController extends Controller
             'farming_data.pesticide_applications.brandNames',
             'farming_data.harvest_management.mechanical',
             'farming_data.harvest_management.manual.items',
+            'farming_data.other_expenses',
         ])->findOrFail($id);
 
         $drySeasonData = $participant_farming_data->farming_data->firstWhere('season', 'Dry Season');

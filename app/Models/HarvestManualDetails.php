@@ -22,6 +22,6 @@ class HarvestManualDetails extends Model
 
     public function items()
     {
-        return $this->hasMany(HarvestManualItems::class);
+        return $this->hasMany(HarvestManualItems::class, 'harvest_manual_detail_id');
     }
 }
