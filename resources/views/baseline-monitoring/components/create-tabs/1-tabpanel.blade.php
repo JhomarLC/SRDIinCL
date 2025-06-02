@@ -9,6 +9,13 @@
     @php
         // Normalize season value from 'dry-season' to 'Dry Season'
         $normalizedSeason = ucwords(str_replace('-', ' ', $season));
+        // Assign value based on season
+        $mc_value = 0;
+        if ($season === 'dry-season') {
+            $mc_value = 18;
+        } elseif ($season === 'wet-season') {
+            $mc_value = 20;
+        }
         $seasonData = $filteredFarmingData->first();
     @endphp
     <div class="mt-3">
@@ -52,21 +59,20 @@
     </div>
     <div class="mt-3">
         <div class="row g-3">
-
             <div class="col-sm-4">
-                <label for="number_of_bags" class="form-label">Number of Bags</label>
-                <input type="text" class="form-control" id="number_of_bags" name="number_of_bags" value="50"
+                <label for="total_yield_caban" class="form-label">Number of Bags</label>
+                <input type="text" class="form-control" id="total_yield_caban" name="total_yield_caban" value="{{ old('total_yield_caban', $seasonData->total_yield_caban ?? '') }}"
                     placeholder="Number of Bags" required>
                 <div class="invalid-feedback">Please enter number of bags</div>
             </div>
             <div class="col-sm-4">
-                <label for="avg_weight_per_bag" class="form-label">Average Weight per Bag</label>
-                <input type="text" class="form-control" id="avg_weight_per_bag" name="avg_weight_per_bag" value="45"
+                <label for="weight_per_caban_kg" class="form-label">Average Weight per Bag</label>
+                <input type="text" class="form-control" id="weight_per_caban_kg" name="weight_per_caban_kg" value="{{ old('weight_per_caban_kg', $seasonData->weight_per_caban_kg ?? '') }}"
                     placeholder="Average Weight per Bag" required>
                 <div class="invalid-feedback">Please enter average weight per bag</div>
             </div>
-            <div class="col-sm-4">
-                <label for="yield_tons_per_ha" class="form-label">Total Yield (tons/ha)</label>
+             <div class="col-sm-4">
+                <label for="yield_tons_per_ha" class="form-label">Total Yield (kg/ha)</label>
                 <input type="text" class="form-control" id="yield_tons_per_ha" name="yield_tons_per_ha" value="2.5"
                     placeholder="0.00" required disabled>
                 <div class="invalid-feedback">Please enter farm size</div>
@@ -88,6 +94,24 @@
                 <input type="text" class="form-control" id="drying_cost_per_bag" name="drying_cost_per_bag" value="10"
                     placeholder="Price of Drying per Bag" required>
                 <div class="invalid-feedback">Please enter price of dying per bag</div>
+            </div>
+            <input type="number" hidden name="mc_value" id="mc_value" value="{{ $mc_value }}">
+            <div class="col-sm-4">
+                <label for="adjusted_yield" class="form-label">Adjusted yield (t/ha)</label>
+                <input type="text" class="form-control" id="adjusted_yield" name="adjusted_yield_display"
+                    placeholder="0.00" disabled>
+                <input type="hidden" name="adjusted_yield" id="adjusted_yield_hidden">
+                <div class="invalid-feedback">Please enter farm size</div>
+            </div>
+            <div class="col-sm-4">
+                <label for="gross_income" class="form-label">Gross Income (₱)</label>
+                <input type="text" class="form-control" id="gross_income" name="gross_income_display" placeholder="0.00" disabled>
+                <input type="hidden" name="gross_income" id="gross_income_hidden">
+            </div>
+            <div class="col-sm-4">
+                <label for="net_income" class="form-label">Net Income (₱)</label>
+                <input type="text" class="form-control" id="net_income" name="net_income_display" placeholder="0.00" disabled>
+                <input type="hidden" name="net_income" id="net_income_hidden">
             </div>
         </div>
     </div>

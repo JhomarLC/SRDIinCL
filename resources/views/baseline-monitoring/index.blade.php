@@ -43,7 +43,7 @@
             </select>
         </div>
         <div class="d-flex gap-2">
-            <button type="button" id="exportBtn" class="btn btn-success">
+            <button type="button" id="exportBtn" onclick="alert('Coming Soon')" class="btn btn-success">
                 <i class="ri-file-excel-2-fill"></i> Export
             </button>
             <button type="button" id="resetFiltersBtn" class="btn btn-outline-secondary">

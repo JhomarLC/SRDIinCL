@@ -9,6 +9,20 @@ class BaselineValidationRules
         $cropEstMethod = request('crop_est_method'); // Get from current request
 
         $rules = [
+            'farming-data' => [
+                'year_training_conducted'   => 'required|string|max:255',
+                'farm_size_hectares'        => 'required|numeric|min:0',
+                'method_crop_establishment' => 'nullable|string|max:255',
+                'total_yield_caban'         => 'nullable|numeric|min:0',
+                'weight_per_caban_kg'       => 'nullable|numeric|min:0',
+                'yield_tons_per_ha'         => 'nullable|numeric|min:0',
+                'price_per_kg_fresh'        => 'nullable|numeric|min:0',
+                'price_per_kg_dry'          => 'nullable|numeric|min:0',
+                'drying_cost_per_bag'       => 'nullable|numeric|min:0',
+                'adjusted_yield'            => 'nullable|numeric|min:0',
+                'gross_income'              => 'nullable|numeric|min:0',
+                'net_income'                => 'nullable|numeric|min:0',
+            ],
             'land-preparation' => [
                 'land_prep_is_pakyaw' => 'required|boolean',
 
@@ -191,6 +205,10 @@ class BaselineValidationRules
     public static function messages()
     {
         return [
+            'year_training_conducted.required' => 'Please select the year when training was conducted.',
+            'farm_size_hectares.required' => 'Please enter the size of the farm in hectares.',
+            // Add more as needed...
+
             'land_prep_package_cost.required_if' => 'Please provide the total cost for the package if pakyaw is selected.',
 
             'land_prep.*.activity.required_if' => 'Activity name is required when not using pakyaw.',

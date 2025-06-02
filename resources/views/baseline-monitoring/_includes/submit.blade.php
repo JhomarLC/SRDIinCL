@@ -3,6 +3,33 @@ $(function () {
     const submitFinalForm = () => {
         const fullFormData = new FormData();
 
+        // 🟩 Farming Data Basic Fields (match DB columns)
+        const yearConducted = $('select[name="year_range"]').val() || '';
+        const farmSize = $('#farmSize').val() || 0;
+        const methodCropEstablishment = $('input[name="method_crop_establishment"]:checked').val() || '';
+        const totalYieldCaban = $('#total_yield_caban').val() || 0;
+        const weightPerCaban = $('#weight_per_caban_kg').val() || 0;
+        const yieldTonsPerHa = $('#yield_tons_per_ha').val() || 0;
+        const pricePerKgFresh = $('#price_per_kg_fresh').val() || 0;
+        const pricePerKgDry = $('#price_per_kg_dry').val() || 0;
+        const dryingCostPerBag = $('#drying_cost_per_bag').val() || 0;
+        const adjustedYield = $('#adjusted_yield_hidden').val() || 0;
+        const grossIncome = $('#gross_income_hidden').val() || 0;
+        const netIncome = $('#net_income_hidden').val() || 0;
+
+        // 🟨 Append to FormData to match DB fields in `farming_data` table
+        fullFormData.append("year_training_conducted", yearConducted);
+        fullFormData.append("farm_size_hectares", farmSize);
+        fullFormData.append("method_crop_establishment", methodCropEstablishment);
+        fullFormData.append("total_yield_caban", totalYieldCaban);
+        fullFormData.append("weight_per_caban_kg", weightPerCaban);
+        fullFormData.append("yield_tons_per_ha", yieldTonsPerHa);
+        fullFormData.append("price_per_kg_fresh", pricePerKgFresh);
+        fullFormData.append("price_per_kg_dry", pricePerKgDry);
+        fullFormData.append("drying_cost_per_bag", dryingCostPerBag);
+        fullFormData.append("adjusted_yield", adjustedYield);
+        fullFormData.append("gross_income", grossIncome);
+        fullFormData.append("net_income", netIncome);
         // Crop Establishment
         const cropMethod = $('#crop-method').val(); // DWSR or TPR
 
@@ -426,7 +453,7 @@ $(function () {
         @php
             $farmingData = $participant->farming_data->where('season', $normalizedSeason)->first();
         @endphp
-        // // Submit
+        // Submit
         $.ajax({
             url: "{{ route('baseline-monitoring.store', [$farmingData->id, $farmingData->season]) }}",
             type: "POST",

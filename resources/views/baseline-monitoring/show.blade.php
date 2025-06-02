@@ -89,10 +89,17 @@
                         <div class="card-body">
                             <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3">
                                 <h5 class="card-title mb-2 mb-md-0">Dry Season</h5>
-                                <a href="{{ route('baseline-monitoring.create', [$participant_farming_data->id, 'dry-season'])}}" class="btn btn-secondary">
-                                    <i class="ri-add-fill"></i>
-                                    Dry Season Baseline Monitoring
-                                </a>
+                                @if ($drySeasonData)
+                                    <button type="button" onclick="alert('Coming soon')" class="btn btn-warning">
+                                        <i class="ri-edit-box-line"></i>
+                                        Update Dry Season Baseline
+                                    </button>
+                                @else
+                                    <a href="{{ route('baseline-monitoring.create', [$participant_farming_data->id, 'dry-season']) }}" class="btn btn-secondary">
+                                        <i class="ri-add-fill"></i>
+                                        Add Dry Season Baseline
+                                    </a>
+                                @endif
                             </div>
                             <div>
                                 {{-- <pre>{{ json_encode($drySeasonData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}</pre> --}}
@@ -112,10 +119,21 @@
                         <div class="card-body">
                             <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3">
                                 <h5 class="card-title mb-2 mb-md-0">Wet Season</h5>
-                                <a href="{{ route('baseline-monitoring.create', [$participant_farming_data->id, 'wet-season'])}}" class="btn btn-secondary">
+                                {{-- <a href="{{ route('baseline-monitoring.create', [$participant_farming_data->id, 'wet-season'])}}" class="btn btn-secondary">
                                     <i class="ri-add-fill"></i>
                                     Wet Season Baseline Monitoring
-                                </a>
+                                </a> --}}
+                                @if ($wetSeasonData)
+                                    <button type="button" onclick="alert('Coming soon')" class="btn btn-warning">
+                                        <i class="ri-edit-box-line"></i>
+                                        Update Wet Season Baseline
+                                    </button>
+                                @else
+                                    <a href="{{ route('baseline-monitoring.create', [$participant_farming_data->id, 'dry-season']) }}" class="btn btn-secondary">
+                                        <i class="ri-add-fill"></i>
+                                        Add Wet Season Baseline
+                                    </a>
+                                @endif
                             </div>
                             <div>
                                 {{-- <pre>{{ json_encode($wetSeasonData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}</pre> --}}

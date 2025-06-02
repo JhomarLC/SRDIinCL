@@ -258,8 +258,16 @@
                                         <span class="text-muted activity-total" id="total-other-expenses">0.00</span>
                                     </li>
                                     <li class="list-group-item d-flex justify-content-between">
-                                        <span><strong>Total (PHP)</strong></span>
+                                        <span><strong>Total Expenses (PHP)</strong></span>
                                         <strong id="grand-total-expenses">0.00</strong>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between">
+                                        <span><strong>Gross Income (PHP)</strong></span>
+                                        <strong id="gross-income">0.00</strong>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between">
+                                        <span><strong>Net Income (PHP)</strong></span>
+                                        <strong id="net-income">0.00</strong>
                                     </li>
                                 </ul>
                             </div>

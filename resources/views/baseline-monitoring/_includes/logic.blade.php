@@ -156,7 +156,43 @@
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
         }));
+        // ✅ Also update Net Income after expenses are recalculated
+        updateNetIncome();
     }
+
+    function updateNetIncome() {
+        const mcValue = parseFloat($('#mc_value').val());
+        const grossIncome = parseFloat($('#gross_income_hidden').val()) || 0;
+
+        // Step 1: Get base inputted costs from visible total
+        const baseExpensesText = $('#grand-total-expenses').text().replace(/,/g, '');
+        let totalExpenses = parseFloat(baseExpensesText) || 0;
+
+        // Step 2: Add drying cost if MC = 18 (Dry Season)
+        if (mcValue === 18) {
+            const numberOfBags = parseFloat($('#total_yield_caban').val()) || 0;
+            const dryingCostPerBag = parseFloat($('#drying_cost_per_bag').val()) || 0;
+            const dryingCost = numberOfBags * dryingCostPerBag;
+
+            totalExpenses += dryingCost;
+        }
+
+        // Step 3: Compute and display Net Income
+        const netIncome = grossIncome - totalExpenses;
+        const formattedNet = '₱' + netIncome.toLocaleString('en-PH', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+        $('#net_income').val(formattedNet);
+        $('#net_income_hidden').val(netIncome.toFixed(2));
+
+        // Sync Net Income to summary section
+        $('#net-income').text(netIncome.toLocaleString('en-PH', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }));
+    }
+
     // Reusable update trigger for all key interactions
     function bindWaterManagementEvents() {
         // When switching NIA/Supplementary type
@@ -345,15 +381,99 @@
         // Initial check on page load
         $('input[name="method_crop_establishment"]:checked').trigger('change');
 
-            function calculateTotalYield() {
-            const numberOfBags = parseFloat($('#number_of_bags').val()) || 0;
-            const avgWeightPerBag = parseFloat($('#avg_weight_per_bag').val()) || 0;
-            const totalYield = (numberOfBags * avgWeightPerBag) / 1000 ;
-
-            $('#yield_tons_per_ha').val(totalYield.toFixed(2));
+        function computeAdjustedYield(yieldVal, mcVal) {
+            return (yieldVal * ((100 - mcVal) / 86) / 1000).toFixed(2);
         }
 
-        $('#number_of_bags, #avg_weight_per_bag').on('input', calculateTotalYield);
+        function updateAdjustedYield() {
+            let yieldVal = parseFloat($('#yield_tons_per_ha').val());
+            let mcVal = parseFloat($('#mc_value').val());
+
+            if (!isNaN(yieldVal) && !isNaN(mcVal)) {
+                let adjusted = computeAdjustedYield(yieldVal, mcVal);
+                $('#adjusted_yield').val(adjusted);
+                $('#adjusted_yield_hidden').val(adjusted);
+            }
+        }
+
+        function calculateTotalYield() {
+            const numberOfBags = parseFloat($('#total_yield_caban').val()) || 0;
+            const avgWeightPerBag = parseFloat($('#weight_per_caban_kg').val()) || 0;
+            const totalYield = (numberOfBags * avgWeightPerBag);
+
+            $('#yield_tons_per_ha').val(totalYield.toFixed(2));
+
+            updateAdjustedYield();
+            updateGrossIncome();
+        }
+
+        // Initial calculation
+        calculateTotalYield();
+
+        // Recalculate when bags or weight change
+        $('#total_yield_caban, #weight_per_caban_kg').on('input', calculateTotalYield);
+
+        function updateGrossIncome() {
+            const mcValue = parseFloat($('#mc_value').val());
+
+            if (mcValue === 18) {
+                // Dry Season
+                const adjustedYieldTons = parseFloat($('#adjusted_yield').val());
+                const pricePerKgDry = parseFloat($('#price_per_kg_dry').val());
+
+                if (!isNaN(adjustedYieldTons) && !isNaN(pricePerKgDry)) {
+                    const adjustedYieldKg = adjustedYieldTons * 1000;
+                    const grossIncome = adjustedYieldKg * pricePerKgDry;
+                    const formattedGross = '₱' + grossIncome.toLocaleString('en-PH', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+                    $('#gross_income').val(formattedGross);
+                    $('#gross_income_hidden').val(grossIncome.toFixed(2));
+
+                    // Sync Gross Income to summary section
+                    $('#gross-income').text(grossIncome.toLocaleString('en-PH', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    }));
+                }
+            } else if (mcValue === 20) {
+                // Wet Season
+                const numberOfBags = parseFloat($('#total_yield_caban').val()) || 0;
+                const avgWeightPerBag = parseFloat($('#weight_per_caban_kg').val()) || 0;
+                const pricePerKgFresh = parseFloat($('#price_per_kg_fresh').val()) || 0;
+
+                if (!isNaN(numberOfBags) && !isNaN(avgWeightPerBag) && !isNaN(pricePerKgFresh)) {
+                    const grossIncome = numberOfBags * avgWeightPerBag * pricePerKgFresh;
+                    const formattedGross = '₱' + grossIncome.toLocaleString('en-PH', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+                    $('#gross_income').val(formattedGross);
+                    $('#gross_income_hidden').val(grossIncome.toFixed(2));
+
+                    // Sync Gross Income to summary section
+                    $('#gross-income').text(grossIncome.toLocaleString('en-PH', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    }));
+                }
+            } else {
+                // Invalid or unsupported MC
+                $('#gross_income').val('');
+                $('#gross_income_hidden').val('');
+            }
+            updateNetIncome();
+        }
+
+        $('#price_per_kg_dry').on('input', updateGrossIncome);
+
+        updateGrossIncome();
+
+
+        $('#total_yield_caban, #drying_cost_per_bag').on('input', updateNetIncome);
+
+        updateNetIncome()
 
         $('.nexttab').on('click', function () {
             var nextTabId = $(this).data('nexttab');
@@ -363,7 +483,6 @@
                 nextTabTrigger.tab('show');
             }
         });
-
     });
 
     $(document).ready(function () {

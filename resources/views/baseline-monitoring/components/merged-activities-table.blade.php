@@ -203,39 +203,46 @@
     }
 
     $otherModel = $data['other_expenses'] ?? null;
-    $other = $otherModel ? $otherModel->toArray() : null;
+    $other = $otherModel ? $otherModel->toArray() : []; // use empty array if null
 
-    if ($other) {
-        $label = 'Other Expenses';
+    $label = 'Other Expenses';
 
-        if (!empty($other['hauling_qty']) || !empty($other['hauling_unit_cost']) || !empty($other['hauling_total_cost'])) {
-            $addRow($mergedRows, $label, 'Hauling', $other['hauling_qty'] ?? '-', $other['hauling_unit_cost'] ?? '-', $other['hauling_total_cost'] ?? '-');
-        }
+    // 🚚 Hauling — always display
+    $addRow(
+        $mergedRows,
+        $label,
+        'Hauling',
+        $other['hauling_qty'] ?? '-',
+        $other['hauling_unit_cost'] ?? '-',
+        $other['hauling_total_cost'] ?? '-'
+    );
 
-       if (
-            !empty($other['hired_bags']) || !empty($other['hired_avg_bag_weight']) ||
-            !empty($other['hired_price_per_kg']) || !empty($other['hired_percent_share']) || !empty($other['hired_total_cost'])
-        ) {
-            $qtyDetail = ($other['hired_bags'] ?? '-') . ' bags @ ' .
-                        ($other['hired_avg_bag_weight'] ?? '-') . 'kg, ' .
-                        ($other['hired_percent_share'] ?? '-') . '% share';
+    // 👷 Permanent Labor — always display with details in qty/unit
+    $qtyDetail = ($other['hired_bags'] ?? '-') . ' bags @ ' .
+                ($other['hired_avg_bag_weight'] ?? '-') . 'kg, ' .
+                ($other['hired_percent_share'] ?? '-') . '% share';
 
-            $unitCost = 'P' . ($other['hired_price_per_kg'] ?? '-') . ' per kg';
+    $unitCost = isset($other['hired_price_per_kg']) ? 'P' . $other['hired_price_per_kg'] . ' per kg' : '-';
 
-            $addRow(
-                $mergedRows,
-                $label,
-                'Permanent Labor',
-                $qtyDetail,
-                $unitCost,
-                $other['hired_total_cost'] ?? '-'
-            );
-        }
+    $addRow(
+        $mergedRows,
+        $label,
+        'Permanent Labor',
+        $qtyDetail,
+        $unitCost,
+        $other['hired_total_cost'] ?? '-'
+    );
 
-        if (!empty($other['land_ownership_fee'])) {
-            $addRow($mergedRows, $label, 'Land Ownership (Amilyar)', '-', '-', $other['land_ownership_fee'] ?? '-');
-        }
-    }
+    // 🧾 Amilyar — always display
+    $addRow(
+        $mergedRows,
+        $label,
+        'Land Ownership (Amilyar)',
+        '-',
+        '-',
+        $other['land_ownership_fee'] ?? '-'
+    );
+
 
 @endphp
 

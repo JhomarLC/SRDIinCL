@@ -138,41 +138,24 @@ class BaselineMonitoringController extends Controller
             ->addColumn('address', function ($participants) {
                 return $participants->full_address;
             })
-            ->addColumn('wet_season', function ($participants) {
-                // $wetRecord = $participants->farming_data
-                //                 ->where('season', 'Wet Season')
-                //                 ->first();
+           ->addColumn('wet_season', function ($participants) {
+                $wetRecord = $participants->farming_data->firstWhere('season', 'Wet Season');
 
-                // if (
-                //     $wetRecord &&
-                //     (
-                //         $wetRecord->activities->flatMap->details->isNotEmpty() ||
-                //         $wetRecord->activities->flatMap->irrigationEvents->isNotEmpty()
-                //     )
-                // ) {
-                //     return '<span class="badge bg-success">Baseline Complete</span>';
-                // } else {
-                // }
+                if ($wetRecord && !is_null($wetRecord->method_crop_establishment)) {
+                    return '<span class="badge bg-success">Baseline Complete</span>';
+                }
+
                 return '<span class="badge bg-danger">No Baseline</span>';
             })
             ->addColumn('dry_season', function ($participants) {
-                // $dryRecord = $participants->farming_data
-                //                 ->where('season', 'Dry Season')
-                //                 ->first();
+                $dryRecord = $participants->farming_data->firstWhere('season', 'Dry Season');
 
-                // if (
-                //     $dryRecord &&
-                //     (
-                //         $dryRecord->activities->flatMap->details->isNotEmpty() ||
-                //         $dryRecord->activities->flatMap->irrigationEvents->isNotEmpty()
-                //     )
-                // ) {
-                //     return '<span class="badge bg-success">Baseline Complete</span>';
-                // } else {
-                // }
+                if ($dryRecord && !is_null($dryRecord->method_crop_establishment)) {
+                    return '<span class="badge bg-success">Baseline Complete</span>';
+                }
+
                 return '<span class="badge bg-danger">No Baseline</span>';
             })
-
             ->addColumn('actions', function ($participants) {
                 return '
                 <a href="' . route('baseline-monitoring.show', $participants->id) . '" class="btn btn-sm btn-secondary editAdmin">
@@ -224,10 +207,32 @@ class BaselineMonitoringController extends Controller
             BaselineValidationRules::rules('all'),
             BaselineValidationRules::messages()
         );
+        $normalizedSeason = ucwords(str_replace('-', ' ', $season));
 
         DB::beginTransaction();
 
         try {
+            $farmingData = FarmingData::where('participant_id', $id)
+                ->where('season', $normalizedSeason)
+                ->first();
+
+            if ($farmingData) {
+                $farmingData->update([
+                    'year_training_conducted'   => $validated['year_training_conducted'],
+                    'farm_size_hectares'        => $validated['farm_size_hectares'],
+                    'method_crop_establishment' => $validated['method_crop_establishment'] ?? null,
+                    'total_yield_caban'         => $validated['total_yield_caban'] ?? 0,
+                    'weight_per_caban_kg'       => $validated['weight_per_caban_kg'] ?? 0,
+                    'yield_tons_per_ha'         => $validated['yield_tons_per_ha'] ?? 0,
+                    'price_per_kg_fresh'        => $validated['price_per_kg_fresh'] ?? 0,
+                    'price_per_kg_dry'          => $validated['price_per_kg_dry'] ?? 0,
+                    'drying_cost_per_bag'       => $validated['drying_cost_per_bag'] ?? 0,
+                    'adjusted_yield'            => $validated['adjusted_yield'] ?? 0,
+                    'gross_income'              => $validated['gross_income'] ?? 0,
+                    'net_income'                => $validated['net_income'] ?? 0,
+                ]);
+            }
+
             /**
              * 1. Save Land Preparation
              */
